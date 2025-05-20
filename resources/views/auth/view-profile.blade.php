@@ -143,17 +143,35 @@
                             </div>
                         @endif
                         <div class="post-stats">
-                            <span class="reaction-count"><i class="fas fa-thumbs-up"></i><span id="like-count-{{ $post->id }}">{{ $post->reaction_counts['like'] ?? 0 }}</span></span>
-                            <span class="comment-count"><span id="comment-count-{{ $post->id }}">{{ $post->comments_count ?? 0 }}</span> {{ ($post->comments_count ?? 0) == 1 ? 'comment' : 'comments' }}</span>
-                            <span class="share-count"><span id="share-count-{{ $post->id }}">{{ $post->share_count ?? 0 }}</span>{{ ($post->share_count ?? 0) == 1 ? ' share' : ' shares' }}</span>
+                            <span class="reaction-count">
+                                <i class="fas fa-heart"></i>
+                                <span id="like-count-{{ $post->id }}">{{ $post->reaction_counts['like'] ?? 0 }}</span>
+                            </span>
+                            <span class="comment-count">
+                                <span id="comment-count-{{ $post->id }}">{{ $post->comments_count }}</span>
+                                <span id="comment-text-{{ $post->id }}">{{ $post->comments_count == 1 ? 'Comment' : 'Comments' }}</span>
+                            </span>
+                            <span class="share-count">
+                                <span id="share-count-{{ $post->id }}">{{ $post->share_count }}</span>
+                                {{ $post->share_count == 1 ? 'share' : 'shares' }}
+                            </span>
                         </div>
                         <div class="post-actions">
-                            <button class="post-action-btn reaction-btn" data-post-id="{{ $post->id }}"><i class="far fa-thumbs-up"></i>Like</button>
-                            <button class="post-action-btn comment-btn" data-post-id="{{ $post->id }}"><i class="far fa-comment"></i>Comment</button>
-                            <button class="post-action-btn share-btn" data-post-id="{{ $post->id }}"><i class="far fa-share-square"></i>Share</button>
+                            <button class="post-action-btn like-btn {{ $post->current_user_reaction === 'like' ? 'reacted' : '' }}"
+                                data-post-id="{{ $post->id }}"
+                                data-liked="{{ $post->current_user_reaction === 'like' ? '1' : '0' }}">
+                                <i class="fas fa-heart"></i>
+                                <span>{{ $post->current_user_reaction === 'like' ? 'Liked' : 'Like' }}</span>
+                            </button>
+                            <button class="post-action-btn comment-btn" data-post-id="{{ $post->id }}">
+                                <i class="far fa-comment"></i> Comment
+                            </button>
+                            <button class="post-action-btn share-btn" data-post-id="{{ $post->id }}">
+                                <i class="far fa-share-square"></i> Share
+                            </button>
                         </div>
                         <div class="post-reaction-panel" id="reaction-panel-{{ $post->id }}">
-                            <button class="reaction-icon" data-reaction="like" data-post-id="{{ $post->id }}"><i class="fas fa-thumbs-up"></i></button>
+                            <button class="reaction-icon" data-reaction="like" data-post-id="{{ $post->id }}"><i class="fas fa-heart"></i></button>
                             <button class="reaction-icon" data-reaction="love" data-post-id="{{ $post->id }}"><i class="fas fa-heart"></i></button>
                             <button class="reaction-icon" data-reaction="care" data-post-id="{{ $post->id }}"><i class="fas fa-paw"></i></button>
                             <button class="reaction-icon" data-reaction="wow" data-post-id="{{ $post->id }}"><i class="fas fa-surprise"></i></button>
@@ -337,6 +355,35 @@
 .post-card.fade-out {
     opacity: 0;
     transition: opacity 0.4s ease;
+}
+
+/* Heart icon color styles */
+.post-stats .reaction-count i,
+.post-actions .reaction-btn i,
+.post-reaction-panel .reaction-icon i {
+    color: #ff4d4d;
+}
+
+.post-stats .reaction-count i:hover,
+.post-actions .reaction-btn i:hover,
+.post-reaction-panel .reaction-icon i:hover {
+    color: #ff0000;
+}
+
+.reaction-count i {
+    color: #e41e3f;
+}
+
+.post-action-btn.like-btn i {
+    color: #65676b;
+}
+
+.post-action-btn.like-btn.reacted i {
+    color: #e41e3f;
+}
+
+.post-action-btn.like-btn:hover i {
+    color: #e41e3f;
 }
 </style>
 <script>
@@ -573,6 +620,14 @@ const EditPostManager = {
                     if (this.modals.delete) this.hideModal(this.modals.delete);
                     this.editingPostId = null;
                 });
+            });
+        }
+
+        // Cancel button for Delete Confirmation Modal
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        if (cancelDeleteBtn) {
+            cancelDeleteBtn.addEventListener('click', () => {
+                this.hideModal(this.modals.delete);
             });
         }
     },
@@ -1478,6 +1533,118 @@ if (cancelSharePostBtn) {
         postIdToShare = null;
     });
 }
+
+// Add these event listeners for reaction, comment, and share counts
+document.addEventListener('DOMContentLoaded', function() {
+    // Comment count update listener
+    window.addEventListener('commentCountUpdated', event => {
+        const postId = event.detail ? event.detail.postId : undefined;
+        const count = event.detail ? event.detail.count : undefined;
+        
+        const commentCountElement = document.getElementById(`comment-count-${postId}`);
+        const commentTextElement = document.getElementById(`comment-text-${postId}`);
+        
+        if (commentCountElement && commentTextElement) {
+            commentCountElement.textContent = count;
+            commentTextElement.textContent = count == 1 ? 'Comment' : 'Comments';
+        }
+    });
+
+    // Share count update listener
+    window.addEventListener('shareCountUpdated', event => {
+        const postId = event.detail ? event.detail.postId : undefined;
+        const count = event.detail ? event.detail.count : undefined;
+        
+        const shareCountElement = document.getElementById(`share-count-${postId}`);
+        
+        if (shareCountElement) {
+            shareCountElement.textContent = count;
+        }
+    });
+
+    // Like button click handlers
+    document.querySelectorAll('.like-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const postId = this.dataset.postId;
+            const liked = this.dataset.liked === '1';
+            const url = `/posts/${postId}/reactions`;
+            const method = liked ? 'DELETE' : 'POST';
+            const body = liked ? null : JSON.stringify({ reaction_type: 'like' });
+
+            fetch(url, {
+                method: method,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: body
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const countSpan = document.getElementById(`like-count-${postId}`);
+                    if (countSpan) {
+                        countSpan.textContent = data.total_reactions;
+                    }
+                    if (liked) {
+                        this.classList.remove('reacted');
+                        this.dataset.liked = '0';
+                        this.querySelector('span').textContent = 'Like';
+                    } else {
+                        this.classList.add('reacted');
+                        this.dataset.liked = '1';
+                        this.querySelector('span').textContent = 'Liked';
+                    }
+                }
+            });
+        });
+    });
+
+    // Share button click handlers
+    document.querySelectorAll('.share-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const postId = this.getAttribute('data-post-id');
+            postIdToShare = postId;
+            showModal(sharePostConfirmModal);
+        });
+    });
+
+    // Confirm share button handler
+    const confirmSharePostBtn = document.getElementById('confirmSharePostBtn');
+    if (confirmSharePostBtn) {
+        confirmSharePostBtn.addEventListener('click', function() {
+            if (!postIdToShare) return;
+
+            fetch(`/posts/${postIdToShare}/share-in-app`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.share_count !== undefined) {
+                        const shareCountElement = document.getElementById(`share-count-${postIdToShare}`);
+                        if (shareCountElement) {
+                            shareCountElement.textContent = data.share_count;
+                        }
+                        window.dispatchEvent(new CustomEvent('shareCountUpdated', {
+                            detail: { postId: postIdToShare, count: data.share_count }
+                        }));
+                    }
+                }
+            })
+            .finally(() => {
+                hideModal(sharePostConfirmModal);
+                postIdToShare = null;
+            });
+        });
+    }
+});
 
 </script>
 @endsection

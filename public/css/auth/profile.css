@@ -33,7 +33,7 @@
 }
 
 .profile-picture {
-    position: static;
+    position: relative;
     width: 140px;
     height: 140px;
     border-radius: 50%;
@@ -363,7 +363,9 @@ body.dark-mode .profile-info-card p {
 
 /* Modal Styles */
 .modal {
-    display: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -618,260 +620,15 @@ button[type="submit"]:hover {
 }
 
 /* Edit post modal specific styles */
-#editPostModal .modal-content form {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    z-index: 1;
-}
-
-#editPostModal .form-group {
-    grid-column: auto;
-}
-
-#editPostModal textarea {
-    min-height: 150px;
-}
-
-/* Target the specific form groups for profile picture and banner image */
-.form-group:nth-of-type(3) {
-    grid-column: 1;
-}
-
-.form-group:nth-of-type(3) .photo-preview,
-.form-group:nth-of-type(4) .photo-preview {
-    display: block;
-}
-
-.form-group:nth-of-type(1),
-.form-group:nth-of-type(2) {
-    grid-column: auto;
-}
-
-/* Profile Edit Button */
-.profile-edit-btn {
-    position: absolute;
-    top: 24px;
-    right: 32px;
-    padding: 12px 24px;
-    background: #3F7D58;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-weight: 500;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    z-index: 3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.profile-edit-btn:hover {
-    background: #4a8d65;
-}
-
-/* Responsive Design */
-@media screen and (max-width: 768px) {
-    .profile-container {
-        padding: 10px;
-    }
-
-    .profile-banner {
-        height: 200px;
-    }
-
-    .profile-picture {
-        width: 120px;
-        height: 120px;
-        left: 30px;
-        bottom: -40px;
-        border-width: 4px;
-    }
-
-    .profile-content {
-        margin-top: 50px;
-        padding: 10px;
-    }
-
-    .post-images {
-        grid-template-columns: 1fr;
-    }
-
-    .post-image {
-        height: 250px;
-    }
-
-    .modal-content {
-        margin: 10% auto;
-        padding: 20px;
-        width: 95%;
-    }
-
-    .modal-content form {
-        grid-template-columns: 1fr;
-    }
-
-    .modal-content h2 {
-        grid-column: 1;
-        font-size: 20px;
-    }
-
-    button[type="submit"] {
-        grid-column: 1;
-        width: 100%;
-    }
-
-    .form-group:nth-of-type(3),
-    .form-group:nth-of-type(4) {
-        grid-column: 1;
-    }
-}
-
-/* Lightbox Modal */
-.lightbox-modal {
-    display: none;
-    position: fixed;
-    z-index: 1100;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
-    overflow: hidden;
-}
-
-.lightbox-content {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-}
-
-.lightbox-image {
-    max-width: 90%;
-    max-height: 90%;
-    object-fit: contain;
-}
-
-.lightbox-close {
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    color: white;
-    font-size: 40px;
-    font-weight: bold;
-    cursor: pointer;
-    z-index: 1110;
-}
-
-.lightbox-prev,
-.lightbox-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    color: white;
-    font-size: 40px;
-    font-weight: bold;
-    cursor: pointer;
-    z-index: 1110;
-    background: rgba(0, 0, 0, 0.3);
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.lightbox-prev {
-    left: 20px;
-}
-
-.lightbox-next {
-    right: 20px;
-}
-
-.lightbox-counter {
-    margin-left: 15px;
-    position: absolute;
-    bottom: 20px;
-    color: white;
-    font-size: 16px;
-}
-
-body.dark-mode .profile-content h1,
-body.dark-mode .profile-content h2,
-body.dark-mode .profile-content h3,
-body.dark-mode .profile-content h4,
-body.dark-mode .profile-content p {
-    color: #fff !important;
-}
-
-
-.photo-preview {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.preview-image-container {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.preview-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.remove-image-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    width: 20px;
-    height: 20px;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.remove-image-btn:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-}
-
-/* Edit Post Modal Improvements */
 #editPostModal .modal-content {
     max-width: 600px;
     border-radius: 12px;
     padding: 28px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    background: #ffffff !important;
+    border: 1px solid rgba(63, 125, 88, 0.2) !important;
+    color: #222 !important;
 }
-
-/* #editPostModal h2 {
-    text-align: center;
-    margin-bottom: 25px;
-    color: #1877f2;
-    font-size: 24px;
-    font-weight: 700;
-    border-bottom: 2px solid #f0f2f5;
-    padding-bottom: 15px;
-} */
 
 #editPostForm .form-group {
     margin-bottom: 18px;
@@ -887,13 +644,13 @@ body.dark-mode .profile-content p {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #444;
+    color: #3F7D58;
     font-size: 14px;
 }
 
 #editPostForm label i {
     margin-right: 6px;
-    color: #1877f2;
+    color: #3F7D58;
 }
 
 #editPostForm input[type="text"],
@@ -916,8 +673,8 @@ body.dark-mode .profile-content p {
 #editPostForm input[type="text"]:focus,
 #editPostForm textarea:focus,
 #editPostForm select:focus {
-    border-color: #1877f2;
-    box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
+    border-color: #3F7D58;
+    box-shadow: 0 0 0 2px rgba(63, 125, 88, 0.2);
     outline: none;
 }
 
@@ -944,13 +701,13 @@ body.dark-mode .profile-content p {
 }
 
 #post_description:focus {
-    border-color: #1877f2;
-    box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
+    border-color: #3F7D58;
+    box-shadow: 0 0 0 2px rgba(63, 125, 88, 0.2);
 }
 
 #editPostForm select {
     appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23444' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233F7D58' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 16px center;
     background-size: 16px;
@@ -1249,4 +1006,180 @@ body.dark-mode #saveProfileConfirmModal .cancel-btn:hover,
 body.dark-mode #sharePostConfirmModal .cancel-btn:hover {
     background-color: #373e47 !important;
     color: #fff !important;
+}
+
+/* Edit Profile Modal Styles */
+#editProfileModal .modal-content {
+    max-width: 600px;
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    background: #ffffff !important;
+    border: 1px solid rgba(63, 125, 88, 0.2) !important;
+    color: #222 !important;
+}
+
+#editProfileForm .form-group {
+    margin-bottom: 18px;
+}
+
+#editProfileForm label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #3F7D58;
+    font-size: 14px;
+}
+
+#editProfileForm input[type="text"],
+#editProfileForm input[type="email"],
+#editProfileForm textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background-color: #fafafa;
+}
+
+#editProfileForm input[type="text"]:focus,
+#editProfileForm input[type="email"]:focus,
+#editProfileForm textarea:focus {
+    border-color: #3F7D58;
+    box-shadow: 0 0 0 2px rgba(63, 125, 88, 0.2);
+    outline: none;
+}
+
+/* Dark Mode Styles for Edit Modals */
+body.dark-mode #editPostModal .modal-content,
+body.dark-mode #editProfileModal .modal-content {
+    background: #23272b !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #333 !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.dark-mode #editPostModal h2,
+body.dark-mode #editProfileModal h2 {
+    color: #8fd19e !important;
+}
+
+body.dark-mode #editPostModal label,
+body.dark-mode #editProfileModal label {
+    color: #8fd19e !important;
+}
+
+body.dark-mode #editPostModal input[type="text"],
+body.dark-mode #editPostModal textarea,
+body.dark-mode #editPostModal select,
+body.dark-mode #editProfileModal input[type="text"],
+body.dark-mode #editProfileModal input[type="email"],
+body.dark-mode #editProfileModal textarea {
+    background-color: #181a1b !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #444 !important;
+}
+
+body.dark-mode #editPostModal input[type="text"]::placeholder,
+body.dark-mode #editPostModal textarea::placeholder,
+body.dark-mode #editProfileModal input[type="text"]::placeholder,
+body.dark-mode #editProfileModal textarea::placeholder {
+    color: #b0b0b0 !important;
+}
+
+body.dark-mode #editPostModal .file-input-button,
+body.dark-mode #editProfileModal .file-input-button {
+    background-color: #23272b !important;
+    color: #ffffff !important;
+    border: 1px solid #8fd19e !important;
+}
+
+body.dark-mode #editPostModal .file-input-button:hover,
+body.dark-mode #editProfileModal .file-input-button:hover {
+    background-color: #1a3d2b !important;
+    color: #fff !important;
+}
+
+body.dark-mode #editPostModal .cancel-btn,
+body.dark-mode #editProfileModal .cancel-btn {
+    background-color: #23272b !important;
+    color: #8fd19e !important;
+    border: 1px solid #8fd19e !important;
+}
+
+body.dark-mode #editPostModal .submit-btn,
+body.dark-mode #editProfileModal .submit-btn {
+    background-color: #8fd19e !important;
+    color: #23272b !important;
+    border: 1px solid #8fd19e !important;
+}
+
+body.dark-mode #editPostModal .cancel-btn:hover,
+body.dark-mode #editProfileModal .cancel-btn:hover {
+    background-color: #181a1b !important;
+    color: #fff !important;
+}
+
+body.dark-mode #editPostModal .submit-btn:hover,
+body.dark-mode #editProfileModal .submit-btn:hover {
+    background-color: #6fcf97 !important;
+    color: #23272b !important;
+}
+
+body.dark-mode #editPostModal .photo-preview,
+body.dark-mode #editProfileModal .photo-preview {
+    background: #181a1b !important;
+}
+
+body.dark-mode #editPostModal .preview-image-container,
+body.dark-mode #editProfileModal .preview-image-container {
+    border: 1px solid #444 !important;
+}
+
+body.dark-mode #editPostModal .remove-image-btn,
+body.dark-mode #editProfileModal .remove-image-btn {
+    background: #8fd19e !important;
+    color: #23272b !important;
+}
+
+body.dark-mode #editPostModal .remove-image-btn:hover,
+body.dark-mode #editProfileModal .remove-image-btn:hover {
+    background: #6fcf97 !important;
+    color: #23272b !important;
+}
+
+body.dark-mode #editPostModal .close-modal,
+body.dark-mode #editProfileModal .close-modal {
+    color: #8fd19e !important;
+}
+
+.profile-edit-btn {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    background: #3F7D58;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(63, 125, 88, 0.15);
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+    z-index: 3;
+}
+
+.profile-edit-btn:hover {
+    background: #4a8d65;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(63, 125, 88, 0.25);
+}
+
+#deleteConfirmModal .modal-content {
+    margin: 0;
 }

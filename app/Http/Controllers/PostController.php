@@ -51,6 +51,9 @@ class PostController extends Controller
     {
         $query = Post::with(['user', 'originalPost.user'])->withCount('comments');
 
+        // Exclude posts created by the current user
+        $query->where('user_id', '!=', Auth::id());
+
         // Category filter
         if ($request->filled('status')) {
             $query->where('status', $request->status);
