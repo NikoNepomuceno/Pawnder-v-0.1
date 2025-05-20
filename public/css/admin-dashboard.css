@@ -1,0 +1,132 @@
+/* Admin Dashboard Orange & White Theme */
+:root {
+    --admin-primary: #ff9800;
+    --admin-primary-dark: #f57c00;
+    --admin-bg: #fff;
+    --admin-bg-alt: #fff7e6;
+    --admin-text: #222;
+    --admin-muted: #888;
+    --admin-border: #ffe0b2;
+    --admin-status-pending: #ff9800;
+    --admin-status-approved: #43a047;
+    --admin-status-rejected: #e53935;
+}
+
+body, .admin-dashboard {
+    background: var(--admin-bg-alt);
+    color: var(--admin-text);
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.admin-dashboard {
+    padding: 2rem 3vw;
+}
+
+.dashboard-header {
+    margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+    color: var(--admin-primary);
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-stats {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    background: var(--admin-bg);
+    border: 1.5px solid var(--admin-border);
+    border-radius: 1rem;
+    padding: 1.2rem 2rem;
+    min-width: 160px;
+    box-shadow: 0 2px 8px rgba(255,152,0,0.07);
+    text-align: center;
+}
+
+.stat-card h3 {
+    color: var(--admin-primary-dark);
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+}
+
+.stat-card p {
+    font-size: 1.7rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.reports-section h2 {
+    color: var(--admin-primary-dark);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.reports-table-container {
+    background: var(--admin-bg);
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(255,152,0,0.05);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.reports-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+}
+
+.reports-table th, .reports-table td {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--admin-border);
+    text-align: left;
+}
+
+.reports-table th {
+    color: var(--admin-primary-dark);
+    font-weight: 600;
+    background: var(--admin-bg-alt);
+}
+
+.status-badge {
+    padding: 0.3em 0.9em;
+    border-radius: 1em;
+    font-size: 0.95em;
+    font-weight: 500;
+    color: #fff;
+    display: inline-block;
+}
+.status-pending { background: var(--admin-status-pending); }
+.status-approved { background: var(--admin-status-approved); }
+.status-rejected { background: var(--admin-status-rejected); }
+
+.action-buttons .btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    margin-right: 0.3em;
+    font-size: 1.1em;
+    color: var(--admin-primary-dark);
+    transition: color 0.15s;
+}
+.action-buttons .btn-view { color: var(--admin-primary); }
+.action-buttons .btn-approve { color: var(--admin-status-approved); }
+.action-buttons .btn-reject { color: var(--admin-status-rejected); }
+.action-buttons .btn:hover { opacity: 0.7; }
+
+.pagination-container {
+    text-align: right;
+}
+
+@media (max-width: 900px) {
+    .dashboard-stats { flex-direction: column; gap: 1rem; }
+    .reports-table th, .reports-table td { padding: 0.5rem 0.5rem; }
+    .admin-dashboard { padding: 1rem 1vw; }
+} 

@@ -1,0 +1,1252 @@
+.profile-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.profile-banner {
+    position: relative;
+    height: 280px;
+    background-color: #f0f2f5;
+    border-radius: 16px;
+    overflow: visible;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.profile-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+}
+
+.profile-header-row {
+    position: absolute;
+    left: 40px;
+    bottom: -60px;
+    display: flex;
+    align-items: flex-end;
+    gap: 32px;
+    z-index: 2;
+}
+
+.profile-picture {
+    position: static;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    border: 6px solid #fff;
+    box-shadow: 20px 20px 24px rgba(0, 0, 0, 0.10);
+    overflow: hidden;
+    background: #fff;
+    z-index: 2;
+    flex-shrink: 0;
+}
+
+.profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-info-card {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+    padding: 28px 40px 24px 40px;
+    min-width: 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 2;
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+}
+
+.profile-info-card h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+    color: #222;
+}
+
+.profile-info-card p {
+    color: #666;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+body.dark-mode .profile-info-card p {
+    color: #fff !important;
+}
+
+.profile-header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 90px;
+    margin-bottom: 30px;
+}
+
+.profile-header-content h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    color: #222;
+    letter-spacing: 0.5px;
+}
+
+.profile-header-content p {
+    color: #666;
+    margin: 6px 0 0 0;
+    font-size: 1.1rem;
+}
+
+.profile-content {
+    margin-top: 70px;
+    padding: 20px;
+}
+
+.profile-content h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #1c1e21;
+}
+
+.profile-content p {
+    margin: 5px 0 20px;
+    color: #65676b;
+}
+
+/* Posts Section Styles */
+.posts-container {
+    margin-top: 30px;
+}
+
+.posts-container h2 {
+    font-size: 20px;
+    color: #1c1e21;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+/* Post Card Styles */
+.post-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.post-header {
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.post-user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.post-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-date {
+    color: #65676b;
+    font-size: 0.9rem;
+}
+
+.post-details {
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.post-status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.post-status.not_found {
+    background-color: #ff4d4d;
+    color: white;
+}
+
+.post-status.found {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.post-breed,
+.post-location,
+.post-contact {
+    color: #65676b;
+    font-size: 0.9rem;
+}
+
+.post-images {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 2px;
+    height: 300px;
+}
+
+.image-grid.single-image {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+}
+
+.image-grid.two-images {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr;
+}
+
+.image-grid.three-images {
+    grid-template-areas:
+        "img1 img2"
+        "img1 img3";
+}
+
+.image-grid.three-images .grid-item:first-child {
+    grid-area: img1;
+}
+
+.grid-item {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.grid-item:hover {
+    opacity: 0.9;
+}
+
+.grid-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.more-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.post-content {
+    padding: 12px;
+}
+
+.post-content h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.1rem;
+    color: #1c1e21;
+}
+
+.post-description {
+    margin: 0;
+    color: #65676b;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.post-stats {
+    padding: 8px 12px;
+    display: flex;
+    gap: 16px;
+    color: #65676b;
+    font-size: 0.9rem;
+    border-top: 1px solid #eee;
+}
+
+.post-actions {
+    display: flex;
+    padding: 4px 12px;
+    border-top: 1px solid #eee;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 8px;
+    background: none;
+    border: none;
+    color: #65676b;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.action-btn:hover {
+    background-color: #f2f2f2;
+    border-radius: 4px;
+}
+
+.post-admin-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 8px 12px;
+    border-top: 1px solid #eee;
+}
+
+.profile-post-actions {
+    display: flex;
+    gap: 8px;
+    padding: 0;
+    border-top: none;
+}
+
+.edit-btn,
+.delete-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.edit-btn {
+    background-color: #3F7D58;
+    color: white;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #4a8d65;
+}
+
+.delete-btn:hover {
+    background-color: #e74c3c;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    overflow-y: auto;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal .modal-content,
+.modal-content {
+    background: #ffffff !important;
+    border: 1px solid rgba(63, 125, 88, 0.2) !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 12px !important;
+    color: #222 !important;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+}
+
+body.dark-mode .modal .modal-content,
+body.dark-mode .modal-content {
+    background: rgba(35, 39, 43, 0.95) !important;
+    backdrop-filter: blur(18px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
+    color: #e0e0e0 !important;
+}
+
+.modal-content::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
+}
+
+.modal-content h1,
+.modal-content h2,
+.modal-content h3,
+.modal-content h4,
+.modal-content label,
+.modal-content p,
+.modal-content span {
+    color: #3F7D58 !important;
+}
+
+.modal-content button {
+    background-color: #3F7D58 !important;
+    color: #fff !important;
+}
+
+.modal-content input {
+    color: #222;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+}
+
+.modal-content h2 {
+    margin-bottom: 25px;
+    grid-column: 1 / 3;
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.modal-content h2:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    right: 25%;
+    height: 3px;
+    background: linear-gradient(to right, transparent, #2d5a41, transparent);
+}
+
+.close,
+.close-modal {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    color: #888;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    z-index: 10;
+}
+
+.close:hover,
+.close-modal:hover {
+    color: #3F7D58;
+    background: rgba(63, 125, 88, 0.08);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #444;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus {
+    border-color: #1877f2;
+    box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.25);
+    outline: none;
+}
+
+.file-input-button {
+    background-color: rgba(63, 125, 88, 0.1);
+    color: #1a3d2b;
+    border: 1px solid #3F7D58;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.file-input-button:hover {
+    background-color: rgba(63, 125, 88, 0.2);
+}
+
+.photo-preview {
+    margin-top: 15px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    min-height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px dashed #ddd;
+    padding: 10px;
+}
+
+.preview-image-container {
+    position: relative;
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 6px;
+}
+
+.preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Save Changes Button Styles */
+#saveProfileChangesBtn,
+#savePostChangesBtn,
+button[type="submit"] {
+    padding: 12px 24px;
+    background-color: #3F7D58;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    max-width: 200px;
+    margin: 20px auto;
+    display: block;
+}
+
+#saveProfileChangesBtn:hover,
+#savePostChangesBtn:hover,
+button[type="submit"]:hover {
+    background-color: #4a8d65;
+}
+
+/* Remove old button styles */
+button[type="submit"] {
+    grid-column: auto;
+    padding: 12px 24px;
+    background-color: #3F7D58;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    margin: 20px auto;
+    width: 100%;
+    max-width: 200px;
+    display: block;
+    box-shadow: none;
+}
+
+button[type="submit"]:hover {
+    background-color: #4a8d65;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Specific styling for different form groups */
+.form-group:nth-of-type(3),
+.form-group:nth-of-type(4) {
+    grid-column: 1 / 3;
+}
+
+/* Edit post modal specific styles */
+#editPostModal .modal-content form {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+}
+
+#editPostModal .form-group {
+    grid-column: auto;
+}
+
+#editPostModal textarea {
+    min-height: 150px;
+}
+
+/* Target the specific form groups for profile picture and banner image */
+.form-group:nth-of-type(3) {
+    grid-column: 1;
+}
+
+.form-group:nth-of-type(3) .photo-preview,
+.form-group:nth-of-type(4) .photo-preview {
+    display: block;
+}
+
+.form-group:nth-of-type(1),
+.form-group:nth-of-type(2) {
+    grid-column: auto;
+}
+
+/* Profile Edit Button */
+.profile-edit-btn {
+    position: absolute;
+    top: 24px;
+    right: 32px;
+    padding: 12px 24px;
+    background: #3F7D58;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-edit-btn:hover {
+    background: #4a8d65;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .profile-container {
+        padding: 10px;
+    }
+
+    .profile-banner {
+        height: 200px;
+    }
+
+    .profile-picture {
+        width: 120px;
+        height: 120px;
+        left: 30px;
+        bottom: -40px;
+        border-width: 4px;
+    }
+
+    .profile-content {
+        margin-top: 50px;
+        padding: 10px;
+    }
+
+    .post-images {
+        grid-template-columns: 1fr;
+    }
+
+    .post-image {
+        height: 250px;
+    }
+
+    .modal-content {
+        margin: 10% auto;
+        padding: 20px;
+        width: 95%;
+    }
+
+    .modal-content form {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-content h2 {
+        grid-column: 1;
+        font-size: 20px;
+    }
+
+    button[type="submit"] {
+        grid-column: 1;
+        width: 100%;
+    }
+
+    .form-group:nth-of-type(3),
+    .form-group:nth-of-type(4) {
+        grid-column: 1;
+    }
+}
+
+/* Lightbox Modal */
+.lightbox-modal {
+    display: none;
+    position: fixed;
+    z-index: 1100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    overflow: hidden;
+}
+
+.lightbox-content {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.lightbox-image {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1110;
+}
+
+.lightbox-prev,
+.lightbox-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1110;
+    background: rgba(0, 0, 0, 0.3);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.lightbox-prev {
+    left: 20px;
+}
+
+.lightbox-next {
+    right: 20px;
+}
+
+.lightbox-counter {
+    margin-left: 15px;
+    position: absolute;
+    bottom: 20px;
+    color: white;
+    font-size: 16px;
+}
+
+body.dark-mode .profile-content h1,
+body.dark-mode .profile-content h2,
+body.dark-mode .profile-content h3,
+body.dark-mode .profile-content h4,
+body.dark-mode .profile-content p {
+    color: #fff !important;
+}
+
+
+.photo-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.preview-image-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.remove-image-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.remove-image-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Edit Post Modal Improvements */
+#editPostModal .modal-content {
+    max-width: 600px;
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* #editPostModal h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #1877f2;
+    font-size: 24px;
+    font-weight: 700;
+    border-bottom: 2px solid #f0f2f5;
+    padding-bottom: 15px;
+} */
+
+#editPostForm .form-group {
+    margin-bottom: 18px;
+}
+
+#editPostForm .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+#editPostForm label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+    font-size: 14px;
+}
+
+#editPostForm label i {
+    margin-right: 6px;
+    color: #1877f2;
+}
+
+#editPostForm input[type="text"],
+#editPostForm textarea,
+#editPostForm select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background-color: #fafafa;
+}
+
+#editPostForm input[type="text"]::placeholder,
+#editPostForm textarea::placeholder {
+    color: #aaa;
+}
+
+#editPostForm input[type="text"]:focus,
+#editPostForm textarea:focus,
+#editPostForm select:focus {
+    border-color: #1877f2;
+    box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
+    outline: none;
+}
+
+#editPostForm textarea {
+    min-height: 120px;
+    resize: vertical;
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+}
+
+#editPostForm .form-group:has(#post_description),
+#editPostForm .description-group {
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+#post_description {
+    font-family: inherit;
+    line-height: 1.5;
+    padding: 15px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+}
+
+#post_description:focus {
+    border-color: #1877f2;
+    box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
+}
+
+#editPostForm select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23444' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.file-input-button:before {
+    content: "📷";
+    font-size: 16px;
+}
+
+#editPostModal .close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.2s;
+}
+
+/* #editPostModal .close:hover {
+    color: #1877f2;
+} */
+
+.photo-hint {
+    font-size: 12px;
+    color: #777;
+    margin: 5px 0 10px;
+    font-style: italic;
+}
+
+/* Confirmation Modal Styles */
+#saveChangesConfirmModal .modal-content,
+#deleteConfirmModal .modal-content,
+#saveProfileConfirmModal .modal-content,
+#sharePostConfirmModal .modal-content {
+    max-width: 400px;
+    max-height: fit-content;
+}
+
+#saveChangesConfirmModal .cancel-btn,
+#deleteConfirmModal .cancel-btn,
+#saveProfileConfirmModal .cancel-btn,
+#sharePostConfirmModal .cancel-btn {
+    background-color: #f0f2f5 !important;
+    color: #1a3d2b !important;
+}
+
+#saveChangesConfirmModal .cancel-btn:hover,
+#deleteConfirmModal .cancel-btn:hover,
+#saveProfileConfirmModal .cancel-btn:hover,
+#sharePostConfirmModal .cancel-btn:hover {
+    background-color: #e4e6e9 !important;
+    color: #1a3d2b !important;
+}
+
+body.dark-mode #saveChangesConfirmModal .cancel-btn,
+body.dark-mode #deleteConfirmModal .cancel-btn,
+body.dark-mode #saveProfileConfirmModal .cancel-btn,
+body.dark-mode #sharePostConfirmModal .cancel-btn {
+    background-color: #2d333b !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode #saveChangesConfirmModal .cancel-btn:hover,
+body.dark-mode #deleteConfirmModal .cancel-btn:hover,
+body.dark-mode #saveProfileConfirmModal .cancel-btn:hover,
+body.dark-mode #sharePostConfirmModal .cancel-btn:hover {
+    background-color: #373e47 !important;
+    color: #fff !important;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(63, 125, 88, 0.2);
+}
+
+.submit-btn {
+    background-color: #3F7D58;
+    color: white;
+}
+
+.submit-btn:hover {
+    background-color: #4a8d65;
+}
+
+@media (max-width: 900px) {
+    .profile-header-row {
+        left: 16px;
+        gap: 16px;
+    }
+
+    .profile-info-card {
+        padding: 18px 18px 16px 18px;
+        min-width: 180px;
+    }
+
+    .profile-picture {
+        width: 90px;
+        height: 90px;
+        border-width: 4px;
+    }
+}
+
+@media (max-width: 600px) {
+    .profile-banner {
+        height: 160px;
+        border-radius: 8px;
+    }
+
+    .profile-header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        left: 8px;
+        bottom: -40px;
+        gap: 8px;
+    }
+
+    .profile-info-card {
+        margin-left: 0;
+        margin-top: 8px;
+        padding: 12px 12px 10px 12px;
+        min-width: 0;
+    }
+
+    .profile-picture {
+        width: 70px;
+        height: 70px;
+        border-width: 3px;
+    }
+}
+
+.edit-profile-sections {
+    flex-direction: column;
+    gap: 10px;
+}
+
+.edit-profile-section {
+    padding: 10px 0 8px 0;
+    margin-bottom: 8px;
+    box-shadow: none;
+}
+
+.edit-profile-section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #3F7D58;
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 700px) {
+    .edit-profile-sections {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .edit-profile-section {
+        padding: 12px 8px 8px 8px;
+        margin-bottom: 10px;
+    }
+}
+
+#banner-preview .preview-image-container {
+    width: 100%;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#banner-preview .preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.alert {
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    background: #fff;
+    color: #222;
+    z-index: 2000;
+    text-align: center;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.no-posts-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #888;
+    /* Light gray text, adjust as needed */
+    font-size: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    /* Ensure it takes some space */
+}
+
+.no-posts-message i {
+    font-size: 3rem;
+    /* Larger icon */
+    margin-bottom: 20px;
+    color: #aaa;
+    /* Slightly darker gray for icon */
+}
+
+body.dark-mode .no-posts-message {
+    color: #777;
+}
+
+body.dark-mode .no-posts-message i {
+    color: #666;
+}
+
+.cancel-btn {
+    background-color: #f0f2f5 !important;
+    color: #1a3d2b !important;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.cancel-btn:hover {
+    background-color: #e4e6e9 !important;
+    color: #1a3d2b !important;
+}
+
+/* Confirmation Modal Styles */
+#saveChangesConfirmModal .modal-content,
+#deleteConfirmModal .modal-content,
+#saveProfileConfirmModal .modal-content,
+#sharePostConfirmModal .modal-content {
+    max-width: 400px;
+    max-height: fit-content;
+}
+
+#saveChangesConfirmModal .cancel-btn,
+#deleteConfirmModal .cancel-btn,
+#saveProfileConfirmModal .cancel-btn,
+#sharePostConfirmModal .cancel-btn {
+    background-color: #f0f2f5 !important;
+    color: #1a3d2b !important;
+}
+
+#saveChangesConfirmModal .cancel-btn:hover,
+#deleteConfirmModal .cancel-btn:hover,
+#saveProfileConfirmModal .cancel-btn:hover,
+#sharePostConfirmModal .cancel-btn:hover {
+    background-color: #e4e6e9 !important;
+    color: #1a3d2b !important;
+}
+
+body.dark-mode #saveChangesConfirmModal .cancel-btn,
+body.dark-mode #deleteConfirmModal .cancel-btn,
+body.dark-mode #saveProfileConfirmModal .cancel-btn,
+body.dark-mode #sharePostConfirmModal .cancel-btn {
+    background-color: #2d333b !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode #saveChangesConfirmModal .cancel-btn:hover,
+body.dark-mode #deleteConfirmModal .cancel-btn:hover,
+body.dark-mode #saveProfileConfirmModal .cancel-btn:hover,
+body.dark-mode #sharePostConfirmModal .cancel-btn:hover {
+    background-color: #373e47 !important;
+    color: #fff !important;
+}
