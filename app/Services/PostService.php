@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PostService
 {
+
     /**
      * Create a new post.
      *
@@ -67,6 +68,24 @@ class PostService
     public function deletePost(Post $post): bool
     {
         try {
+
+            // If this is an original post, delete all shared posts first
+            if (!$post->isShared()) {
+                // Get all posts that share this post
+                $sharedPosts = Post::where('shared_post_id', $post->id)->get();
+
+                // Delete each shared post
+                foreach ($sharedPosts as $sharedPost) {
+                    $sharedPost->delete();
+                }
+            }
+
+            // Delete the post itself
+            // This will cascade delete:
+            // - post_shares records (due to foreign key constraint)
+            // - post_reactions (due to foreign key constraint)
+            // - post_comments (due to foreign key constraint)
+            // - post_reports (due to foreign key constraint)
             return $post->delete();
         } catch (\Exception $e) {
             Log::error('Post deletion failed:', [
