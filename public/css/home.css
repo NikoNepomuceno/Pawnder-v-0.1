@@ -1674,75 +1674,93 @@ body.dark-mode #createPostConfirmModal .submit-btn:hover {
 }
 
 /* Report Modal Styles */
-#reportPostModal .modal-content {
-    max-width: 500px;
-    max-height: fit-content;
-    margin: 5% auto;
+.report-modal-content {
+    background-color: #fff;
     padding: 25px;
-    background: #ffffff;
-    border: 1px solid rgba(63, 125, 88, 0.2);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-#reportPostModal h2 {
-    color: #1a3d2b;
-    margin-bottom: 15px;
+.report-modal-content h2 {
+    color: #2d5a41;
     font-size: 1.5rem;
     font-weight: 600;
+    margin-bottom: 15px;
 }
 
-#reportPostModal p {
+.report-modal-content p {
     color: #4b5563;
     margin-bottom: 20px;
     line-height: 1.5;
 }
 
-#reportPostModal textarea {
+.report-modal-content textarea {
     width: 100%;
-    min-height: 100px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    min-height: 120px;
     padding: 12px;
-    margin-bottom: 15px;
-    resize: vertical;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     font-size: 14px;
+    resize: vertical;
     transition: all 0.3s ease;
+    background-color: #f8f9fa;
 }
 
-#reportPostModal textarea:focus {
+.report-modal-content textarea:focus {
     outline: none;
     border-color: #3F7D58;
     box-shadow: 0 0 0 2px rgba(63, 125, 88, 0.1);
+    background-color: #fff;
 }
 
-/* Dark Mode for Report Modal */
-body.dark-mode #reportPostModal .modal-content {
-    background: #23272b !important;
-    color: #e0e0e0 !important;
-    border: 1px solid #333 !important;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5) !important;
+/* Dark Mode Styles for Report Modal */
+body.dark-mode .report-modal-content {
+    background-color: #23272b;
+    border: 1px solid #333;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
-body.dark-mode #reportPostModal h2 {
-    color: #8fd19e !important;
+body.dark-mode .report-modal-content h2 {
+    color: #8fd19e;
 }
 
-body.dark-mode #reportPostModal p {
-    color: #b0b0b0 !important;
+body.dark-mode .report-modal-content p {
+    color: #e0e0e0;
 }
 
-body.dark-mode #reportPostModal textarea {
-    background-color: #181a1b !important;
-    color: #e0e0e0 !important;
-    border: 1px solid #444 !important;
+body.dark-mode .report-modal-content textarea {
+    background-color: #1a1d20;
+    border-color: #444;
+    color: #e0e0e0;
 }
 
-body.dark-mode #reportPostModal textarea:focus {
-    border-color: #8fd19e !important;
-    box-shadow: 0 0 0 2px rgba(143, 209, 158, 0.1) !important;
+body.dark-mode .report-modal-content textarea:focus {
+    border-color: #8fd19e;
+    box-shadow: 0 0 0 2px rgba(143, 209, 158, 0.1);
 }
 
-body.dark-mode #reportPostModal .close-modal {
-    color: #8fd19e !important;
+body.dark-mode .report-modal-content .close-modal {
+    color: #8fd19e;
+}
+
+/* No Results Message Styles */
+.no-results-message {
+    text-align: center;
+    color: #888;
+    font-size: 1.2rem;
+    margin: 40px 0;
+}
+
+.no-results-image {
+    margin-top: 24px;
+    display: flex;
+    justify-content: center;
+}
+
+.no-results-image img {
+    max-width: 120px;
+    opacity: 0.85;
 }

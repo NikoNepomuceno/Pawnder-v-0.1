@@ -68,6 +68,12 @@ class PostService
     public function deletePost(Post $post): bool
     {
         try {
+            // If this is a shared post, delete the share record from post_shares table
+            if ($post->isShared()) {
+                \App\Models\PostShare::where('user_id', Auth::id())
+                    ->where('post_id', $post->shared_post_id)
+                    ->delete();
+            }
 
             // If this is an original post, delete all shared posts first
             if (!$post->isShared()) {

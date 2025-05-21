@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,43 +14,59 @@
     @vite(['resources/css/app.css'])
     <link rel="stylesheet" href="{{ asset('css/auth/register.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <title>Pawnder - Register</title>
 </head>
+
 <body>
     <div class="page-transition-overlay"></div>
     <div class="register-split">
         <div class="register-left">
             <div class="register-form-container">
                 <div class="register-title">Sign up</div>
-                <form method="POST" action="{{ route('register.submit') }}" class="register-form" id="signupForm" onsubmit="setUsername()">
+                <form method="POST" action="{{ route('register.submit') }}" class="register-form" id="signupForm"
+                    onsubmit="setUsername()">
                     @csrf
                     <input type="hidden" name="username" id="username">
                     <div class="register-input-wrapper">
                         <span class="register-input-icon"><i class="fas fa-user"></i></span>
-                        <input type="text" id="first_name" name="first_name" value="{{ old('first_name') }}" class="register-input" placeholder="First Name" required pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed">
+                        <input type="text" id="first_name" name="first_name" value="{{ old('first_name') }}"
+                            class="register-input" placeholder="First Name" required pattern="[A-Za-z\s]+"
+                            title="Only letters and spaces are allowed">
                     </div>
                     <div class="register-input-wrapper">
                         <span class="register-input-icon"><i class="fas fa-user"></i></span>
-                        <input type="text" id="last_name" name="last_name" value="{{ old('last_name') }}" class="register-input" placeholder="Last Name" required pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed">
+                        <input type="text" id="last_name" name="last_name" value="{{ old('last_name') }}"
+                            class="register-input" placeholder="Last Name" required pattern="[A-Za-z\s]+"
+                            title="Only letters and spaces are allowed">
                     </div>
                     <div class="register-input-wrapper">
                         <span class="register-input-icon"><i class="fas fa-envelope"></i></span>
-                        <input type="email" id="reg_email" name="email" value="{{ old('email') }}" class="register-input" placeholder="Email" required>
+                        <input type="email" id="reg_email" name="email" value="{{ old('email') }}"
+                            class="register-input" placeholder="Email" required>
                     </div>
                     <div class="register-input-wrapper">
                         <span class="register-input-icon"><i class="fas fa-lock"></i></span>
-                        <input type="password" id="reg_password" name="password" class="register-input" placeholder="Password" required pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" title="Password must contain at least 8 characters, one uppercase letter, one number, and one special character">
-                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('reg_password')"><i class="fas fa-eye"></i></button>
+                        <input type="password" id="reg_password" name="password" class="register-input"
+                            placeholder="Password" required
+                            pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                            title="Password must contain at least 8 characters, one uppercase letter, one number, and one special character">
+                        <button type="button" class="password-toggle"
+                            onclick="togglePasswordVisibility('reg_password')"><i class="fas fa-eye"></i></button>
                     </div>
                     <div class="register-input-wrapper">
                         <span class="register-input-icon"><i class="fas fa-lock"></i></span>
-                        <input type="password" id="password_confirmation" name="password_confirmation" class="register-input" placeholder="Confirm Password" required>
-                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('password_confirmation')"><i class="fas fa-eye"></i></button>
+                        <input type="password" id="password_confirmation" name="password_confirmation"
+                            class="register-input" placeholder="Confirm Password" required>
+                        <button type="button" class="password-toggle"
+                            onclick="togglePasswordVisibility('password_confirmation')"><i
+                                class="fas fa-eye"></i></button>
                     </div>
                     <div class="privacy-policy">
                         <input type="checkbox" id="privacy_agreement" name="privacy_agreement" required>
-                        <label for="privacy_agreement">I agree to the <a href="#" onclick="showPrivacyPolicy()">Privacy Policy</a></label>
+                        <label for="privacy_agreement">I agree to the <a href="#" onclick="showPrivacyPolicy()">Privacy
+                                Policy</a></label>
                     </div>
                     <button type="submit" class="register-btn">Sign Up</button>
                 </form>
@@ -84,8 +101,10 @@
                         <h3><i class="fas fa-database"></i> Information We Collect</h3>
                         <p>We may collect the following when you use Pawnder:</p>
                         <ul class="privacy-list">
-                            <li><i class="fas fa-user"></i> Your name, email, and phone number (when you sign up or post a listing)</li>
-                            <li><i class="fas fa-paw"></i> Details about lost or found pets (photos, descriptions, locations)</li>
+                            <li><i class="fas fa-user"></i> Your name, email, and phone number (when you sign up or post
+                                a listing)</li>
+                            <li><i class="fas fa-paw"></i> Details about lost or found pets (photos, descriptions,
+                                locations)</li>
                             <li><i class="fas fa-map-marker-alt"></i> Your location (if permission is granted)</li>
                             <li><i class="fas fa-laptop"></i> Technical info (IP address, browser type, etc.)</li>
                         </ul>
@@ -99,9 +118,12 @@
                         </ul>
                         <h3><i class="fas fa-share-alt"></i> Data Sharing</h3>
                         <ul class="privacy-list">
-                            <li><i class="fas fa-globe"></i> Public Listings: Pet-related info you share may be visible to others to assist in recovery.</li>
-                            <li><i class="fas fa-handshake"></i> Third-Party Services: We may share data with trusted partners (e.g., for hosting or email delivery).</li>
-                            <li><i class="fas fa-gavel"></i> Legal Compliance: We may disclose information if required by law or to protect our users.</li>
+                            <li><i class="fas fa-globe"></i> Public Listings: Pet-related info you share may be visible
+                                to others to assist in recovery.</li>
+                            <li><i class="fas fa-handshake"></i> Third-Party Services: We may share data with trusted
+                                partners (e.g., for hosting or email delivery).</li>
+                            <li><i class="fas fa-gavel"></i> Legal Compliance: We may disclose information if required
+                                by law or to protect our users.</li>
                         </ul>
                     </div>
                     <div class="modal-column">
@@ -111,18 +133,23 @@
                             <li><i class="fas fa-eye"></i> Access or update your data</li>
                             <li><i class="fas fa-trash-alt"></i> Request account deletion</li>
                             <li><i class="fas fa-undo"></i> Withdraw consent at any time</li>
-                            <li><i class="fas fa-file-alt"></i> File a complaint with the National Privacy Commission</li>
+                            <li><i class="fas fa-file-alt"></i> File a complaint with the National Privacy Commission
+                            </li>
                         </ul>
-                        <p><i class="fas fa-envelope"></i> To make any request, email us at <a href="mailto:support@pawnder.com">support@pawnder.com</a></p>
+                        <p><i class="fas fa-envelope"></i> To make any request, email us at <a
+                                href="mailto:support@pawnder.com">support@pawnder.com</a></p>
                         <h3><i class="fas fa-lock"></i> Data Security</h3>
-                        <p><i class="fas fa-shield-alt"></i> We take steps to protect your data, but no system is 100% secure. Please safeguard your own information as well.</p>
+                        <p><i class="fas fa-shield-alt"></i> We take steps to protect your data, but no system is 100%
+                            secure. Please safeguard your own information as well.</p>
                         <h3><i class="fas fa-child"></i> Children's Privacy</h3>
-                        <p><i class="fas fa-exclamation-circle"></i> Pawnder is not intended for users under 13 years old. We do not knowingly collect their data.</p>
+                        <p><i class="fas fa-exclamation-circle"></i> Pawnder is not intended for users under 13 years
+                            old. We do not knowingly collect their data.</p>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button onclick="closePrivacyModal()" class="modal-btn" id="privacyBtn"><i class="fas fa-check"></i> I Understand</button>
+                <button onclick="closePrivacyModal()" class="modal-btn" id="privacyBtn"><i class="fas fa-check"></i> I
+                    Understand</button>
             </div>
         </div>
     </div>
@@ -198,7 +225,7 @@
             modal.style.display = 'none';
         }
         // Form validation
-        document.getElementById('signupForm').addEventListener('submit', function(e) {
+        document.getElementById('signupForm').addEventListener('submit', function (e) {
             const privacyCheckbox = document.getElementById('privacy_agreement');
             if (!privacyCheckbox.checked) {
                 e.preventDefault();
@@ -219,25 +246,25 @@
         @endif
 
         // Add page transition handling
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const overlay = document.querySelector('.page-transition-overlay');
             const links = document.querySelectorAll('a[href]');
-            
+
             links.forEach(link => {
-                link.addEventListener('click', function(e) {
+                link.addEventListener('click', function (e) {
                     if (this.getAttribute('href').startsWith('{{ route('login') }}')) {
                         e.preventDefault();
                         const targetUrl = this.getAttribute('href');
-                        
+
                         // Add exit animations
                         document.querySelector('.register-left').classList.add('slide-out-left');
                         document.querySelector('.register-right').classList.add('slide-out-right');
                         document.querySelector('.register-form-container').classList.add('fade-out');
-                        
+
                         // Activate overlay
                         document.body.classList.add('transitioning');
                         overlay.classList.add('active');
-                        
+
                         // Navigate after animation
                         setTimeout(() => {
                             window.location.href = targetUrl;
@@ -257,4 +284,5 @@
         });
     </script>
 </body>
+
 </html>
