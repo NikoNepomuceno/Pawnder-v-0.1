@@ -75,23 +75,23 @@ class PostService
                     ->delete();
             }
 
-            // If this is an original post, delete all shared posts first
+            // If this is an original post, update all shared posts
             if (!$post->isShared()) {
                 // Get all posts that share this post
                 $sharedPosts = Post::where('shared_post_id', $post->id)->get();
 
-                // Delete each shared post
+                // Update each shared post
                 foreach ($sharedPosts as $sharedPost) {
-                    $sharedPost->delete();
+                    $sharedPost->update([
+                        'shared_post_id' => null,
+                        'title' => 'This post has been deleted',
+                        'description' => 'The original post has been deleted by the author.',
+                        'photo_urls' => [],
+                    ]);
                 }
             }
 
-            // Delete the post itself
-            // This will cascade delete:
-            // - post_shares records (due to foreign key constraint)
-            // - post_reactions (due to foreign key constraint)
-            // - post_comments (due to foreign key constraint)
-            // - post_reports (due to foreign key constraint)
+            // Soft delete the post
             return $post->delete();
         } catch (\Exception $e) {
             Log::error('Post deletion failed:', [
@@ -184,6 +184,7 @@ class PostService
             'contact' => $post->contact,
             'shared_post_id' => $post->id,
             'photo_urls' => $post->photo_urls,
+            'was_shared' => true,
         ]);
     }
 

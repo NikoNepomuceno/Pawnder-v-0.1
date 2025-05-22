@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
@@ -22,9 +23,11 @@ use Illuminate\Support\Facades\Auth;
  * @property bool $is_flagged
  * @property string|null $flag_reason
  * @property int|null $shared_post_id
+ * @property bool $was_shared
  * @property int $share_count
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ * @property \Carbon\Carbon|null $deleted_at
  * @property-read \App\Models\User $user
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PostComment[] $comments
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PostComment[] $allComments
@@ -38,7 +41,7 @@ use Illuminate\Support\Facades\Auth;
  */
 class Post extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -57,6 +60,7 @@ class Post extends Model
         'is_flagged',
         'flag_reason',
         'shared_post_id',
+        'was_shared',
     ];
 
     /**
@@ -68,6 +72,8 @@ class Post extends Model
         'photo_urls' => 'json',
         'is_flagged' => 'boolean',
         'share_count' => 'integer',
+        'was_shared' => 'boolean',
+        'deleted_at' => 'datetime',
     ];
 
     /**
@@ -197,6 +203,22 @@ class Post extends Model
      */
     public function isShared(): bool
     {
-        return !is_null($this->shared_post_id);
+        return $this->was_shared || !is_null($this->shared_post_id);
+    }
+
+    /**
+     * Scope a query to only include posts that are not deleted or have valid shared posts.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeValid($query)
+    {
+        return $query->where(function ($q) {
+            $q->whereNull('shared_post_id')
+                ->orWhereHas('originalPost', function ($q) {
+                    $q->whereNull('deleted_at');
+                });
+        });
     }
 }

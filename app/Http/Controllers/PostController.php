@@ -54,6 +54,9 @@ class PostController extends Controller
         // Exclude posts created by the current user
         $query->where('user_id', '!=', Auth::id());
 
+        // Only show valid posts (not deleted and with valid shared posts)
+        $query->valid();
+
         // Category filter
         if ($request->filled('status')) {
             $query->where('status', $request->status);

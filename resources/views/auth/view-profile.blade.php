@@ -50,54 +50,61 @@
                             <!-- Sharer's Post Header -->
                             <div class="post-header">
                                 <div class="post-user-info">
-                                    <img src="{{ $post->sharedBy->profile_picture ?? asset('images/default-avatar.jpg') }}" alt="Profile" class="post-avatar">
+                                    <img src="{{ $post->sharedBy->profile_picture ?? asset('images/default-profile.png') }}" alt="Profile" class="post-avatar">
                                     <div>
                                         <h4 class="post-author">{{ $post->sharedBy->name }} <span style="font-weight:normal; color:#888;"><i class="fas fa-share-alt" style="margin-right: 4px;"></i>shared</span></h4>
                                         <span class="post-date">{{ $post->created_at->diffForHumans() }}</span>
                                     </div>
                                 </div>
                                 <div class="post-actions profile-post-actions">
-                                    <button class="edit-btn" onclick="editPost({{ $post->id }})">Edit</button>
                                     <button class="delete-btn">Delete</button>
                                 </div>
                             </div>
                             @php $original = $post->originalPost; @endphp
                             <!-- Original Post Content -->
                             <div class="original-post-content">
-                                <!-- Original Post Creator's Post Header -->
-                                <div class="post-header original-post-header">
-                                    <div class="post-user-info">
-                                        <img src="{{ $original->user->profile_picture ?? asset('images/default-profile.png') }}" alt="Profile" class="post-avatar">
-                                        <div>
-                                            <h4 class="post-author">{{ $original->user->name }}</h4>
-                                            <span class="post-date">{{ $original->created_at->diffForHumans() }}</span>
+                                @if($original && !$original->trashed())
+                                    <!-- Original Post Creator's Post Header -->
+                                    <div class="post-header original-post-header">
+                                        <div class="post-user-info">
+                                            <img src="{{ $original->user->profile_picture ?? asset('images/default-profile.png') }}" alt="Profile" class="post-avatar">
+                                            <div>
+                                                <h4 class="post-author">{{ $original->user->name }}</h4>
+                                                <span class="post-date">{{ $original->created_at->diffForHumans() }}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="post-details">
-                                    <span class="post-status {{ $original->status }}">{{ ucfirst($original->status) }}</span>
-                                    <span class="post-breed">Breed: {{ $original->breed }}</span>
-                                    <span class="post-location">Location: {{ $original->location }}</span>
-                                    <span class="post-contact">Contact: {{ $original->contact }}</span>
-                                </div>
-                                <div class="post-content">
-                                    <h3>{{ $original->title }}</h3>
-                                    <p class="post-description">{{ $original->description }}</p>
-                                </div>
-                                @if(count($original->photo_urls ?? []) > 0)
-                                    <div class="post-images">
-                                        <div class="image-grid {{ count($original->photo_urls) === 1 ? 'single-image' : '' }} {{ count($original->photo_urls) === 2 ? 'two-images' : '' }} {{ count($original->photo_urls) === 3 ? 'three-images' : '' }}">
-                                            @foreach($original->photo_urls as $index => $photo_url)
-                                                @if($index < 4)
-                                                    <div class="grid-item" data-post-id="{{ $original->id }}" data-index="{{ $index }}">
-                                                        <img src="{{ $photo_url }}" alt="Pet Photo">
-                                                        @if($index === 3 && count($original->photo_urls) > 4)
-                                                            <div class="more-indicator">+{{ count($original->photo_urls) - 4 }}</div>
-                                                        @endif
-                                                    </div>
-                                                @endif
-                                            @endforeach
+                                    <div class="post-details">
+                                        <span class="post-status {{ $original->status }}">{{ ucfirst($original->status) }}</span>
+                                        <span class="post-breed">Breed: {{ $original->breed }}</span>
+                                        <span class="post-location">Location: {{ $original->location }}</span>
+                                        <span class="post-contact">Contact: {{ $original->contact }}</span>
+                                    </div>
+                                    <div class="post-content">
+                                        <h3>{{ $original->title }}</h3>
+                                        <p class="post-description">{{ $original->description }}</p>
+                                    </div>
+                                    @if(count($original->photo_urls ?? []) > 0)
+                                        <div class="post-images">
+                                            <div class="image-grid {{ count($original->photo_urls) === 1 ? 'single-image' : '' }} {{ count($original->photo_urls) === 2 ? 'two-images' : '' }} {{ count($original->photo_urls) === 3 ? 'three-images' : '' }}">
+                                                @foreach($original->photo_urls as $index => $photo_url)
+                                                    @if($index < 4)
+                                                        <div class="grid-item" data-post-id="{{ $original->id }}" data-index="{{ $index }}">
+                                                            <img src="{{ $photo_url }}" alt="Pet Photo">
+                                                            @if($index === 3 && count($original->photo_urls) > 4)
+                                                                <div class="more-indicator">+{{ count($original->photo_urls) - 4 }}</div>
+                                                            @endif
+                                                        </div>
+                                                    @endif
+                                                @endforeach
+                                            </div>
                                         </div>
+                                    @endif
+                                @else
+                                    <!-- Deleted Post Content -->
+                                    <div class="post-content deleted-post">
+                                        <h3>This post has been deleted</h3>
+                                        <p class="post-description">The original post has been deleted by the author.</p>
                                     </div>
                                 @endif
                             </div>
@@ -384,6 +391,25 @@
 
 .post-action-btn.like-btn:hover i {
     color: #e41e3f;
+}
+
+/* Deleted post styling */
+.deleted-post {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+}
+
+.deleted-post h3 {
+    color: #6c757d;
+    font-size: 1.1em;
+    margin-bottom: 8px;
+}
+
+.deleted-post .post-description {
+    color: #6c757d;
+    font-style: italic;
 }
 </style>
 <script>

@@ -34,12 +34,13 @@
                     @if($post->isShared())
                         <div class="post-header">
                             <div class="post-user-info">
-                                <img src="{{ $post->sharedBy->profile_picture ?? asset('images/default-avatar.jpg') }}" 
+                                <img src="{{ $post->sharedBy->profile_picture ?? asset('images/default-profile.png') }}" 
                                      alt="Profile" 
                                      class="post-avatar">
                                 <div>
                                     <h4 class="post-author">
-                                        {{ $post->sharedBy->name }}
+                                        {{ $post->sharedBy->username }}
+                                        <span class="post-name" style="font-weight:normal; color:#888;">({{ $post->sharedBy->username }})</span>
                                         <span style="font-weight:normal; color:#888;">
                                             <i class="fas fa-share-alt" style="margin-right: 4px;"></i>shared
                                         </span>
@@ -63,48 +64,56 @@
                             $original = $post->originalPost;
                         @endphp
 
-                        <div class="original-post-content">
-                            <div class="post-header original-post-header">
-                                <div class="post-user-info">
-                                    <img src="{{ $original->user->profile_picture ?? asset('images/default-avatar.jpg') }}" 
-                                         alt="Profile" 
-                                         class="post-avatar">
-                                    <div>
-                                        <h4 class="post-author">{{ $original->user->name }}</h4>
-                                        <span class="post-date">{{ $original->created_at->diffForHumans() }}</span>
+                        @if($original && !$original->trashed())
+                            <div class="original-post-content">
+                                <div class="post-header original-post-header">
+                                    <div class="post-user-info">
+                                        <img src="{{ $original->user->profile_picture ?? asset('images/default-avatar.jpg') }}" 
+                                             alt="Profile" 
+                                             class="post-avatar">
+                                        <div>
+                                            <h4 class="post-author">{{ $original->user->name }}</h4>
+                                            <span class="post-date">{{ $original->created_at->diffForHumans() }}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="post-details">
-                            <span class="post-status {{ $original->status }}">{{ ucfirst($original->status) }}</span>
-                            <span class="post-breed">Breed: {{ $original->breed }}</span>
-                            <span class="post-location">Location: {{ $original->location }}</span>
-                            <span class="post-contact">Contact: {{ $original->contact }}</span>
-                        </div>
+                            <div class="post-details">
+                                <span class="post-status {{ $original->status }}">{{ ucfirst($original->status) }}</span>
+                                <span class="post-breed">Breed: {{ $original->breed }}</span>
+                                <span class="post-location">Location: {{ $original->location }}</span>
+                                <span class="post-contact">Contact: {{ $original->contact }}</span>
+                            </div>
 
-                        <div class="post-content">
-                            <h3>{{ $original->title }}</h3>
-                            <p class="post-description">{{ $original->description }}</p>
-                        </div>
+                            <div class="post-content">
+                                <h3>{{ $original->title }}</h3>
+                                <p class="post-description">{{ $original->description }}</p>
+                            </div>
 
-                        @if(count($original->photo_urls ?? []) > 0)
-                            <div class="post-images">
-                                <div class="image-grid {{ count($original->photo_urls) === 1 ? 'single-image' : '' }} 
-                                                      {{ count($original->photo_urls) === 2 ? 'two-images' : '' }} 
-                                                      {{ count($original->photo_urls) === 3 ? 'three-images' : '' }}">
-                                    @foreach($original->photo_urls as $index => $photo_url)
-                                        @if($index < 4)
-                                            <div class="grid-item" data-post-id="{{ $original->id }}" data-index="{{ $index }}">
-                                                <img src="{{ $photo_url }}" alt="Pet Photo">
-                                                @if($index === 3 && count($original->photo_urls) > 4)
-                                                    <div class="more-indicator">+{{ count($original->photo_urls) - 4 }}</div>
-                                                @endif
-                                            </div>
-                                        @endif
-                                    @endforeach
+                            @if(count($original->photo_urls ?? []) > 0)
+                                <div class="post-images">
+                                    <div class="image-grid {{ count($original->photo_urls) === 1 ? 'single-image' : '' }} 
+                                                          {{ count($original->photo_urls) === 2 ? 'two-images' : '' }} 
+                                                          {{ count($original->photo_urls) === 3 ? 'three-images' : '' }}">
+                                        @foreach($original->photo_urls as $index => $photo_url)
+                                            @if($index < 4)
+                                                <div class="grid-item" data-post-id="{{ $original->id }}" data-index="{{ $index }}">
+                                                    <img src="{{ $photo_url }}" alt="Pet Photo">
+                                                    @if($index === 3 && count($original->photo_urls) > 4)
+                                                        <div class="more-indicator">+{{ count($original->photo_urls) - 4 }}</div>
+                                                    @endif
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
                                 </div>
+                            @endif
+                        @else
+                            <div class="deleted-post-message">
+                                <i class="fas fa-trash-alt"></i>
+                                <h3>This post has been deleted</h3>
+                                <p>The original post has been deleted by the author.</p>
                             </div>
                         @endif
                     @else
@@ -114,7 +123,10 @@
                                      alt="Profile" 
                                      class="post-avatar">
                                 <div>
-                                    <h4 class="post-author">{{ $post->user->name }}</h4>
+                                    <h4 class="post-author">
+                                        {{ $post->user->username }}
+                                        <span class="post-name" style="font-weight:normal; color:#888;">{{ $post->user->name }}</span>
+                                    </h4>
                                     <span class="post-date">{{ $post->created_at->diffForHumans() }}</span>
                                 </div>
                             </div>
@@ -136,7 +148,10 @@
                             <span class="post-location">Location: {{ $post->location }}</span>
                             <span class="post-contact">Contact: {{ $post->contact }}</span>
                         </div>
-
+                        <div class="post-content">
+                            <h3>{{ $post->title }}</h3>
+                            <p class="post-description">{{ $post->description }}</p>
+                        </div>
                         <div class="post-images">
                             @if(count($post->photo_urls) > 0)
                                 <div class="image-grid {{ count($post->photo_urls) === 1 ? 'single-image' : '' }} 
@@ -234,7 +249,7 @@
             <h2>Create a New Post</h2>
             <form id="createPostForm" action="{{ route('posts.store') }}" method="POST">
                 @csrf
-                @if ($errors->any())
+                {{-- @if ($errors->any())
                     <div class="alert alert-error">
                         <ul>
                             @foreach ($errors->all() as $error)
@@ -242,11 +257,13 @@
                             @endforeach
                         </ul>
                     </div>
-                @endif
+                @endif --}}
 
                 <div class="form-group">
                     <label for="title">Post Title</label>
-                    <input type="text" id="title" name="title" required>
+                    <input type="text" id="title" name="title" required 
+                           style="text-transform: uppercase;" 
+                           oninput="this.value = this.value.toUpperCase();">
                 </div>
 
                 <div class="form-group">
@@ -1107,6 +1124,32 @@
 
         .post-action-btn.like-btn:hover i {
             color: #e41e3f;
+        }
+
+        .deleted-post-message {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin: 15px;
+        }
+
+        .deleted-post-message i {
+            font-size: 2.5rem;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+
+        .deleted-post-message h3 {
+            color: #343a40;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .deleted-post-message p {
+            color: #6c757d;
+            margin: 0;
+            font-size: 0.9rem;
         }
     </style>
 @endsection
