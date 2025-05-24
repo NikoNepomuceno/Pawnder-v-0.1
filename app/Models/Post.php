@@ -61,6 +61,10 @@ class Post extends Model
         'flag_reason',
         'shared_post_id',
         'was_shared',
+        'is_deleted',
+        'deletion_reason',
+        'deleted_at',
+        'is_taken_down',
     ];
 
     /**
@@ -73,7 +77,9 @@ class Post extends Model
         'is_flagged' => 'boolean',
         'share_count' => 'integer',
         'was_shared' => 'boolean',
+        'is_deleted' => 'boolean',
         'deleted_at' => 'datetime',
+        'is_taken_down' => 'boolean',
     ];
 
     /**
@@ -220,5 +226,14 @@ class Post extends Model
                     $q->whereNull('deleted_at');
                 });
         });
+    }
+
+    public function markAsDeleted(string $reason = null): void
+    {
+        $this->update([
+            'is_deleted' => true,
+            'deletion_reason' => $reason ?? 'Violation of community guidelines',
+            'deleted_at' => now(),
+        ]);
     }
 }

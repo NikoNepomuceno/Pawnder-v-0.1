@@ -67,3 +67,22 @@ Route::post('/verify-email', [VerificationController::class, 'verify'])
 
 Route::post('/resend-verification', [VerificationController::class, 'resend'])
     ->name('resend.verification');
+
+// Test route for debugging
+Route::get('/test-approved-reports', function() {
+    \Log::info('Test route accessed');
+    return 'Test route works!';
+});
+
+// Test admin route without middleware
+Route::get('/test-admin-route', function() {
+    \Log::info('Test admin route accessed', [
+        'user' => \Auth::user(),
+        'is_admin' => \Auth::user() ? \Auth::user()->is_admin : false
+    ]);
+    return 'Test admin route works!';
+});
+
+// Direct route for testing approved reports
+Route::get('/approved-reports-test', [\App\Http\Controllers\Admin\DashboardController::class, 'approvedReports'])
+    ->name('approved.reports.test');

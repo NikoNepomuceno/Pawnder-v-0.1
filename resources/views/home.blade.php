@@ -109,6 +109,10 @@
                                     </div>
                                 </div>
                             @endif
+                        @elseif($original && $original->is_taken_down)
+                            <div class="violation-banner">
+                                <i class="fas fa-exclamation-triangle"></i> This post has been taken down for violating community guidelines.
+                            </div>
                         @else
                             <div class="deleted-post-message">
                                 <i class="fas fa-trash-alt"></i>
@@ -130,79 +134,89 @@
                                     <span class="post-date">{{ $post->created_at->diffForHumans() }}</span>
                                 </div>
                             </div>
-                            <div class="post-options">
-                                <button class="post-options-btn" data-post-id="{{ $post->id }}">
-                                    <i class="fas fa-ellipsis-v"></i>
-                                </button>
-                                <div class="post-options-menu" id="post-options-menu-{{ $post->id }}">
-                                    <button class="report-post-btn" data-post-id="{{ $post->id }}">
-                                        <i class="fas fa-flag"></i>Report Post
+                            @if(!$post->is_taken_down)
+                                <div class="post-options">
+                                    <button class="post-options-btn" data-post-id="{{ $post->id }}">
+                                        <i class="fas fa-ellipsis-v"></i>
                                     </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="post-details" style="padding: 10px 15px;">
-                            <span class="post-status {{ $post->status }}">{{ ucfirst($post->status) }}</span>
-                            <span class="post-breed">Breed: {{ $post->breed }}</span>
-                            <span class="post-location">Location: {{ $post->location }}</span>
-                            <span class="post-contact">Contact: {{ $post->contact }}</span>
-                        </div>
-                        <div class="post-content">
-                            <h3>{{ $post->title }}</h3>
-                            <p class="post-description">{{ $post->description }}</p>
-                        </div>
-                        <div class="post-images">
-                            @if(count($post->photo_urls) > 0)
-                                <div class="image-grid {{ count($post->photo_urls) === 1 ? 'single-image' : '' }} 
-                                                      {{ count($post->photo_urls) === 2 ? 'two-images' : '' }} 
-                                                      {{ count($post->photo_urls) === 3 ? 'three-images' : '' }}">
-                                    @foreach($post->photo_urls as $index => $photo_url)
-                                        @if($index < 4)
-                                            <div class="grid-item" data-post-id="{{ $post->id }}" data-index="{{ $index }}">
-                                                <img src="{{ $photo_url }}" alt="Pet Photo">
-                                                @if($index === 3 && count($post->photo_urls) > 4)
-                                                    <div class="more-indicator">+{{ count($post->photo_urls) - 4 }}</div>
-                                                @endif
-                                            </div>
-                                        @endif
-                                    @endforeach
+                                    <div class="post-options-menu" id="post-options-menu-{{ $post->id }}">
+                                        <button class="report-post-btn" data-post-id="{{ $post->id }}">
+                                            <i class="fas fa-flag"></i>Report Post
+                                        </button>
+                                    </div>
                                 </div>
                             @endif
                         </div>
+                        @if($post->is_taken_down)
+                            <div class="violation-banner" style="margin: 0 15px 15px 15px;">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                This post has been taken down for violating community guidelines.
+                            </div>
+                        @else
+                            <div class="post-details" style="padding: 10px 15px;">
+                                <span class="post-status {{ $post->status }}">{{ ucfirst($post->status) }}</span>
+                                <span class="post-breed">Breed: {{ $post->breed }}</span>
+                                <span class="post-location">Location: {{ $post->location }}</span>
+                                <span class="post-contact">Contact: {{ $post->contact }}</span>
+                            </div>
+                            <div class="post-content">
+                                <h3>{{ $post->title }}</h3>
+                                <p class="post-description">{{ $post->description }}</p>
+                            </div>
+                            <div class="post-images">
+                                @if(count($post->photo_urls) > 0)
+                                    <div class="image-grid {{ count($post->photo_urls) === 1 ? 'single-image' : '' }} 
+                                                          {{ count($post->photo_urls) === 2 ? 'two-images' : '' }} 
+                                                          {{ count($post->photo_urls) === 3 ? 'three-images' : '' }}">
+                                            @foreach($post->photo_urls as $index => $photo_url)
+                                                @if($index < 4)
+                                                    <div class="grid-item" data-post-id="{{ $post->id }}" data-index="{{ $index }}">
+                                                        <img src="{{ $photo_url }}" alt="Pet Photo">
+                                                        @if($index === 3 && count($post->photo_urls) > 4)
+                                                            <div class="more-indicator">+{{ count($post->photo_urls) - 4 }}</div>
+                                                        @endif
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                @endif
+                            </div>
+                        @endif
                     @endif
 
-                    <div class="post-stats">
-                        <span class="reaction-count">
-                            <i class="fas fa-heart"></i>
-                            <span id="like-count-{{ $post->id }}">{{ $post->reaction_counts['like'] ?? 0 }}</span>
-                        </span>
-                        <span class="comment-count">
-                            <span id="comment-count-{{ $post->id }}">{{ $post->comments_count }}</span>
-                            <span id="comment-text-{{ $post->id }}">
-                                {{ $post->comments_count == 1 ? 'Comment' : 'Comments' }}
+                    @if(!$post->is_taken_down)
+                        <div class="post-stats">
+                            <span class="reaction-count">
+                                <i class="fas fa-heart"></i>
+                                <span id="like-count-{{ $post->id }}">{{ $post->reaction_counts['like'] ?? 0 }}</span>
                             </span>
-                        </span>
-                        <span class="share-count">
-                            <span id="share-count-{{ $post->id }}">{{ $post->share_count }}</span>
-                            {{ $post->share_count == 1 ? 'share' : 'shares' }}
-                        </span>
-                    </div>
+                            <span class="comment-count">
+                                <span id="comment-count-{{ $post->id }}">{{ $post->comments_count }}</span>
+                                <span id="comment-text-{{ $post->id }}">
+                                    {{ $post->comments_count == 1 ? 'Comment' : 'Comments' }}
+                                </span>
+                            </span>
+                            <span class="share-count">
+                                <span id="share-count-{{ $post->id }}">{{ $post->share_count }}</span>
+                                {{ $post->share_count == 1 ? 'share' : 'shares' }}
+                            </span>
+                        </div>
 
-                    <div class="post-actions">
-                        <button class="post-action-btn like-btn {{ $post->current_user_reaction === 'like' ? 'reacted' : '' }}"
-                                data-post-id="{{ $post->id }}"
-                                data-liked="{{ $post->current_user_reaction === 'like' ? '1' : '0' }}">
-                            <i class="fas fa-heart"></i>
-                            <span>{{ $post->current_user_reaction === 'like' ? 'Liked' : 'Like' }}</span>
-                        </button>
-                        <button class="post-action-btn comment-btn" data-post-id="{{ $post->id }}">
-                            <i class="far fa-comment"></i>Comment
-                        </button>
-                        <button class="post-action-btn share-btn" data-post-id="{{ $post->id }}">
-                            <i class="far fa-share-square"></i>Share
-                        </button>
-                    </div>
+                        <div class="post-actions">
+                            <button class="post-action-btn like-btn {{ $post->current_user_reaction === 'like' ? 'reacted' : '' }}"
+                                    data-post-id="{{ $post->id }}"
+                                    data-liked="{{ $post->current_user_reaction === 'like' ? '1' : '0' }}">
+                                <i class="fas fa-heart"></i>
+                                <span>{{ $post->current_user_reaction === 'like' ? 'Liked' : 'Like' }}</span>
+                            </button>
+                            <button class="post-action-btn comment-btn" data-post-id="{{ $post->id }}">
+                                <i class="far fa-comment"></i>Comment
+                            </button>
+                            <button class="post-action-btn share-btn" data-post-id="{{ $post->id }}">
+                                <i class="far fa-share-square"></i>Share
+                            </button>
+                        </div>
+                    @endif
 
                     <div class="modal comments-modal" id="comments-modal-{{ $post->id }}">
                         <div class="modal-content comments-modal-content">
@@ -249,15 +263,6 @@
             <h2>Create a New Post</h2>
             <form id="createPostForm" action="{{ route('posts.store') }}" method="POST">
                 @csrf
-                {{-- @if ($errors->any())
-                    <div class="alert alert-error">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif --}}
 
                 <div class="form-group">
                     <label for="title">Post Title</label>
@@ -1033,6 +1038,12 @@
             padding: 15px;
         }
 
+        .post-user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .post-options {
             position: relative;
         }
@@ -1150,6 +1161,26 @@
             color: #6c757d;
             margin: 0;
             font-size: 0.9rem;
+        }
+
+        .violation-banner {
+            background: #ffeaea;
+            color: #d32f2f;
+            border: 1px solid #f44336;
+            padding: 24px 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 1.1rem;
+            text-align: center;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+        .violation-banner i {
+            font-size: 1.5rem;
+            color: #d32f2f;
         }
     </style>
 @endsection

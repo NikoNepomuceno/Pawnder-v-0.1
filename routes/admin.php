@@ -13,12 +13,29 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Admin Dashboard Routes (Protected)
     Route::middleware(['web', 'auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
+        // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        
+        // Authentication
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
         // Report Management Routes
-        Route::get('/reports/{report}', [DashboardController::class, 'showReport'])->name('reports.show');
-        Route::post('/reports/{report}/approve', [DashboardController::class, 'approveReport'])->name('reports.approve');
-        Route::post('/reports/{report}/reject', [DashboardController::class, 'rejectReport'])->name('reports.reject');
+        Route::prefix('reports')->name('reports.')->group(function () {
+            Route::get('/{report}', [DashboardController::class, 'showReport'])->name('show');
+            Route::post('/{report}/approve', [DashboardController::class, 'approveReport'])->name('approve');
+            Route::post('/{report}/reject', [DashboardController::class, 'rejectReport'])->name('reject');
+            
+            // Reports Pages
+            Route::view('/archived', 'admin.reports-archived')->name('archived');
+            Route::get('/approved', [DashboardController::class, 'approvedReports'])
+                ->name('approved')
+                ->middleware('auth', 'admin');
+        });
+
+        // Test simple route
+        Route::get('/test-route', function() {
+            \Log::info('Admin test route accessed');
+            return 'Admin test route works!';
+        })->name('test.route');
     });
 });

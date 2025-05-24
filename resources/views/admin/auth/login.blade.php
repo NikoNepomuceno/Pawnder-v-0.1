@@ -4,6 +4,7 @@
     <div class="admin-login-container">
         <div class="admin-login-card">
             <div class="admin-login-header">
+                <img src="/images/logo.png" alt="Logo" class="admin-login-logo">
                 <h1>Admin Login</h1>
             </div>
 

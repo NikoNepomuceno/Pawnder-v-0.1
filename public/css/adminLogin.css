@@ -1,17 +1,18 @@
-/* Admin Login Orange & White Theme */
+/* Admin Login Green & White Theme */
 :root {
-    --admin-primary: #ff9800;
-    --admin-primary-dark: #f57c00;
+    --admin-primary: #1b4332;
     --admin-bg: #fff;
-    --admin-bg-alt: #fff7e6;
-    --admin-text: #222;
-    --admin-muted: #888;
-    --admin-border: #ffe0b2;
+    --admin-bg-alt: #f0f2f5;
+    --admin-text: #333;
+    --admin-muted: #666;
+    --admin-border: #d8f3dc;
+    --admin-btn-bg: #d8f3dc;
+    --admin-btn-text: #1b4332;
     --admin-error: #e53935;
 }
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
     background-color: var(--admin-bg-alt);
     color: var(--admin-text);
     min-height: 100vh;
@@ -29,30 +30,43 @@ body {
 
 .admin-login-card {
     background: var(--admin-bg);
-    border-radius: 1rem;
-    box-shadow: 0 4px 16px rgba(255,152,0,0.08);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 420px;
     overflow: hidden;
-    border: 1.5px solid var(--admin-border);
+    border: none;
 }
 
 .admin-login-header {
-    background: var(--admin-primary);
-    color: white;
-    padding: 1.5rem;
+    background: transparent;
+    color: var(--admin-primary);
+    padding: 2rem 1.5rem 0.7rem 1.5rem;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-login-logo {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 1.1rem;
+    display: block;
 }
 
 .admin-login-header h1 {
-    margin: 0;
-    font-size: 1.5rem;
+    font-family: 'Montserrat', 'Poppins', sans-serif;
+    font-size: 1.8rem;
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    color: var(--admin-primary);
+    margin: 0;
 }
 
 .admin-login-body {
-    padding: 2rem;
+    padding: 1.2rem 2rem 2rem 2rem;
 }
 
 .form-group {
@@ -63,7 +77,7 @@ body {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
-    color: var(--admin-primary-dark);
+    color: var(--admin-primary);
 }
 
 .input-group {
@@ -74,28 +88,28 @@ body {
 
 .input-group-text {
     background-color: var(--admin-bg-alt);
-    border: 1px solid var(--admin-border);
+    border: 2px solid var(--admin-border);
     border-right: none;
     padding: 0.75rem 1rem;
-    border-radius: 0.5rem 0 0 0.5rem;
-    color: var(--admin-primary-dark);
+    border-radius: 8px 0 0 8px;
+    color: var(--admin-primary);
 }
 
 .form-control {
     flex: 1;
     padding: 0.75rem 1rem;
-    border: 1px solid var(--admin-border);
+    border: 2px solid var(--admin-border);
     border-left: none;
-    border-radius: 0 0.5rem 0.5rem 0;
+    border-radius: 0 8px 8px 0;
     font-size: 1rem;
-    transition: border-color 0.15s ease-in-out;
+    transition: all 0.3s ease;
     background: var(--admin-bg);
 }
 
 .form-control:focus {
     outline: none;
     border-color: var(--admin-primary);
-    box-shadow: 0 0 0 2px rgba(255,152,0,0.12);
+    box-shadow: 0 0 0 2px rgba(27, 67, 50, 0.2);
 }
 
 .form-check {
@@ -116,29 +130,30 @@ body {
 
 .btn-login {
     width: 100%;
-    padding: 0.75rem 1.5rem;
-    background-color: var(--admin-primary);
-    color: white;
+    padding: 12px 24px;
+    background-color: var(--admin-btn-bg);
+    color: var(--admin-btn-text);
     border: none;
-    border-radius: 0.5rem;
+    border-radius: 5px;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.15s ease-in-out, box-shadow 0.15s;
-    box-shadow: 0 2px 8px rgba(255,152,0,0.08);
+    transition: all 0.3s ease;
+    box-shadow: none;
 }
 
 .btn-login:hover {
-    background-color: var(--admin-primary-dark);
+    background-color: #b7e4c7;
+    color: var(--admin-btn-text);
 }
 
 .alert {
     padding: 1rem;
-    border-radius: 0.5rem;
+    border-radius: 5px;
     margin-bottom: 1.5rem;
-    background: #fff3e0;
-    color: var(--admin-error);
-    border: 1px solid #ffd180;
+    background: #d8f3dc;
+    color: var(--admin-primary);
+    border: 1px solid var(--admin-border);
 }
 
 .invalid-feedback {
@@ -153,8 +168,20 @@ body {
     .admin-login-container {
         padding: 1rem;
     }
-    
+
     .admin-login-body {
         padding: 1.5rem;
     }
-} 
+}
+
+.admin-login-card,
+.admin-login-header,
+.admin-login-body,
+.form-label,
+.form-control,
+.btn-login,
+.form-check-label,
+.alert,
+.invalid-feedback {
+    font-family: 'Poppins', sans-serif;
+}

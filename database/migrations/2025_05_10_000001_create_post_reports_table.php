@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('post_id')->constrained()->onDelete('cascade');
             $table->foreignId('reported_by')->constrained('users')->onDelete('cascade');
             $table->text('reason');
-            $table->enum('status', ['pending', 'reviewed', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'reviewed', 'rejected', 'resolved'])->default('pending');
             $table->timestamp('reviewed_at')->nullable();
             $table->foreignId('reviewed_by')->nullable()->constrained('users')->onDelete('set null');
             $table->text('admin_notes')->nullable();

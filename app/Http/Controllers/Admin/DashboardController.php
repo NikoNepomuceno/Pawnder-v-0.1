@@ -123,4 +123,34 @@ class DashboardController extends Controller
         return redirect()->route('admin.dashboard')
             ->with('success', 'Report has been rejected.');
     }
-} 
+
+    /**
+     * Show all approved reports.
+     */
+    public function approvedReports()
+    {
+        \Log::info('Approved reports accessed', [
+            'user_id' => \Auth::id(),
+            'is_admin' => \Auth::user() ? \Auth::user()->is_admin : false,
+            'url' => \Request::fullUrl(),
+            'method' => \Request::method(),
+            'full_url' => \Request::fullUrl(),
+            'path_info' => \Request::getPathInfo(),
+            'request_uri' => $_SERVER['REQUEST_URI'] ?? null,
+            'script_name' => $_SERVER['SCRIPT_NAME'] ?? null,
+            'php_self' => $_SERVER['PHP_SELF'] ?? null
+        ]);
+
+        // Temporary simple response for testing
+        return response('Approved reports page - This is a test response');
+        
+        /* Original code - keeping for reference
+        $approvedReports = PostReport::with(['post', 'reporter', 'reviewer'])
+            ->where('status', 'approved')
+            ->orderBy('approved_at', 'desc')
+            ->paginate(10);
+
+        return view('admin.approved-reports', compact('approvedReports'));
+        */
+    }
+}
