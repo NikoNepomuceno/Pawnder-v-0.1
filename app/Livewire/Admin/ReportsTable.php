@@ -83,6 +83,8 @@ class ReportsTable extends Component
         $report->update([
             'status' => 'dismissed',
             'reviewed_at' => now(),
+            'reviewed_by' => auth()->id(),
+            'admin_notes' => 'Report was dismissed by admin.'
         ]);
 
         $this->dispatch('reportStatusUpdated');

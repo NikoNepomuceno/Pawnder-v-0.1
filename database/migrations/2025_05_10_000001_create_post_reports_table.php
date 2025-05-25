@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('post_id')->constrained()->onDelete('cascade');
             $table->foreignId('reported_by')->constrained('users')->onDelete('cascade');
             $table->text('reason');
-            $table->enum('status', ['pending', 'reviewed', 'rejected', 'resolved'])->default('pending');
+            $table->enum('status', ['pending', 'reviewed', 'rejected', 'resolved', 'dismissed'])->default('pending');
             $table->timestamp('reviewed_at')->nullable();
             $table->foreignId('reviewed_by')->nullable()->constrained('users')->onDelete('set null');
             $table->text('admin_notes')->nullable();
@@ -36,9 +36,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('post_reports');
-        
+
         Schema::table('posts', function (Blueprint $table) {
             $table->dropColumn(['is_flagged', 'flag_reason']);
         });
     }
-}; 
+};

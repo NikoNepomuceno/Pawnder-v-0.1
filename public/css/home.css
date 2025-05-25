@@ -1783,3 +1783,8 @@ body.dark-mode .report-modal-content .close-modal {
     max-width: 120px;
     opacity: 0.85;
 }
+
+.flagged-post {
+    border: 1px solid #e41e3f;
+    position: relative;
+}

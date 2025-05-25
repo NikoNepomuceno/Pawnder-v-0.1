@@ -138,6 +138,169 @@
         });
         </script>
         <style>
+        .post-card {
+            background: white;
+            border-radius: 0.8rem;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        .post-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .post-user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .post-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .post-author {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1b4332;
+        }
+        .post-name {
+            font-weight: normal;
+            color: #6b7280;
+            margin-left: 0.5rem;
+        }
+        .post-date {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        .post-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            padding: 1rem 1.25rem;
+            background-color: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .post-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .post-status.pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .post-status.approved {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        .post-status.archived {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+        .post-breed,
+        .post-location,
+        .post-contact {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+        .post-breed i,
+        .post-location i,
+        .post-contact i {
+            margin-right: 0.375rem;
+            color: #6b7280;
+        }
+        .post-content {
+            padding: 1.25rem;
+        }
+        .post-content h3 {
+            margin: 0 0 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1b4332;
+        }
+        .post-description {
+            margin: 0;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+        .post-images {
+            padding: 0 1.25rem 1.25rem;
+        }
+        .image-grid {
+            display: grid;
+            gap: 0.5rem;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .image-grid.single-image {
+            grid-template-columns: 1fr;
+        }
+        .image-grid.two-images {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .image-grid.three-images {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .grid-item {
+            position: relative;
+            aspect-ratio: 1;
+            cursor: pointer;
+            overflow: hidden;
+            border-radius: 0.5rem;
+        }
+        .grid-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.2s;
+        }
+        .grid-item:hover img {
+            transform: scale(1.05);
+        }
+        .more-indicator {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .deleted-post-message {
+            text-align: center;
+            padding: 2rem;
+            background: #f3f4f6;
+            border-radius: 0.8rem;
+            color: #6b7280;
+        }
+        .deleted-post-message i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #9ca3af;
+        }
+        .deleted-post-message h3 {
+            margin: 0 0 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        .deleted-post-message p {
+            margin: 0;
+            font-size: 0.875rem;
+        }
         .lightbox-modal {
             display: none;
             position: fixed;

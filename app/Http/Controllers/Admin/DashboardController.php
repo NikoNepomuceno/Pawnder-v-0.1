@@ -141,4 +141,22 @@ class DashboardController extends Controller
 
         return view('admin.approved-reports', compact('approvedReports'));
     }
+
+    /**
+     * Show all archived reports.
+     */
+    public function archivedReports()
+    {
+        if (!\Illuminate\Support\Facades\Auth::user() || !\Illuminate\Support\Facades\Auth::user()->is_admin) {
+            abort(403, 'Unauthorized. Admin access required.');
+        }
+
+        $archivedReports = PostReport::with(['reporter', 'reviewer'])
+            ->where('status', 'dismissed')
+            ->whereNotNull('reviewed_at')
+            ->orderBy('reviewed_at', 'desc')
+            ->paginate(10);
+
+        return view('admin.reports-archived', compact('archivedReports'));
+    }
 }

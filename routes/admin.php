@@ -25,12 +25,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/approved', [DashboardController::class, 'approvedReports'])
                 ->name('approved')
                 ->middleware('auth');
+            Route::get('/archived', [DashboardController::class, 'archivedReports'])
+                ->name('archived')
+                ->middleware('auth');
             Route::get('/{report}', [DashboardController::class, 'showReport'])->name('show');
             Route::post('/{report}/approve', [DashboardController::class, 'approveReport'])->name('approve');
             Route::post('/{report}/reject', [DashboardController::class, 'rejectReport'])->name('reject');
-
-            // Reports Pages
-            Route::view('/archived', 'admin.reports-archived')->name('archived');
         });
 
         // Test simple route

@@ -14,29 +14,23 @@
 @section('content')
     <div class="content">
         <div id="app-notification-container"></div>
-        
         <div class="welcome-panel">
             <div class="welcome-content">
                 <h2>Lost or Found a pet? Report it now !</h2>
                 <button id="createPostBtn" class="create-post-btn">Create Post</button>
             </div>
         </div>
-
         <div class="posts-container">
             @forelse($posts as $post)
                 <div class="post-card {{ $post->is_flagged ? 'flagged-post' : '' }}" data-post-id="{{ $post->id }}">
                     @if($post->is_flagged)
-                        <div class="flag-notification">
-                            <i class="fas fa-exclamation-triangle"></i> {{ $post->flag_reason }}
-                        </div>
+                        {{-- Removed flag-notification, only violation banner will be shown if needed --}}
                     @endif
 
                     @if($post->isShared())
                         <div class="post-header">
                             <div class="post-user-info">
-                                <img src="{{ $post->sharedBy->profile_picture ?? asset('images/default-profile.png') }}" 
-                                     alt="Profile" 
-                                     class="post-avatar">
+                                <img src="{{ $post->sharedBy->profile_picture ?? asset('images/default-profile.png') }}" alt="Profile" class="post-avatar">
                                 <div>
                                     <h4 class="post-author">
                                         {{ $post->sharedBy->username }}
@@ -59,18 +53,14 @@
                                 </div>
                             </div>
                         </div>
-
                         @php
                             $original = $post->originalPost;
                         @endphp
-
                         @if($original && !$original->trashed())
                             <div class="original-post-content">
                                 <div class="post-header original-post-header">
                                     <div class="post-user-info">
-                                        <img src="{{ $original->user->profile_picture ?? asset('images/default-avatar.jpg') }}" 
-                                             alt="Profile" 
-                                             class="post-avatar">
+                                        <img src="{{ $original->user->profile_picture ?? asset('images/default-avatar.jpg') }}" alt="Profile" class="post-avatar">
                                         <div>
                                             <h4 class="post-author">{{ $original->user->name }}</h4>
                                             <span class="post-date">{{ $original->created_at->diffForHumans() }}</span>
@@ -78,24 +68,19 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="post-details">
                                 <span class="post-status {{ $original->status }}">{{ ucfirst($original->status) }}</span>
                                 <span class="post-breed">Breed: {{ $original->breed }}</span>
                                 <span class="post-location">Location: {{ $original->location }}</span>
                                 <span class="post-contact">Contact: {{ $original->contact }}</span>
                             </div>
-
                             <div class="post-content">
                                 <h3>{{ $original->title }}</h3>
                                 <p class="post-description">{{ $original->description }}</p>
                             </div>
-
                             @if(count($original->photo_urls ?? []) > 0)
                                 <div class="post-images">
-                                    <div class="image-grid {{ count($original->photo_urls) === 1 ? 'single-image' : '' }} 
-                                                          {{ count($original->photo_urls) === 2 ? 'two-images' : '' }} 
-                                                          {{ count($original->photo_urls) === 3 ? 'three-images' : '' }}">
+                                    <div class="image-grid {{ count($original->photo_urls) === 1 ? 'single-image' : '' }} {{ count($original->photo_urls) === 2 ? 'two-images' : '' }} {{ count($original->photo_urls) === 3 ? 'three-images' : '' }}">
                                         @foreach($original->photo_urls as $index => $photo_url)
                                             @if($index < 4)
                                                 <div class="grid-item" data-post-id="{{ $original->id }}" data-index="{{ $index }}">
@@ -123,9 +108,7 @@
                     @else
                         <div class="post-header">
                             <div class="post-user-info">
-                                <img src="{{ $post->user->profile_picture ?? asset('images/default-profile.png') }}" 
-                                     alt="Profile" 
-                                     class="post-avatar">
+                                <img src="{{ $post->user->profile_picture ?? asset('images/default-profile.png') }}" alt="Profile" class="post-avatar">
                                 <div>
                                     <h4 class="post-author">
                                         {{ $post->user->username }}
@@ -165,20 +148,18 @@
                             </div>
                             <div class="post-images">
                                 @if(count($post->photo_urls) > 0)
-                                    <div class="image-grid {{ count($post->photo_urls) === 1 ? 'single-image' : '' }} 
-                                                          {{ count($post->photo_urls) === 2 ? 'two-images' : '' }} 
-                                                          {{ count($post->photo_urls) === 3 ? 'three-images' : '' }}">
-                                            @foreach($post->photo_urls as $index => $photo_url)
-                                                @if($index < 4)
-                                                    <div class="grid-item" data-post-id="{{ $post->id }}" data-index="{{ $index }}">
-                                                        <img src="{{ $photo_url }}" alt="Pet Photo">
-                                                        @if($index === 3 && count($post->photo_urls) > 4)
-                                                            <div class="more-indicator">+{{ count($post->photo_urls) - 4 }}</div>
-                                                        @endif
-                                                    </div>
-                                                @endif
-                                            @endforeach
-                                        </div>
+                                    <div class="image-grid {{ count($post->photo_urls) === 1 ? 'single-image' : '' }} {{ count($post->photo_urls) === 2 ? 'two-images' : '' }} {{ count($post->photo_urls) === 3 ? 'three-images' : '' }}">
+                                        @foreach($post->photo_urls as $index => $photo_url)
+                                            @if($index < 4)
+                                                <div class="grid-item" data-post-id="{{ $post->id }}" data-index="{{ $index }}">
+                                                    <img src="{{ $photo_url }}" alt="Pet Photo">
+                                                    @if($index === 3 && count($post->photo_urls) > 4)
+                                                        <div class="more-indicator">+{{ count($post->photo_urls) - 4 }}</div>
+                                                    @endif
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
                                 @endif
                             </div>
                         @endif
@@ -201,7 +182,6 @@
                                 {{ $post->share_count == 1 ? 'share' : 'shares' }}
                             </span>
                         </div>
-
                         <div class="post-actions">
                             <button class="post-action-btn like-btn {{ $post->current_user_reaction === 'like' ? 'reacted' : '' }}"
                                     data-post-id="{{ $post->id }}"
@@ -217,7 +197,6 @@
                             </button>
                         </div>
                     @endif
-
                     <div class="modal comments-modal" id="comments-modal-{{ $post->id }}">
                         <div class="modal-content comments-modal-content">
                             <span class="close-modal">&times;</span>
@@ -235,7 +214,6 @@
             @endforelse
         </div>
     </div>
-
     <!-- Report Post Modal -->
     <div id="reportPostModal" class="modal">
         <div class="modal-content" style="max-width: 500px;">
@@ -255,7 +233,6 @@
             </form>
         </div>
     </div>
-
     <!-- Create Post Modal -->
     <div id="createPostModal" class="modal">
         <div class="modal-content">
@@ -263,14 +240,10 @@
             <h2>Create a New Post</h2>
             <form id="createPostForm" action="{{ route('posts.store') }}" method="POST">
                 @csrf
-
                 <div class="form-group">
                     <label for="title">Post Title</label>
-                    <input type="text" id="title" name="title" required 
-                           style="text-transform: uppercase;" 
-                           oninput="this.value = this.value.toUpperCase();">
+                    <input type="text" id="title" name="title" required style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();">
                 </div>
-
                 <div class="form-group">
                     <label for="status">Status</label>
                     <select id="status" name="status" required>
@@ -278,27 +251,22 @@
                         <option value="not_found" selected>Not Found</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label for="breed">Pet Breed</label>
                     <input type="text" id="breed" name="breed" required>
                 </div>
-
                 <div class="form-group">
                     <label for="location">Last Seen Location</label>
                     <input type="text" id="location" name="location" required>
                 </div>
-
                 <div class="form-group">
                     <label for="contact">Contact Information</label>
                     <input type="text" id="contact" name="contact" required>
                 </div>
-
                 <div class="form-group">
                     <label for="description">Post Description</label>
                     <textarea id="description" name="description" required></textarea>
                 </div>
-
                 <div class="form-group">
                     <label>Pet Photos</label>
                     <div class="file-input-container">
@@ -309,7 +277,6 @@
                     <div id="photo-preview" class="photo-preview"></div>
                     <input type="hidden" id="photo_urls" name="photo_urls">
                 </div>
-
                 <div class="form-actions">
                     <button type="button" class="cancel-btn" id="cancelBtn">Cancel</button>
                     <button type="button" class="submit-btn" id="submitCreatePostBtn">Create Post</button>
@@ -317,7 +284,6 @@
             </form>
         </div>
     </div>
-
     <!-- Create Post Confirm Modal -->
     <div id="createPostConfirmModal" class="modal">
         <div class="modal-content" style="max-width: 400px;">
@@ -329,7 +295,6 @@
             </div>
         </div>
     </div>
-
     <!-- Share Post Confirm Modal -->
     <div id="sharePostConfirmModal" class="modal">
         <div class="modal-content" style="max-width: 400px;">
@@ -341,7 +306,6 @@
             </div>
         </div>
     </div>
-
     <!-- Lightbox Modal -->
     <div class="lightbox-modal" id="lightbox-modal">
         <span class="lightbox-close">&times;</span>
@@ -352,7 +316,6 @@
         </div>
         <div class="lightbox-counter"></div>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('status').value='not_found';
@@ -361,9 +324,17 @@
                 const postId=event.detail ? event.detail.postId : undefined;
                 const count=event.detail ? event.detail.count : undefined;
 
-                const commentCountElement=document.getElementById(`comment-count-${postId}`);
+                const commentCountElement=document.getElementById(`comment-count-$ {
+                    postId
+                }
 
-                const commentTextElement=document.getElementById(`comment-text-${postId}`);
+                `);
+
+                const commentTextElement=document.getElementById(`comment-text-$ {
+                    postId
+                }
+
+                `);
 
                 if (commentCountElement && commentTextElement) {
                     commentCountElement.textContent=count;
@@ -375,7 +346,11 @@
                 const postId=event.detail ? event.detail.postId : undefined;
                 const count=event.detail ? event.detail.count : undefined;
 
-                const shareCountElement=document.getElementById(`share-count-${postId}`);
+                const shareCountElement=document.getElementById(`share-count-$ {
+                    postId
+                }
+
+                `);
 
                 if (shareCountElement) {
                     shareCountElement.textContent=count;
@@ -386,7 +361,11 @@
                 button.addEventListener('click', function () {
                     const postId=this.getAttribute('data-post-id');
 
-                    const modal=document.getElementById(`comments-modal-${postId}`);
+                    const modal=document.getElementById(`comments-modal-$ {
+                        postId
+                    }
+
+                    `);
                     if (modal) showModal(modal);
                 });
             });
@@ -447,7 +426,11 @@
 
                 const notification=document.createElement('div');
 
-                notification.className=`alert alert-${type} alert-dismissible fade show`;
+                notification.className=`alert alert-$ {
+                    type
+                }
+
+                alert-dismissible fade show`;
                 notification.setAttribute('role', 'alert');
 
                 const messageSpan=document.createElement('span');
@@ -642,17 +625,19 @@
                     const postImages=Array.from(document.querySelectorAll(`.grid-item[data-post-id="${postId}"]`)) .map(item=> item.querySelector('img').src);
 
                     if (document.querySelector(`.grid-item[data-post-id="${postId}"] .more-indicator`)) {
-                        fetch(`/posts/${postId}/photos`) .then(response=> response.json()) .then(data=> {
+                        fetch(`/posts/$ {
+                            postId
+                        }
+
+                        /photos`) .then(response=> response.json()) .then(data=> {
                             if (data.success) {
                                 currentPostImages=data.photo_urls;
                                 openLightbox(postId, index);
                             }
                         }) .catch(()=> {
-                                currentPostImages=postImages;
-                                openLightbox(postId, index);
-                            }
-
-                        );
+                            currentPostImages=postImages;
+                            openLightbox(postId, index);
+                        });
                     }
 
                     else {
@@ -675,7 +660,15 @@
             function updateLightboxImage() {
                 lightboxImage.src=currentPostImages[currentImageIndex];
 
-                lightboxCounter.textContent=`${currentImageIndex + 1} / ${currentPostImages.length}`;
+                lightboxCounter.textContent=`$ {
+                    currentImageIndex + 1
+                }
+
+                / $ {
+                    currentPostImages.length
+                }
+
+                `;
 
                 lightboxPrev.style.display=currentPostImages.length > 1 ? 'flex' : 'none';
                 lightboxNext.style.display=currentPostImages.length > 1 ? 'flex' : 'none';
@@ -733,12 +726,18 @@
                     const postId=this.dataset.postId;
                     const liked=this.dataset.liked==='1';
 
-                    const url = `/posts/${postId}/reactions`;
+                    const url=`/posts/$ {
+                        postId
+                    }
+
+                    /reactions`;
                     const method=liked ? 'DELETE' : 'POST';
 
-                    const body=liked ? null : JSON.stringify({
-                        reaction_type: 'like'
-                    });
+                    const body=liked ? null : JSON.stringify( {
+                            reaction_type: 'like'
+                        }
+
+                    );
 
                     fetch(url, {
                         method: method,
@@ -750,15 +749,23 @@
                         body: body
                     }) .then(response=> response.json()) .then(data=> {
                         if (data.success) {
-                            const countSpan=document.getElementById(`like-count-${postId}`);
+                            const countSpan=document.getElementById(`like-count-$ {
+                                postId
+                            }
+
+                            `);
+
                             if (countSpan) {
                                 countSpan.textContent=data.total_reactions;
                             }
+
                             if (liked) {
                                 this.classList.remove('reacted');
                                 this.dataset.liked='0';
                                 this.querySelector('span').textContent='Like';
-                            } else {
+                            }
+
+                            else {
                                 this.classList.add('reacted');
                                 this.dataset.liked='1';
                                 this.querySelector('span').textContent='Liked';
@@ -779,7 +786,11 @@
             confirmSharePostBtn.addEventListener('click', function () {
                 if ( !postIdToShare) return;
 
-                fetch(`/posts/${postIdToShare}/share-in-app`, {
+                fetch(`/posts/$ {
+                    postIdToShare
+                }
+
+                /share-in-app`, {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -791,7 +802,11 @@
                         showAppNotification('Post shared successfully!', 'success');
 
                         if (data.share_count !==undefined) {
-                            const originalPostShareCountElement=document.getElementById(`share-count-${postIdToShare}`);
+                            const originalPostShareCountElement=document.getElementById(`share-count-$ {
+                                postIdToShare
+                            }
+
+                            `);
 
                             if (originalPostShareCountElement) {
                                 originalPostShareCountElement.textContent=data.share_count;
@@ -825,10 +840,18 @@
                     e.stopPropagation();
                     const postId=this.getAttribute('data-post-id');
 
-                    const menu=document.getElementById(`post-options-menu-${postId}`);
+                    const menu=document.getElementById(`post-options-menu-$ {
+                        postId
+                    }
+
+                    `);
 
                     document.querySelectorAll('.post-options-menu').forEach(m=> {
-                        if (m.id !==`post-options-menu-${postId}`) {
+                        if (m.id !==`post-options-menu-$ {
+                            postId
+                        }
+
+                        `) {
                             m.classList.remove('show');
                         }
                     });
@@ -852,7 +875,11 @@
                 button.addEventListener('click', function () {
                     const postId=this.getAttribute('data-post-id');
 
-                    reportPostForm.action=`/posts/${postId}/report`;
+                    reportPostForm.action=`/posts/$ {
+                        postId
+                    }
+
+                    /report`;
                     showModal(reportPostModal);
                 });
             });
@@ -885,10 +912,9 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify( {
-                            reason: reason
-                        }
+                        reason: reason
+                    }
 
-                    )
                 }) .then(response=> response.json()) .then(data=> {
                     if (data.success) {
                         showAppNotification('Post reported successfully. Thank you for helping keep our community safe.', 'success');
@@ -900,15 +926,12 @@
                         showAppNotification(data.message || 'Failed to report post. Please try again.', 'error');
                     }
                 }) .catch(error=> {
-                        console.error('Error:', error);
-                        showAppNotification('An error occurred while reporting the post. Please try again.', 'error');
-                    }
-
-                );
+                    console.error('Error:', error);
+                    showAppNotification('An error occurred while reporting the post. Please try again.', 'error');
+                });
             });
         });
     </script>
-
     <style>
         .comments-modal .modal-content {
             max-width: 600px;
@@ -1178,6 +1201,7 @@
             gap: 10px;
             justify-content: center;
         }
+
         .violation-banner i {
             font-size: 1.5rem;
             color: #d32f2f;

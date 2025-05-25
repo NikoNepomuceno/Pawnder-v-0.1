@@ -43,7 +43,7 @@
                 @foreach($posts as $post)
                     <div class="post-card" data-post-id="{{ $post->id }}">
                         @if($post->is_flagged)
-                            <div class="flag-notification"><i class="fas fa-exclamation-triangle"></i> {{ $post->flag_reason }}</div>
+                            {{-- Removed flag-notification, only violation banner will be shown if needed --}}
                         @endif
                         <!-- Shared Post Layout -->
                         @if($post->isShared())
@@ -1568,109 +1568,4 @@ document.addEventListener('DOMContentLoaded', function() {
         const count = event.detail ? event.detail.count : undefined;
         
         const commentCountElement = document.getElementById(`comment-count-${postId}`);
-        const commentTextElement = document.getElementById(`comment-text-${postId}`);
-        
-        if (commentCountElement && commentTextElement) {
-            commentCountElement.textContent = count;
-            commentTextElement.textContent = count == 1 ? 'Comment' : 'Comments';
-        }
-    });
-
-    // Share count update listener
-    window.addEventListener('shareCountUpdated', event => {
-        const postId = event.detail ? event.detail.postId : undefined;
-        const count = event.detail ? event.detail.count : undefined;
-        
-        const shareCountElement = document.getElementById(`share-count-${postId}`);
-        
-        if (shareCountElement) {
-            shareCountElement.textContent = count;
-        }
-    });
-
-    // Like button click handlers
-    document.querySelectorAll('.like-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const postId = this.dataset.postId;
-            const liked = this.dataset.liked === '1';
-            const url = `/posts/${postId}/reactions`;
-            const method = liked ? 'DELETE' : 'POST';
-            const body = liked ? null : JSON.stringify({ reaction_type: 'like' });
-
-            fetch(url, {
-                method: method,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: body
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const countSpan = document.getElementById(`like-count-${postId}`);
-                    if (countSpan) {
-                        countSpan.textContent = data.total_reactions;
-                    }
-                    if (liked) {
-                        this.classList.remove('reacted');
-                        this.dataset.liked = '0';
-                        this.querySelector('span').textContent = 'Like';
-                    } else {
-                        this.classList.add('reacted');
-                        this.dataset.liked = '1';
-                        this.querySelector('span').textContent = 'Liked';
-                    }
-                }
-            });
-        });
-    });
-
-    // Share button click handlers
-    document.querySelectorAll('.share-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const postId = this.getAttribute('data-post-id');
-            postIdToShare = postId;
-            showModal(sharePostConfirmModal);
-        });
-    });
-
-    // Confirm share button handler
-    const confirmSharePostBtn = document.getElementById('confirmSharePostBtn');
-    if (confirmSharePostBtn) {
-        confirmSharePostBtn.addEventListener('click', function() {
-            if (!postIdToShare) return;
-
-            fetch(`/posts/${postIdToShare}/share-in-app`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    if (data.share_count !== undefined) {
-                        const shareCountElement = document.getElementById(`share-count-${postIdToShare}`);
-                        if (shareCountElement) {
-                            shareCountElement.textContent = data.share_count;
-                        }
-                        window.dispatchEvent(new CustomEvent('shareCountUpdated', {
-                            detail: { postId: postIdToShare, count: data.share_count }
-                        }));
-                    }
-                }
-            })
-            .finally(() => {
-                hideModal(sharePostConfirmModal);
-                postIdToShare = null;
-            });
-        });
-    }
-});
-
-</script>
-@endsection
+        const commentTextElement = document.getElementById(`

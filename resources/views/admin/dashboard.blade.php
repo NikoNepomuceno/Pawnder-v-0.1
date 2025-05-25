@@ -3,289 +3,257 @@
 @section('content')
 <div id="pageFade" class="flex min-h-screen opacity-0 transition-opacity duration-500">
     <x-admin-side-bar />
-    <div class="flex-1 p-8">
-        <div class="dashboard-header-row mb-6">
-            <h1>Admin Dashboard</h1>
+    <div class="flex-1 p-8 bg-gray-50">
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
+            <div class="flex items-center space-x-4">
+                <span class="text-sm text-gray-500">Welcome back, Admin</span>
+            </div>
         </div>
-        <div class="dashboard-stats-row">
+
+        <div class="mb-8">
             <livewire:admin.dashboard-stats />
         </div>
-        <div class="reports-container">
-            <div class="reports-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-clock"></i> Pending Reports</h2>
-                    {{-- <span class="section-count">0</span> --}}
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-clock text-blue-500 text-xl"></i>
+                    <h2 class="text-xl font-semibold text-gray-800">Pending Reports</h2>
                 </div>
+            </div>
+            <div class="p-6">
                 <livewire:admin.reports-table status="pending" />
             </div>
         </div>
     </div>
 </div>
 
-    <!-- Logout Confirmation Modal -->
-    <div id="adminLogoutConfirmModal" class="logout-modal" tabindex="-1" aria-modal="true" role="dialog">
-        <div class="logout-modal-content">
-            <span class="close-modal" id="adminCloseLogoutModal" tabindex="0" aria-label="Close">&times;</span>
-            <h3>Confirm Logout</h3>
-            <p>Are you sure you want to log out?</p>
-            <div class="modal-actions">
-                <button class="cancel-btn" id="adminCancelLogout">Cancel</button>
-                <button class="submit-btn" id="adminConfirmLogout">Logout</button>
-            </div>
+<!-- Archive Report Confirmation Modal -->
+<div id="archiveReportConfirmModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/25 backdrop-blur-sm">
+    <div class="relative bg-white rounded-2xl p-8 shadow-lg min-w-[320px] max-w-[90vw] text-center flex flex-col items-center border border-gray-200">
+        <button class="absolute right-4 top-4 text-2xl text-gray-500 hover:text-gray-700 transition-colors" id="closeArchiveModal" tabindex="0" aria-label="Close">&times;</button>
+        <h3 class="text-xl font-semibold mb-4 text-gray-800">Confirm Archive</h3>
+        <p class="mb-6 text-gray-600">Are you sure you want to archive this report?</p>
+        <div class="flex justify-center gap-4">
+            <button class="px-6 py-2.5 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-colors" id="cancelArchive">Cancel</button>
+            <button class="px-6 py-2.5 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors" id="confirmArchive">Archive</button>
         </div>
     </div>
-@endsection
+</div>
 
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('css/admin-dashboard.css') }}">
-    <style>
-        .dashboard-header-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.2rem;
-        }
-        .dashboard-header-row h1 {
-            color: var(--admin-primary);
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin: 0;
-        }
-        .dashboard-stats-row {
-            margin-bottom: 2.2rem;
-        }
-        .admin-menu-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-            margin-left: 0;
-        }
-        .admin-hamburger {
-            background: none;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 44px;
-            height: 44px;
-            padding: 0;
-        }
-        .hamburger-bar {
-            width: 28px;
-            height: 3px;
-            background: var(--admin-primary);
-            margin: 3px 0;
-            border-radius: 2px;
-            transition: all 0.2s;
-        }
-        .admin-dropdown-menu {
-            display: none;
-            position: absolute;
-            top: 48px;
-            right: 0;
-            background: #fff;
-            border-radius: 0.7rem;
-            box-shadow: 0 4px 16px rgba(27,67,50,0.13);
-            min-width: 170px;
-            z-index: 100;
-            flex-direction: column;
-            padding: 0.5rem 0;
-        }
-        .admin-dropdown-menu.show {
-            display: flex;
-        }
-        .admin-dropdown-item {
-            background: none;
-            border: none;
-            color: var(--admin-primary);
-            text-align: left;
-            width: 100%;
-            padding: 0.7rem 1.2rem;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.7em;
-            text-decoration: none;
-            transition: background 0.13s;
-        }
-        .admin-dropdown-item:hover, .admin-dropdown-item:focus {
-            background: var(--admin-bg-alt);
-            outline: none;
-        }
-        .logout-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0,0,0,0.25);
-            justify-content: center;
-            align-items: center;
-        }
-        .logout-modal.show {
-            display: flex;
-        }
-        .logout-modal-content {
-            background: #fff;
-            border-radius: 1rem;
-            padding: 2rem 2.5rem;
-            box-shadow: 0 8px 32px rgba(27,67,50,0.15);
-            min-width: 320px;
-            max-width: 90vw;
-            text-align: center;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .close-modal {
-            position: absolute;
-            right: 18px;
-            top: 14px;
-            font-size: 1.5rem;
-            color: var(--admin-primary);
-            cursor: pointer;
-            background: none;
-            border: none;
-            transition: color 0.2s;
-        }
-        .close-modal:hover, .close-modal:focus {
-            color: var(--admin-primary-dark);
-            outline: none;
-        }
-        .modal-actions {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: 1rem;
-        }
-        .cancel-btn, .submit-btn {
-            padding: 0.6rem 1.5rem;
-            border-radius: 0.5rem;
-            border: none;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-        .cancel-btn {
-            background: var(--admin-bg-alt);
-            color: var(--admin-primary);
-        }
-        .cancel-btn:hover {
-            background: #e0e0e0;
-        }
-        .submit-btn {
-            background: var(--admin-primary);
-            color: #fff;
-        }
-        .submit-btn:hover {
-            background: var(--admin-primary-dark);
-        }
-        @media (max-width: 600px) {
-            .logout-modal-content {
-                padding: 1.2rem 0.7rem;
-                min-width: 0;
-            }
-        }
-    </style>
-@endpush
+<!-- Approve Report Confirmation Modal -->
+<div id="approveReportConfirmModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/25 backdrop-blur-sm">
+    <div class="relative bg-white rounded-2xl p-8 shadow-lg min-w-[320px] max-w-[90vw] text-center flex flex-col items-center border border-gray-200">
+        <button class="absolute right-4 top-4 text-2xl text-gray-500 hover:text-gray-700 transition-colors" id="closeApproveModal" tabindex="0" aria-label="Close">&times;</button>
+        <h3 class="text-xl font-semibold mb-4 text-gray-800">Confirm Approval</h3>
+        <p class="mb-6 text-gray-600">Are you sure you want to approve this report and take down the post?</p>
+        <div class="flex justify-center gap-4">
+            <button class="px-6 py-2.5 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-colors" id="cancelApprove">Cancel</button>
+            <button class="px-6 py-2.5 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-colors" id="confirmApprove">Approve</button>
+        </div>
+    </div>
+</div>
+
+<!-- Logout Confirmation Modal -->
+<div id="adminLogoutConfirmModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/25 backdrop-blur-sm">
+    <div class="relative bg-white rounded-2xl p-8 shadow-lg min-w-[320px] max-w-[90vw] text-center flex flex-col items-center border border-gray-200">
+        <button class="absolute right-4 top-4 text-2xl text-gray-500 hover:text-gray-700 transition-colors" id="adminCloseLogoutModal" tabindex="0" aria-label="Close">&times;</button>
+        <h3 class="text-xl font-semibold mb-4 text-gray-800">Confirm Logout</h3>
+        <p class="mb-6 text-gray-600">Are you sure you want to log out?</p>
+        <div class="flex justify-center gap-4">
+            <button class="px-6 py-2.5 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-colors" id="adminCancelLogout">Cancel</button>
+            <button class="px-6 py-2.5 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition-colors" id="adminConfirmLogout">Logout</button>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Container -->
+<div id="notificationContainer" class="fixed top-4 right-4 z-50"></div>
+@endsection
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Hamburger menu logic
-    var hamburger=document.getElementById('adminHamburgerMenu');
-    var dropdown=document.getElementById('adminDropdownMenu');
-    var openBtn=document.getElementById('adminOpenLogoutModal');
-    var modal=document.getElementById('adminLogoutConfirmModal');
-    var closeBtn=document.getElementById('adminCloseLogoutModal');
-    var cancelBtn=document.getElementById('adminCancelLogout');
-    var confirmBtn=document.getElementById('adminConfirmLogout');
-    var form=document.getElementById('adminLogoutForm');
+    var hamburger = document.getElementById('adminHamburgerMenu');
+    var dropdown = document.getElementById('adminDropdownMenu');
+    var openBtn = document.getElementById('adminOpenLogoutModal');
+    var modal = document.getElementById('adminLogoutConfirmModal');
+    var closeBtn = document.getElementById('adminCloseLogoutModal');
+    var cancelBtn = document.getElementById('adminCancelLogout');
+    var confirmBtn = document.getElementById('adminConfirmLogout');
+    var form = document.getElementById('adminLogoutForm');
 
     if (hamburger && dropdown) {
-        hamburger.onclick=function(e) {
+        hamburger.onclick = function(e) {
             e.stopPropagation();
-            var expanded=hamburger.getAttribute('aria-expanded')==='true';
-            hamburger.setAttribute('aria-expanded',  !expanded);
+            var expanded = hamburger.getAttribute('aria-expanded') === 'true';
+            hamburger.setAttribute('aria-expanded', !expanded);
             dropdown.classList.toggle('show');
-            if ( !expanded) dropdown.focus();
-        }
-
-        ;
+            if (!expanded) dropdown.focus();
+        };
 
         // Close dropdown when clicking outside
         document.addEventListener('click', function(e) {
-                if ( !dropdown.contains(e.target) && !hamburger.contains(e.target)) {
-                    dropdown.classList.remove('show');
-                    hamburger.setAttribute('aria-expanded', 'false');
-                }
+            if (!dropdown.contains(e.target) && !hamburger.contains(e.target)) {
+                dropdown.classList.remove('show');
+                hamburger.setAttribute('aria-expanded', 'false');
             }
-
-        );
+        });
 
         // Keyboard accessibility
         dropdown.addEventListener('keydown', function(e) {
-                if (e.key==='Escape') {
-                    dropdown.classList.remove('show');
-                    hamburger.setAttribute('aria-expanded', 'false');
-                    hamburger.focus();
-                }
+            if (e.key === 'Escape') {
+                dropdown.classList.remove('show');
+                hamburger.setAttribute('aria-expanded', 'false');
+                hamburger.focus();
             }
-
-        );
+        });
     }
 
-    // Logout modal logic (unchanged)
+    // Logout modal logic
     if (openBtn && modal) {
-        openBtn.onclick=function() {
-            modal.classList.add('show');
-        }
-
-        ;
+        openBtn.onclick = function() {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
     }
 
     if (closeBtn && modal) {
-        closeBtn.onclick=function() {
-            modal.classList.remove('show');
-        }
-
-        ;
+        closeBtn.onclick = function() {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
     }
 
     if (cancelBtn && modal) {
-        cancelBtn.onclick=function() {
-            modal.classList.remove('show');
-        }
-
-        ;
+        cancelBtn.onclick = function() {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
     }
 
     if (confirmBtn && form) {
-        confirmBtn.onclick=function() {
+        confirmBtn.onclick = function() {
             form.submit();
-        }
-
-        ;
+        };
     }
 
     window.addEventListener('click', function(event) {
-            if (event.target===modal) {
-                modal.classList.remove('show');
-            }
+        if (event.target === modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
+    });
 
-    );
-}
-
-);
+    // Archive Report Modal Logic
+    const archiveModal = document.getElementById('archiveReportConfirmModal');
+    const closeArchiveModal = document.getElementById('closeArchiveModal');
+    const cancelArchive = document.getElementById('cancelArchive');
+    const confirmArchive = document.getElementById('confirmArchive');
+    
+    function showArchiveModal() {
+        archiveModal.classList.remove('hidden');
+        archiveModal.classList.add('flex');
+    }
+    
+    function hideArchiveModal() {
+        archiveModal.classList.add('hidden');
+        archiveModal.classList.remove('flex');
+    }
+    
+    if (closeArchiveModal) {
+        closeArchiveModal.onclick = hideArchiveModal;
+    }
+    
+    if (cancelArchive) {
+        cancelArchive.onclick = hideArchiveModal;
+    }
+    
+    // Approve Report Modal Logic
+    const approveModal = document.getElementById('approveReportConfirmModal');
+    const closeApproveModal = document.getElementById('closeApproveModal');
+    const cancelApprove = document.getElementById('cancelApprove');
+    const confirmApprove = document.getElementById('confirmApprove');
+    
+    function showApproveModal() {
+        approveModal.classList.remove('hidden');
+        approveModal.classList.add('flex');
+    }
+    
+    function hideApproveModal() {
+        approveModal.classList.add('hidden');
+        approveModal.classList.remove('flex');
+    }
+    
+    if (closeApproveModal) {
+        closeApproveModal.onclick = hideApproveModal;
+    }
+    
+    if (cancelApprove) {
+        cancelApprove.onclick = hideApproveModal;
+    }
+    
+    // Notification System
+    window.showNotification = function(message, type = 'success') {
+        const container = document.getElementById('notificationContainer');
+        const notification = document.createElement('div');
+        notification.className = `p-4 mb-2 rounded-lg flex items-center justify-between min-w-[300px] max-w-[400px] shadow-lg animate-slideIn ${
+            type === 'success' 
+                ? 'bg-green-50 text-green-800 border-l-4 border-green-500' 
+                : 'bg-red-50 text-red-800 border-l-4 border-red-500'
+        }`;
+        
+        const messageSpan = document.createElement('span');
+        messageSpan.textContent = message;
+        
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'text-current opacity-70 hover:opacity-100 px-2 text-xl';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.onclick = function() {
+            notification.classList.add('animate-slideOut');
+            setTimeout(() => notification.remove(), 300);
+        };
+        
+        notification.appendChild(messageSpan);
+        notification.appendChild(closeBtn);
+        container.appendChild(notification);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.classList.add('animate-slideOut');
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, 5000);
+    };
+    
+    // Handle session flash messages
+    @if(session('success'))
+        window.showNotification('{{ session('success') }}', 'success');
+    @endif
+    
+    @if(session('error'))
+        window.showNotification('{{ session('error') }}', 'error');
+    @elseif($errors->any())
+        window.showNotification('{{ $errors->first() }}', 'error');
+    @endif
+    
+    // Close modals when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target === archiveModal) {
+            hideArchiveModal();
+        }
+        if (event.target === approveModal) {
+            hideApproveModal();
+        }
+        if (event.target === modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    });
+});
 
 document.addEventListener('DOMContentLoaded', function () {
     setTimeout(function () {
@@ -293,4 +261,36 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 10);
 });
 </script>
+
+<style>
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.animate-slideIn {
+    animation: slideIn 0.3s ease-out;
+}
+
+.animate-slideOut {
+    animation: slideOut 0.3s ease-out forwards;
+}
+</style>
 @endpush

@@ -39,7 +39,7 @@
         </div>
 
         @if($showReportDetails && !$showApproveConfirm && $selectedReport)
-            <div class="report-modal" id="reportDetailsModal">
+            <div class="report-modal show" id="reportDetailsModal">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h3>Report Details</h3>
@@ -200,7 +200,7 @@
         color: var(--admin-text-secondary);
     }
     .view-btn {
-        background: var(--admin-primary);
+        background: #1b4332; /* Forest green color */
         color: white;
         border: none;
         padding: 0.5rem 1rem;
@@ -210,10 +210,19 @@
         align-items: center;
         gap: 0.5rem;
         font-size: 0.9rem;
-        transition: background 0.2s;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     .view-btn:hover {
-        background: var(--admin-primary-dark);
+        background: #2d6a4f; /* Lighter forest green on hover */
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .view-btn:active {
+        background: #1b4332; /* Back to original color when active */
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     .report-content {
         color: var(--admin-text);
@@ -251,116 +260,61 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(30, 30, 30, 0.18);
-        backdrop-filter: blur(6px);
+        background: rgba(27, 67, 50, 0.15);
+        backdrop-filter: blur(4px);
         display: flex;
         align-items: center;
         justify-content: center;
         z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
     }
-    .modal-content {
-        background: var(--admin-bg);
-        border-radius: 1.5rem;
+    .report-modal.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    .report-modal .modal-content {
+        background: white;
+        border-radius: 1.2rem;
         width: 90%;
         max-width: 800px;
         max-height: 90vh;
         overflow-y: auto;
-        box-shadow: 0 12px 40px 0 rgba(27, 67, 50, 0.22), 0 2px 8px 0 rgba(27, 67, 50, 0.10);
-        border: 1px solid var(--admin-border);
+        box-shadow: 0 12px 40px rgba(27, 67, 50, 0.15);
+        border: 1px solid #e5e7eb;
+        transform: scale(0.95);
+        opacity: 0;
+        transition: transform 0.3s ease, opacity 0.3s ease;
     }
-
-    /* Add existing modal styles */
-    .approve-modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        backdrop-filter: blur(2px);
+    .report-modal.show .modal-content {
+        transform: scale(1);
+        opacity: 1;
     }
-
-    .approve-modal-content {
-        background: white;
-        border-radius: 12px;
-        width: 90%;
-        max-width: 400px;
-        border: 2px solid #4CAF50;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .approve-modal-content .modal-header {
+    .report-modal .modal-header {
         padding: 1.5rem;
-        border-bottom: 1px solid #eee;
-    }
-
-    .approve-modal-content .modal-body {
-        padding: 1.5rem;
-    }
-
-    .approve-modal-content .modal-footer {
-        padding: 1.5rem;
-        border-top: 1px solid #eee;
-        display: flex;
-        gap: 1rem;
-        justify-content: flex-end;
-    }
-
-    .approve-modal-content .cancel-btn,
-    .approve-modal-content .submit-btn {
-        padding: 0.5rem 1.5rem;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-        font-weight: 500;
-    }
-
-    .approve-modal-content .cancel-btn {
-        background: #f0f2f5;
-        color: #1a3d2b;
-    }
-
-    .approve-modal-content .submit-btn {
-        background: #4CAF50;
-        color: white;
-    }
-
-    .approve-modal-content .cancel-btn:hover {
-        background: #e4e6e9;
-    }
-
-    .approve-modal-content .submit-btn:hover {
-        background: #45a049;
-    }
-    .modal-header {
-        padding: 1.5rem;
-        border-bottom: 1px solid var(--admin-border);
+        border-bottom: 1px solid #e5e7eb;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: var(--admin-bg);
+        background: white;
         position: sticky;
         top: 0;
         z-index: 2;
-        box-shadow: 0 2px 8px rgba(27, 67, 50, 0.07);
-        border-top-left-radius: 1.5rem;
-        border-top-right-radius: 1.5rem;
+        border-top-left-radius: 1.2rem;
+        border-top-right-radius: 1.2rem;
     }
-    .modal-header h3 {
+    .report-modal .modal-header h3 {
         margin: 0;
-        color: var(--admin-primary);
+        color: #1b4332;
         font-size: 1.4rem;
         font-weight: 600;
     }
-    .close-btn {
+    .report-modal .close-btn {
         background: none;
         border: none;
         font-size: 1.2rem;
-        color: var(--admin-text-secondary);
+        color: #6b7280;
         cursor: pointer;
         width: 32px;
         height: 32px;
@@ -370,258 +324,120 @@
         justify-content: center;
         transition: all 0.2s;
     }
-    .close-btn:hover {
-        background: var(--admin-bg-alt);
-        color: var(--admin-primary);
+    .report-modal .close-btn:hover {
+        background: #f3f4f6;
+        color: #1b4332;
     }
-    .modal-body {
+    .report-modal .modal-body {
         padding: 1.5rem;
     }
-    .detail-section {
-        margin-bottom: 2rem;
-        background: var(--admin-bg);
-        border-radius: 1.1rem;
-        padding: 1.2rem;
-        box-shadow: 0 4px 18px rgba(27, 67, 50, 0.13), 0 1.5px 4px rgba(27, 67, 50, 0.07);
+    .report-modal .detail-section {
+        margin-bottom: 1.5rem;
+        background: white;
+        border-radius: 0.8rem;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e7eb;
     }
-    .detail-section h4 {
-        color: var(--admin-primary);
+    .report-modal .detail-section:last-child {
+        margin-bottom: 0;
+    }
+    .report-modal .detail-section h4 {
+        color: #1b4332;
         margin: 0 0 1rem;
         font-size: 1.1rem;
         font-weight: 600;
-    }
-    .detail-section p {
-        margin: 0.5rem 0;
-        color: var(--admin-text);
-        line-height: 1.5;
-    }
-    .post-preview {
-        background: var(--admin-bg);
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin-top: 0.5rem;
-    }
-
-    /* Post Card Styles */
-    .post-card {
-        background: white;
-        border-radius: 1.2rem;
-        box-shadow: 0 8px 32px rgba(27, 67, 50, 0.18), 0 2px 8px rgba(27, 67, 50, 0.10);
-        overflow: hidden;
-        margin-top: 1rem;
-    }
-
-    .post-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 15px;
-        border-bottom: 1px solid #eee;
-    }
-
-    .post-user-info {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .post-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-
-    .post-author {
-        font-weight: 600;
-        margin: 0;
-        font-size: 14px;
-    }
-
-    .post-date {
-        color: #65676B;
-        font-size: 12px;
-    }
-
-    .post-details {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 10px;
-        font-size: 13px;
-    }
-
-    .post-status {
-        display: inline-block;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-weight: bold;
-        font-size: 12px;
-        text-transform: uppercase;
-        color: white;
-    }
-
-    .post-status.found {
-        background-color: #4CAF50;
-    }
-
-    .post-status.not_found {
-        background-color: #F44336;
-    }
-
-    .post-breed,
-    .post-location,
-    .post-contact {
-        display: inline-block;
-        color: #65676B;
-        font-weight: 600;
-    }
-
-    .post-content {
-        padding: 15px;
-    }
-
-    .post-content h3 {
-        margin-top: 0;
-        margin-bottom: 10px;
-        color: #1c1e21;
-        font-size: 18px;
-    }
-
-    .post-description {
-        margin-top: 10px;
-        color: #1c1e21;
-        line-height: 1.5;
-        font-size: 15px;
-    }
-
-    .post-images {
-        position: relative;
-        width: 100%;
-        overflow: hidden;
-        margin-top: 1rem;
-    }
-
-    .image-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 4px;
-        width: 100%;
-    }
-
-    .image-grid.single-image {
-        grid-template-columns: 1fr;
-    }
-
-    .image-grid.two-images {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .image-grid.three-images {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: auto;
-    }
-
-    .image-grid.three-images .grid-item:first-child {
-        grid-row: span 2;
-    }
-
-    .grid-item {
-        position: relative;
-        width: 100%;
-        padding-bottom: 100%; /* Creates a square aspect ratio */
-        overflow: hidden;
-        cursor: pointer;
-    }
-
-    .grid-item img {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: contain; /* Changed from cover to contain */
-        background-color: #f8f9fa; /* Light background for images */
-    }
-
-    .more-indicator {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 24px;
-        font-weight: bold;
-    }
-
-    .deleted-post-message {
-        text-align: center;
-        padding: 2rem;
-        background: #f8f9fa;
-        border-radius: 8px;
-        color: #666;
-    }
-
-    .deleted-post-message i {
-        font-size: 2rem;
-        color: #dc3545;
-        margin-bottom: 1rem;
-    }
-
-    .deleted-post-message h3 {
-        margin: 0.5rem 0;
-        color: #333;
-    }
-
-    .deleted-post-message p {
-        margin: 0;
-        color: #666;
-    }
-
-    .modal-footer {
-        display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
-        padding: 1.2rem 1.5rem 1.5rem 1.5rem;
-        background: var(--admin-bg);
-        border-bottom-left-radius: 1.5rem;
-        border-bottom-right-radius: 1.5rem;
-    }
-    .archive-btn, .approve-btn {
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.5rem 1.2rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+    .report-modal .detail-section p {
+        margin: 0.75rem 0;
+        color: #374151;
+        line-height: 1.6;
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+    }
+    .report-modal .detail-section strong {
+        color: #1b4332;
+        font-weight: 600;
+        min-width: 120px;
+    }
+    .report-modal .modal-footer {
+        padding: 1.5rem;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+    .report-modal .archive-btn,
+    .report-modal .approve-btn {
+        padding: 0.5rem 1.5rem;
+        border-radius: 6px;
         border: none;
-        border-radius: 0.5rem;
-        font-size: 1rem;
         cursor: pointer;
-        transition: background 0.2s, color 0.2s;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
-    .archive-btn {
-        background: #f5f5f5;
-        color: #444;
+    .report-modal .archive-btn {
+        background: #f3f4f6;
+        color: #1b4332;
     }
-    .archive-btn:hover {
-        background: #e0e0e0;
-        color: #222;
+    .report-modal .approve-btn {
+        background: #1b4332;
+        color: white;
     }
-    .approve-btn {
-        background: #4CAF50;
-        color: #fff;
+    .report-modal .archive-btn:hover {
+        background: #e5e7eb;
     }
-    .approve-btn:hover {
-        background: #388e3c;
-        color: #fff;
+    .report-modal .approve-btn:hover {
+        background: #2d6a4f;
     }
-    .modal.show {
-        opacity: 1 !important;
-        visibility: visible !important;
+    /* Scrollbar Styles */
+    .report-modal .modal-content::-webkit-scrollbar {
+        width: 8px;
+    }
+    .report-modal .modal-content::-webkit-scrollbar-track {
+        background: #f3f4f6;
+        border-radius: 4px;
+    }
+    .report-modal .modal-content::-webkit-scrollbar-thumb {
+        background: #1b4332;
+        border-radius: 4px;
+    }
+    .report-modal .modal-content::-webkit-scrollbar-thumb:hover {
+        background: #2d6a4f;
+    }
+    /* Mobile Responsiveness */
+    @media (max-width: 640px) {
+        .report-modal .modal-content {
+            width: 95%;
+            margin: 1rem;
+        }
+        
+        .report-modal .modal-header {
+            padding: 1rem;
+        }
+        
+        .report-modal .modal-body {
+            padding: 1rem;
+        }
+        
+        .report-modal .modal-footer {
+            padding: 1rem;
+            flex-direction: column;
+        }
+        
+        .report-modal .archive-btn,
+        .report-modal .approve-btn {
+            width: 100%;
+            justify-content: center;
+        }
     }
     </style>
 </div>

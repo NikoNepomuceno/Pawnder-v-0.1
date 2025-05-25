@@ -3,69 +3,81 @@
 @section('content')
 <div id="pageFade" class="flex min-h-screen opacity-0 transition-opacity duration-500">
     <x-admin-side-bar />
-    <div class="flex-1 p-8">
-        <div class="dashboard-header-row mb-6">
-            <h1>Approved Reports</h1>
-        </div>
-        <div class="reports-container inline-block mx-auto max-w-fit bg-white border border-gray-200 rounded-xl shadow">
-            <div class="reports-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-check-circle"></i> Approved Reports</h2>
-                </div>
-                <div class="w-full">
-                    <table class="min-w-full w-full bg-white">
-                        <thead>
-                            <tr class="bg-gray-100">
-                                <th class="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                    Report ID
-                                </th>
-                                <th class="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                    Report Created
-                                </th>
-                                <th class="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                    Approved At
-                                </th>
-                                <th class="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                    Approved By
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            @forelse($approvedReports as $report)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        #{{ $report->id }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $report->created_at->format('M d, Y H:i') }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $report->reviewed_at->format('M d, Y H:i') }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        Admin
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                                        No approved reports found.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                @if($approvedReports->hasPages())
-                    <div class="mt-4">
-                        {{ $approvedReports->links() }}
-                    </div>
-                @endif
+    <div class="flex-1 p-8 bg-gray-50">
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Approved Reports</h1>
+            <div class="flex items-center space-x-4">
+                <span class="text-sm text-gray-500">Total: {{ $approvedReports->total() }}</span>
             </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                    <h2 class="text-xl font-semibold text-gray-800">Approved Reports</h2>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Report ID
+                            </th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Report Created
+                            </th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Approved At
+                            </th>
+                            <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Approved By
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @forelse($approvedReports as $report)
+                            <tr class="hover:bg-gray-50 transition-colors duration-150">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    #{{ $report->id }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $report->created_at->format('M d, Y H:i') }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $report->reviewed_at->format('M d, Y H:i') }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Admin
+                                    </span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="px-6 py-8 text-center text-sm text-gray-500">
+                                    <div class="flex flex-col items-center justify-center space-y-2">
+                                        <i class="fas fa-inbox text-gray-400 text-3xl"></i>
+                                        <p>No approved reports found.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            @if($approvedReports->hasPages())
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                    {{ $approvedReports->links() }}
+                </div>
+            @endif
         </div>
     </div>
 </div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         setTimeout(function () {
