@@ -1,30 +1,11 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="admin-dashboard">
-        <div class="dashboard-header-row">
+<div id="pageFade" class="flex min-h-screen opacity-0 transition-opacity duration-500">
+    <x-admin-side-bar />
+    <div class="flex-1 p-8">
+        <div class="dashboard-header-row mb-6">
             <h1>Admin Dashboard</h1>
-            <div class="admin-menu-wrapper">
-                <button class="admin-hamburger" id="adminHamburgerMenu" aria-label="Open menu" aria-haspopup="true" aria-expanded="false">
-                    <span class="hamburger-bar"></span>
-                    <span class="hamburger-bar"></span>
-                    <span class="hamburger-bar"></span>
-                </button>
-                <div class="admin-dropdown-menu" id="adminDropdownMenu" tabindex="-1">
-                    <form id="adminLogoutForm" method="POST" action="{{ route('admin.logout') }}">
-                        @csrf
-                        <button type="button" class="admin-dropdown-item" id="adminOpenLogoutModal">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </button>
-                    </form>
-                    <a href="{{ route('admin.reports.archived') }}" class="admin-dropdown-item">
-                        <i class="fas fa-archive"></i> Archived
-                    </a>
-                    <a href="{{ route('admin.reports.approved') }}" class="admin-dropdown-item">
-                        <i class="fas fa-check-circle"></i> Approved
-                    </a>
-                </div>
-            </div>
         </div>
         <div class="dashboard-stats-row">
             <livewire:admin.dashboard-stats />
@@ -39,6 +20,7 @@
             </div>
         </div>
     </div>
+</div>
 
     <!-- Logout Confirmation Modal -->
     <div id="adminLogoutConfirmModal" class="logout-modal" tabindex="-1" aria-modal="true" role="dialog">
@@ -304,5 +286,11 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 );
+
+document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(function () {
+        document.getElementById('pageFade').classList.add('opacity-100');
+    }, 10);
+});
 </script>
 @endpush

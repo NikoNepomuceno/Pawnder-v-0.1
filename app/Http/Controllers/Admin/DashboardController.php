@@ -129,28 +129,16 @@ class DashboardController extends Controller
      */
     public function approvedReports()
     {
-        \Log::info('Approved reports accessed', [
-            'user_id' => \Auth::id(),
-            'is_admin' => \Auth::user() ? \Auth::user()->is_admin : false,
-            'url' => \Request::fullUrl(),
-            'method' => \Request::method(),
-            'full_url' => \Request::fullUrl(),
-            'path_info' => \Request::getPathInfo(),
-            'request_uri' => $_SERVER['REQUEST_URI'] ?? null,
-            'script_name' => $_SERVER['SCRIPT_NAME'] ?? null,
-            'php_self' => $_SERVER['PHP_SELF'] ?? null
-        ]);
+        if (!\Illuminate\Support\Facades\Auth::user() || !\Illuminate\Support\Facades\Auth::user()->is_admin) {
+            abort(403, 'Unauthorized. Admin access required.');
+        }
 
-        // Temporary simple response for testing
-        return response('Approved reports page - This is a test response');
-        
-        /* Original code - keeping for reference
-        $approvedReports = PostReport::with(['post', 'reporter', 'reviewer'])
-            ->where('status', 'approved')
-            ->orderBy('approved_at', 'desc')
+        $approvedReports = PostReport::with(['reporter', 'reviewer'])
+            ->where('status', 'resolved')
+            ->whereNotNull('reviewed_at')
+            ->orderBy('reviewed_at', 'desc')
             ->paginate(10);
 
         return view('admin.approved-reports', compact('approvedReports'));
-        */
     }
 }
