@@ -74,10 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     notificationItem.classList.add('read');
                     updateNotificationCount();
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('Failed to mark notification as read', 'error');
             });
         });
     });
@@ -103,10 +99,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     updateNotificationCount();
                     showNotification('All notifications marked as read', 'success');
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('Failed to mark all notifications as read', 'error');
             });
         });
     }

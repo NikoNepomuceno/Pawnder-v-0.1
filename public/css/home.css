@@ -87,27 +87,20 @@ body::-webkit-scrollbar {
 
 /* Modal Styles */
 .modal {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
     overflow: auto;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
-}
-
-.modal[style*="display"] .modal-content {
-    transform: scale(1);
-    opacity: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .modal-content {
@@ -122,114 +115,39 @@ body::-webkit-scrollbar {
     overflow-y: auto;
     position: relative;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    transform: scale(0.95);
-    opacity: 0;
-    transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-/* Ensure comments modal content height is driven by its actual content, up to max-height */
-.comments-modal .modal-content {
-    height: fit-content;
+/* Create Post Modal Specific Styles */
+#createPostModal .modal-content {
+    background: #ffffff;
+    border: 1px solid rgba(63, 125, 88, 0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    color: #1a1a1a;
+    padding: 25px;
 }
 
-.close-modal {
-    position: absolute;
-    right: 20px;
-    top: 15px;
-    font-size: 24px;
-    font-weight: bold;
-    color: #3F7D58;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    width: 48px;
-    height: 48px;
-    min-width: 44px;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: transparent;
-    border: none;
-    padding: 0;
-    z-index: 2;
-}
-
-.close-modal:focus {
-    outline: 2px solid #3F7D58;
-    outline-offset: 2px;
-}
-
-.close-modal:hover {
-    background-color: rgba(63, 125, 88, 0.1);
-    color: #2d5a41;
-}
-
-.close-modal:active {
-    background-color: rgba(63, 125, 88, 0.2);
-    transform: scale(0.95);
-}
-
-body.dark-mode .modal {
-    background-color: rgba(20, 20, 20, 0.85);
-}
-
-body.dark-mode .modal-content {
-    background-color: #23272b !important;
-    color: #e0e0e0 !important;
-    border: 1px solid #333 !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
-}
-
-body.dark-mode .modal h2,
-body.dark-mode .modal h3 {
-    color: #8fd19e !important;
-}
-
-body.dark-mode .modal p,
-body.dark-mode .modal label,
-body.dark-mode .modal input,
-body.dark-mode .modal textarea,
-body.dark-mode .modal select {
-    color: #e0e0e0 !important;
-    background: #23272b !important;
-    border-color: #444 !important;
-}
-
-body.dark-mode .close-modal {
-    color: #8fd19e;
-}
-
-.modal h2,
-.modal h3 {
+#createPostModal h2 {
     color: #2d5a41;
     margin-bottom: 20px;
     font-size: 1.5rem;
     font-weight: 600;
 }
 
-.modal p {
-    color: #4b5563;
-    margin-bottom: 20px;
-    line-height: 1.5;
-}
-
-.form-group {
+#createPostModal .form-group {
     margin-bottom: 20px;
 }
 
-.form-group label {
+#createPostModal .form-group label {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
     color: #2d5a41;
 }
 
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="tel"],
-.form-group textarea,
-.form-group select {
+#createPostModal .form-group input[type="text"],
+#createPostModal .form-group textarea,
+#createPostModal .form-group select {
     width: 100%;
     padding: 12px;
     border: 1px solid #e0e0e0;
@@ -239,18 +157,16 @@ body.dark-mode .close-modal {
     background-color: #f8f9fa;
 }
 
-.form-group input[type="text"]:focus,
-.form-group input[type="email"]:focus,
-.form-group input[type="tel"]:focus,
-.form-group textarea:focus,
-.form-group select:focus {
+#createPostModal .form-group input[type="text"]:focus,
+#createPostModal .form-group textarea:focus,
+#createPostModal .form-group select:focus {
     outline: none;
     border-color: #3F7D58;
     box-shadow: 0 0 0 2px rgba(63, 125, 88, 0.1);
     background-color: #fff;
 }
 
-.form-actions {
+#createPostModal .form-actions {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
@@ -259,8 +175,8 @@ body.dark-mode .close-modal {
     border-top: 1px solid #e0e0e0;
 }
 
-.cancel-btn,
-.submit-btn {
+#createPostModal .cancel-btn,
+#createPostModal .submit-btn {
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
@@ -270,77 +186,85 @@ body.dark-mode .close-modal {
     font-size: 14px;
 }
 
-.cancel-btn {
-    background-color: #f0f2f5 !important;
-    color: #1a3d2b !important;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    font-size: 14px;
+#createPostModal .cancel-btn {
+    background-color: #f0f2f5;
+    color: #1a3d2b;
 }
 
-.submit-btn {
+#createPostModal .submit-btn {
     background-color: #3F7D58;
     color: white;
 }
 
-.cancel-btn:hover {
-    background-color: #e4e6e9 !important;
-    color: #1a3d2b !important;
-}
-
-body.dark-mode .cancel-btn {
-    background-color: #2d333b !important;
-    color: #e0e0e0 !important;
-}
-
-body.dark-mode .cancel-btn:hover {
-    background-color: #373e47 !important;
-    color: #fff !important;
-}
-
-#createPostModal .cancel-btn {
-    background-color: #f0f2f5 !important;
-    color: #1a3d2b !important;
-}
-
 #createPostModal .cancel-btn:hover {
-    background-color: #e4e6e9 !important;
-    color: #1a3d2b !important;
+    background-color: #e4e6e9;
 }
 
-body.dark-mode #createPostModal .cancel-btn {
-    background-color: #2d333b !important;
-    color: #e0e0e0 !important;
+#createPostModal .submit-btn:hover {
+    background-color: #2d5a41;
 }
 
-body.dark-mode #createPostModal .cancel-btn:hover {
-    background-color: #373e47 !important;
-    color: #fff !important;
+/* File Input Button Styles */
+#createPostModal .file-input-button {
+    background-color: rgba(63, 125, 88, 0.1);
+    color: #1a3d2b;
+    border: 1px solid #3F7D58;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
 }
 
-/* Custom scrollbar styles */
-.modal-content::-webkit-scrollbar {
-    display: none;
+#createPostModal .file-input-button:hover {
+    background-color: rgba(63, 125, 88, 0.2);
+    transform: translateY(-1px);
 }
 
-.modal-content {
-    -ms-overflow-style: none;
-    /* IE and Edge */
-    scrollbar-width: none;
-    /* Firefox */
+/* Photo Preview Styles */
+.photo-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
 }
 
-/* Mobile Responsive Styles */
-@media screen and (max-width: 768px) {
-    .modal-content {
-        width: 95%;
-        margin: 20px auto;
-        padding: 15px;
-    }
+.preview-image-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.remove-image {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+}
+
+.remove-image:hover {
+    background: #c0392b;
 }
 
 /* Post Cards */
@@ -943,48 +867,6 @@ body.dark-mode #createPostModal .cancel-btn:hover {
     color: #65676B;
 }
 
-/* Photo preview for post creation */
-.photo-preview {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.preview-image-container {
-    position: relative;
-    width: 100px;
-    height: 100px;
-}
-
-.preview-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 4px;
-}
-
-.remove-image {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
-    text-align: center;
-    cursor: pointer;
-    font-size: 14px;
-    padding: 0;
-}
-
-.remove-image:hover {
-    background: #c0392b;
-}
-
 /* Alert Messages */
 .alert {
     padding: 15px;
@@ -1091,103 +973,6 @@ body.dark-mode .post-option-btn:hover {
 
 body.dark-mode .post-date {
     color: #888 !important;
-}
-
-/* Create Post Modal Specific Styles */
-body.dark-mode #createPostModal .modal-content {
-    background: #23272b !important;
-    color: #e0e0e0 !important;
-    border: 1px solid #333 !important;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5) !important;
-}
-
-body.dark-mode #createPostModal h2 {
-    color: #8fd19e !important;
-}
-
-body.dark-mode #createPostModal label {
-    color: #8fd19e !important;
-}
-
-body.dark-mode #createPostModal input[type="text"],
-body.dark-mode #createPostModal textarea,
-body.dark-mode #createPostModal select {
-    background-color: #181a1b !important;
-    color: #e0e0e0 !important;
-    border: 1px solid #444 !important;
-}
-
-body.dark-mode #createPostModal input[type="text"]::placeholder,
-body.dark-mode #createPostModal textarea::placeholder {
-    color: #b0b0b0 !important;
-}
-
-body.dark-mode #createPostModal .file-input-button {
-    background-color: #23272b !important;
-    color: #ffffff !important;
-    border: 1px solid #8fd19e !important;
-    padding: 12px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-}
-
-body.dark-mode #createPostModal .file-input-button i {
-    font-size: 1em;
-}
-
-body.dark-mode #createPostModal .file-input-button:hover {
-    background-color: #1a3d2b !important;
-    color: #fff !important;
-}
-
-body.dark-mode #createPostModal .cancel-btn {
-    background-color: #23272b !important;
-    color: #8fd19e !important;
-    border: 1px solid #8fd19e !important;
-}
-
-body.dark-mode #createPostModal .submit-btn {
-    background-color: #8fd19e !important;
-    color: #23272b !important;
-    border: 1px solid #8fd19e !important;
-}
-
-body.dark-mode #createPostModal .cancel-btn:hover {
-    background-color: #181a1b !important;
-    color: #fff !important;
-}
-
-body.dark-mode #createPostModal .submit-btn:hover {
-    background-color: #6fcf97 !important;
-    color: #23272b !important;
-}
-
-body.dark-mode #createPostModal .photo-preview {
-    background: #181a1b !important;
-}
-
-body.dark-mode #createPostModal .preview-image-container {
-    border: 1px solid #444 !important;
-}
-
-body.dark-mode #createPostModal .remove-image-btn {
-    background: #8fd19e !important;
-    color: #23272b !important;
-}
-
-body.dark-mode #createPostModal .remove-image-btn:hover {
-    background: #6fcf97 !important;
-    color: #23272b !important;
-}
-
-body.dark-mode #createPostModal .close-modal {
-    color: #8fd19e !important;
 }
 
 /* Create Post Confirmation Modal */
@@ -1698,9 +1483,11 @@ body.dark-mode #createPostConfirmModal .submit-btn:hover {
     padding: 25px;
     border-radius: 12px;
     max-width: 500px;
+    max-height: fit-content;
     width: 90%;
     position: relative;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
 }
 
 .report-modal-content h2 {

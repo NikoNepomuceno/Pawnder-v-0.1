@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\ReactionHelper;
 
 class PostReactionController extends Controller
 {
@@ -32,6 +33,9 @@ class PostReactionController extends Controller
                 'reaction_type' => 'like',
             ]
         );
+
+        // Get the icon for the reaction using ReactionHelper
+        $icon = ReactionHelper::getReactionIcon('like');
 
         // Send notification to post owner only if not already notified
         if ($post->user_id !== Auth::id()) {
@@ -58,10 +62,11 @@ class PostReactionController extends Controller
 
         // Count likes only
         $likeCount = $post->fresh()->reactions()->where('reaction_type', 'like')->count();
-        
+
         return response()->json([
             'success' => true,
             'reaction' => $reaction,
+            'icon' => $icon,
             'total_reactions' => $likeCount,
         ]);
     }
@@ -78,10 +83,10 @@ class PostReactionController extends Controller
 
         // Count likes only
         $likeCount = $post->fresh()->reactions()->where('reaction_type', 'like')->count();
-        
+
         return response()->json([
             'success' => $deleted > 0,
             'total_reactions' => $likeCount,
         ]);
     }
-} 
+}

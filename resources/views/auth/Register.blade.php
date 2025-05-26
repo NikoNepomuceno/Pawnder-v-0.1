@@ -211,7 +211,6 @@
         function showPrivacyPolicy() {
             const modal = document.getElementById('privacyModal');
             if (!modal) {
-                console.error('Privacy modal element not found');
                 return;
             }
             modal.style.display = 'flex';
@@ -219,7 +218,6 @@
         function closePrivacyModal() {
             const modal = document.getElementById('privacyModal');
             if (!modal) {
-                console.error('Modal element not found when closing');
                 return;
             }
             modal.style.display = 'none';
