@@ -66,6 +66,7 @@ class PostComments extends Component
 
         $this->newComment = '';
         $this->loadComments();
+        $this->updateCommentCount();
     }
 
     public function startEdit($commentId)
@@ -95,6 +96,7 @@ class PostComments extends Component
             $this->editingCommentId = null;
             $this->editCommentContent = '';
             $this->loadComments();
+            $this->updateCommentCount();
         }
     }
 
@@ -126,6 +128,17 @@ class PostComments extends Component
             $this->replyingToCommentId = null;
             $this->replyContent = '';
             $this->loadComments();
+            $this->updateCommentCount();
+        }
+    }
+
+    public function deleteComment($commentId)
+    {
+        $comment = PostComment::find($commentId);
+        if ($comment && $comment->user_id === Auth::id()) {
+            $comment->delete();
+            $this->loadComments();
+            $this->updateCommentCount();
         }
     }
 

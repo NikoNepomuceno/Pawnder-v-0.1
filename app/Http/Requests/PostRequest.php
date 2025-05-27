@@ -33,7 +33,8 @@ class PostRequest extends FormRequest
             'status' => ['required', Rule::in(['not_found', 'found'])],
             'breed' => ['required', 'string', 'max:255'],
             'location' => ['required', 'string', 'max:255'],
-            'contact' => ['required', 'string', 'max:255'],
+            'mobile_number' => ['required', 'numeric'],
+            'email' => ['required', 'email', 'max:255'],
             'photo_urls' => ['required', 'array'],
             'photo_urls.*' => ['required', 'string', 'url', 'max:2048']
         ];
@@ -57,8 +58,10 @@ class PostRequest extends FormRequest
             'breed.max' => 'The breed name cannot exceed 255 characters.',
             'location.required' => 'Please provide the location.',
             'location.max' => 'The location cannot exceed 255 characters.',
-            'contact.required' => 'Please provide contact information.',
-            'contact.max' => 'The contact information cannot exceed 255 characters.',
+            'mobile_number.required' => 'Please provide a contact number.',
+            'mobile_number.numeric' => 'The contact number must be numeric.',
+            'email.required' => 'Please provide an email address.',
+            'email.email' => 'Please provide a valid email address.',
             'photo_urls.required' => 'Please upload at least one photo.',
             'photo_urls.array' => 'The photos must be provided as an array.',
             'photo_urls.*.required' => 'Each photo URL is required.',

@@ -14,6 +14,7 @@
 
 @section('content')
     <div class="content">
+        <div id="notificationContainer"></div>
         <div id="app-notification-container"></div>
         <div class="welcome-panel">
             <div class="welcome-content">
@@ -99,7 +100,7 @@
                                             <span class="post-status {{ $original->status }}">{{ ucfirst($original->status) }}</span>
                                             <span class="post-breed">Breed: {{ $original->breed }}</span>
                                             <span class="post-location">Location: {{ $original->location }}</span>
-                                            <span class="post-contact">Contact: {{ $original->contact }}</span>
+                                            <span class="post-contact">Contact Number: {{ $original->mobile_number }} | Email: {{ $original->email }}</span>
                                         </div>
                                         <div class="post-content">
                                             <h3>{{ $original->title }}</h3>
@@ -180,7 +181,7 @@
                                     <span class="post-status {{ $post->status }}">{{ ucfirst($post->status) }}</span>
                                     <span class="post-breed">Breed: {{ $post->breed }}</span>
                                     <span class="post-location">Location: {{ $post->location }}</span>
-                                    <span class="post-contact">Contact: {{ $post->contact }}</span>
+                                    <span class="post-contact">Contact Number: {{ $post->mobile_number }} | Email: {{ $post->email }}</span>
                                 </div>
                                 <div class="post-content">
                                     <h3>{{ $post->title }}</h3>
@@ -319,6 +320,7 @@
             <h2>Create a New Post</h2>
             <form id="createPostForm" action="{{ route('posts.store') }}" method="POST">
                 @csrf
+                <div id="createPostErrors" class="alert alert-danger" style="display:none;"></div>
                 <div class="form-group">
                     <label for="title">Post Title</label>
                     <input type="text" 
@@ -344,8 +346,12 @@
                     <input type="text" id="location" name="location" required>
                 </div>
                 <div class="form-group">
-                    <label for="contact">Contact Information</label>
-                    <input type="text" id="contact" name="contact" required>
+                    <label for="mobile_number">Contact Number</label>
+                    <input type="text" id="mobile_number" name="mobile_number" required pattern="[0-9]+" title="Contact number must be numeric">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
                 </div>
                 <div class="form-group">
                     <label for="description">Post Description</label>
@@ -435,6 +441,49 @@
     </div>
 
     <script>
+        function showNotification(message, type = 'success') {
+            const container = document.getElementById('notificationContainer');
+            if (!container) {
+                console.error('Notification container not found');
+                return;
+            }
+
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            const messageSpan = document.createElement('span');
+            messageSpan.textContent = message;
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'close-btn';
+            closeBtn.innerHTML = '&times;';
+            closeBtn.onclick = () => {
+                notification.classList.add('slide-out');
+                setTimeout(() => notification.remove(), 300);
+            };
+
+            notification.appendChild(messageSpan);
+            notification.appendChild(closeBtn);
+            container.appendChild(notification);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.classList.add('slide-out');
+                    setTimeout(() => notification.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        // Handle session flash messages
+        @if(session('success'))
+            showNotification('{{ session('success') }}', 'success');
+        @endif
+
+        @if(session('error'))
+            showNotification('{{ session('error') }}', 'error');
+        @endif
+
         function showModal(modal) {
             if (modal) {
                 console.log('Showing modal:', modal.id);
@@ -461,6 +510,14 @@
         }
 
         function validateAndShowConfirmModal() {
+            const form = document.getElementById('createPostForm');
+            if (form) {
+                // If the form is invalid, trigger browser validation and do not show the confirm modal
+                if (!form.checkValidity()) {
+                    form.reportValidity(); // This will show the browser's validation UI
+                    return;
+                }
+            }
             showModal(document.getElementById('createPostConfirmModal'));
         }
 
@@ -737,29 +794,355 @@
             }
         });
 
-        // Timer for taken down posts
-        function checkTakenDownPosts() {
-            const takenDownPosts = document.querySelectorAll('.post-card[data-taken-down]');
+        // --- Create Post Modal AJAX Submission ---
+        document.addEventListener('DOMContentLoaded', function () {
+            const createPostForm = document.getElementById('createPostForm');
+            const createPostErrors = document.getElementById('createPostErrors');
+            const confirmCreatePostBtn = document.getElementById('confirmCreatePostBtn');
+            const createPostConfirmModal = document.getElementById('createPostConfirmModal');
+            const createPostModal = document.getElementById('createPostModal');
 
-            takenDownPosts.forEach(post => {
-                const takenDownTime = new Date(post.getAttribute('data-taken-down'));
-                const now = new Date();
-                const elapsedSeconds = (now - takenDownTime) / 1000; // Convert to seconds
+            if (createPostForm) {
+                createPostForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    if (createPostErrors) {
+                        createPostErrors.style.display = 'none';
+                        createPostErrors.innerHTML = '';
+                    }
+                    const formData = new FormData(createPostForm);
+                    fetch(createPostForm.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    })
+                    .then(async response => {
+                        if (response.ok) {
+                            // Success: reload or close modal
+                            window.location.reload();
+                        } else {
+                            let data = {};
+                            try {
+                                data = await response.json();
+                            } catch {
+                                data.message = 'Something went wrong. Please try again.';
+                            }
+                            if (data.errors && createPostErrors) {
+                                createPostErrors.style.display = 'block';
+                                createPostErrors.innerHTML = Object.values(data.errors)
+                                    .map(errArr => `<div>${errArr.join('<br>')}</div>`)
+                                    .join('');
+                            } else if (data.message && createPostErrors) {
+                                createPostErrors.style.display = 'block';
+                                createPostErrors.innerHTML = `<div>${data.message}</div>`;
+                            }
+                            // Keep modal open
+                            if (createPostConfirmModal) hideModal(createPostConfirmModal);
+                            if (createPostModal) showModal(createPostModal);
+                        }
+                    })
+                    .catch(error => {
+                        if (createPostErrors) {
+                            createPostErrors.style.display = 'block';
+                            createPostErrors.innerHTML = '<div>Something went wrong. Please try again.</div>';
+                        }
+                        if (createPostConfirmModal) hideModal(createPostConfirmModal);
+                        if (createPostModal) showModal(createPostModal);
+                    });
+                });
+            }
+            if (confirmCreatePostBtn) {
+                confirmCreatePostBtn.onclick = function () {
+                    if (createPostForm) createPostForm.requestSubmit();
+                };
+            }
+        });
 
-                // console.log('Post ID:', post.getAttribute('data-post-id'));
-                // console.log('Taken down time:', takenDownTime);
-                // console.log('Current time:', now);
-                // console.log('Elapsed seconds:', elapsedSeconds);
-                if (elapsedSeconds >= 600) {
-                    // Check for 10 minutes
-                    post.style.display = 'none';
+        // Handle post options button clicks
+        document.addEventListener('DOMContentLoaded', function() {
+            // Close any open menus when clicking outside
+            document.addEventListener('click', function(event) {
+                const optionsMenus = document.querySelectorAll('.post-options-menu');
+                optionsMenus.forEach(menu => {
+                    if (!menu.contains(event.target) && !event.target.closest('.post-options-btn')) {
+                        menu.classList.remove('show');
+                    }
+                });
+            });
+
+            // Handle options button clicks
+            const optionsButtons = document.querySelectorAll('.post-options-btn');
+            optionsButtons.forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    const menuId = `post-options-menu-${this.dataset.postId}`;
+                    const menu = document.getElementById(menuId);
+                    
+                    // Close all other menus
+                    document.querySelectorAll('.post-options-menu').forEach(m => {
+                        if (m.id !== menuId) {
+                            m.classList.remove('show');
+                        }
+                    });
+                    
+                    // Toggle current menu
+                    menu.classList.toggle('show');
+                });
+            });
+        });
+
+        // Lightbox functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const lightboxModal = document.getElementById('lightbox-modal');
+            const lightboxImage = lightboxModal.querySelector('.lightbox-image');
+            const lightboxClose = lightboxModal.querySelector('.lightbox-close');
+            const lightboxPrev = lightboxModal.querySelector('.lightbox-prev');
+            const lightboxNext = lightboxModal.querySelector('.lightbox-next');
+            const lightboxCounter = lightboxModal.querySelector('.lightbox-counter');
+            
+            let currentPostImages = [];
+            let currentImageIndex = 0;
+            let lightboxPostId = null;
+
+            // Handle image clicks
+            document.querySelectorAll('.grid-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const postId = this.getAttribute('data-post-id');
+                    const index = parseInt(this.getAttribute('data-index'));
+                    
+                    lightboxPostId = postId;
+                    
+                    // Get all images for this post
+                    const postImages = Array.from(document.querySelectorAll(`.grid-item[data-post-id="${postId}"] img`))
+                        .map(item => item.src);
+                    
+                    // If there are more than 4 images, we need to fetch all image URLs
+                    if (document.querySelector(`.grid-item[data-post-id="${postId}"] .more-indicator`)) {
+                        // Fetch all image URLs from the server
+                        fetch(`/posts/${postId}/photos`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    currentPostImages = data.photo_urls;
+                                    openLightbox(postId, index);
+                                }
+                            })
+                            .catch(() => {
+                                // Fallback to the images we have
+                                currentPostImages = postImages;
+                                openLightbox(postId, index);
+                            });
+                    } else {
+                        currentPostImages = postImages;
+                        openLightbox(postId, index);
+                    }
+                });
+            });
+
+            function openLightbox(postId, index) {
+                lightboxPostId = postId;
+                currentImageIndex = index;
+                
+                updateLightboxImage();
+                lightboxModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+
+            function updateLightboxImage() {
+                lightboxImage.src = currentPostImages[currentImageIndex];
+                lightboxCounter.textContent = `${currentImageIndex + 1} / ${currentPostImages.length}`;
+                
+                // Show/hide prev/next buttons based on the number of images
+                lightboxPrev.style.display = currentPostImages.length > 1 ? 'flex' : 'none';
+                lightboxNext.style.display = currentPostImages.length > 1 ? 'flex' : 'none';
+            }
+
+            // Close lightbox
+            lightboxClose.addEventListener('click', function() {
+                lightboxModal.style.display = 'none';
+                document.body.style.overflow = '';
+            });
+
+            // Navigate to previous image
+            lightboxPrev.addEventListener('click', function() {
+                currentImageIndex = (currentImageIndex - 1 + currentPostImages.length) % currentPostImages.length;
+                updateLightboxImage();
+            });
+
+            // Navigate to next image
+            lightboxNext.addEventListener('click', function() {
+                currentImageIndex = (currentImageIndex + 1) % currentPostImages.length;
+                updateLightboxImage();
+            });
+
+            // Close lightbox when clicking outside the image
+            lightboxModal.addEventListener('click', function(event) {
+                if (event.target === lightboxModal) {
+                    lightboxModal.style.display = 'none';
+                    document.body.style.overflow = '';
                 }
             });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function(event) {
+                if (lightboxModal.style.display === 'flex') {
+                    if (event.key === 'Escape') {
+                        lightboxModal.style.display = 'none';
+                        document.body.style.overflow = '';
+                    } else if (event.key === 'ArrowLeft') {
+                        currentImageIndex = (currentImageIndex - 1 + currentPostImages.length) % currentPostImages.length;
+                        updateLightboxImage();
+                    } else if (event.key === 'ArrowRight') {
+                        currentImageIndex = (currentImageIndex + 1) % currentPostImages.length;
+                        updateLightboxImage();
+                    }
+                }
+            });
+        });
+
+        // Real-time comment count update
+        window.addEventListener('commentCountUpdated', event => {
+            const postId = event.detail ? event.detail.postId : undefined;
+            const count = event.detail ? event.detail.count : undefined;
+            
+            const commentCountElement = document.getElementById(`comment-count-${postId}`);
+            const commentTextElement = document.getElementById(`comment-text-${postId}`);
+            
+            if (commentCountElement && commentTextElement) {
+                commentCountElement.textContent = count;
+                commentTextElement.textContent = count == 1 ? 'Comment' : 'Comments';
+            }
+        });
+
+        // Report Post Form Submission Handler
+        document.addEventListener('DOMContentLoaded', function () {
+            const reportPostForm = document.getElementById('reportPostForm');
+            if (reportPostForm) {
+                reportPostForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const form = this;
+                    const formData = new FormData(form);
+                    const action = form.action;
+
+                    fetch(action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showNotification(data.message, 'success');
+                        } else {
+                            showNotification(data.message || 'Failed to report post.', 'error');
+                        }
+                        hideModal(document.getElementById('reportPostModal'));
+                    })
+                    .catch(() => {
+                        showNotification('Failed to report post. Please try again.', 'error');
+                        hideModal(document.getElementById('reportPostModal'));
+                    });
+                });
+            }
+        });
+
+        // Timer for taken down posts
+        // function checkTakenDownPosts() {
+        //     const takenDownPosts = document.querySelectorAll('.post-card[data-taken-down]');
+
+        //     takenDownPosts.forEach(post => {
+        //         const takenDownTime = new Date(post.getAttribute('data-taken-down'));
+        //         const now = new Date();
+        //         const elapsedSeconds = (now - takenDownTime) / 1000; // Convert to seconds
+
+        //         // console.log('Post ID:', post.getAttribute('data-post-id'));
+        //         // console.log('Taken down time:', takenDownTime);
+        //         // console.log('Current time:', now);
+        //         // console.log('Elapsed seconds:', elapsedSeconds);
+        //         if (elapsedSeconds >= 86400) { // Check for 24 hours (86400 seconds)
+        //             post.style.display = 'none';
+        //         }
+        //     });
+        // }
+
+        // // Run the check every second
+        // setInterval(checkTakenDownPosts, 1000);
+        // // Initial check
+        // checkTakenDownPosts();
+    </script>
+
+    <style>
+        #notificationContainer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            width: auto;
+            max-width: 90%;
         }
 
-        // Run the check every second
-        setInterval(checkTakenDownPosts, 1000);
-        // Initial check
-        checkTakenDownPosts();
-    </script>
+        .notification {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            background: #fff;
+            color: #222;
+            border-left: 6px solid #3F7D58;
+            animation: fadeIn 0.3s;
+            position: relative;
+            min-width: 280px;
+            max-width: 400px;
+            margin-bottom: 8px;
+        }
+
+        .notification.success {
+            border-left-color: #16a34a;
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .notification.error {
+            border-left-color: #dc2626;
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .notification .close-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-left: 16px;
+            transition: color 0.2s;
+        }
+
+        .notification .close-btn:hover {
+            color: #222;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-out {
+            animation: slideOut 0.3s forwards;
+        }
+
+        @keyframes slideOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+    </style>
 @endsection

@@ -99,7 +99,7 @@
                                                 <span class="post-status {{ $original->status }}">{{ ucfirst($original->status) }}</span>
                                                 <span class="post-breed">Breed: {{ $original->breed }}</span>
                                                 <span class="post-location">Location: {{ $original->location }}</span>
-                                                <span class="post-contact">Contact: {{ $original->contact }}</span>
+                                                <span class="post-contact">Contact Number: {{ $original->mobile_number }} | Email: {{ $original->email }}</span>
                                             </div>
 
                                             <div class="post-content">
@@ -159,7 +159,7 @@
                                         <span class="post-status {{ $post->status }}">{{ ucfirst($post->status) }}</span>
                                         <span class="post-breed">Breed: {{ $post->breed }}</span>
                                         <span class="post-location">Location: {{ $post->location }}</span>
-                                        <span class="post-contact">Contact: {{ $post->contact }}</span>
+                                        <span class="post-contact">Contact Number: {{ $post->mobile_number }} | Email: {{ $post->email }}</span>
                                     </div>
 
                                     <div class="post-content">
@@ -324,10 +324,12 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="post_contact"><i class="fas fa-phone" style="color: #3F7D58;"></i>Contact
-                        Information</label>
-                    <input type="text" id="post_contact" name="contact" required
-                        placeholder="Your contact details">
+                    <label for="post_contact"><i class="fas fa-phone" style="color: #3F7D58;"></i>Contact Number</label>
+                    <input type="text" id="post_contact" name="mobile_number" required placeholder="Your contact number" pattern="[0-9]+" title="Contact number must be numeric">
+                </div>
+                <div class="form-group">
+                    <label for="post_email"><i class="fas fa-envelope" style="color: #3F7D58;"></i>Email</label>
+                    <input type="email" id="post_email" name="email" required placeholder="Your email address">
                 </div>
                 <div class="form-group">
                     <label for="post_photos"><i class="fas fa-images" style="color: #3F7D58;"></i>Photos</label>

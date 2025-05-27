@@ -28,6 +28,7 @@
                                 <span class="comment-time">{{ $comment->created_at->diffForHumans() }}</span>
                                 @if(Auth::id() === $comment->user_id)
                                     <span class="comment-action" wire:click="startEdit({{ $comment->id }})">Edit</span>
+                                    <span class="comment-action delete-action" wire:click="deleteComment({{ $comment->id }})">Delete</span>
                                 @endif
                                 <span class="comment-action" wire:click="startReply({{ $comment->id }})">Reply</span>
                             </div>
@@ -195,6 +196,21 @@
             color: #65676b;
             padding: 20px;
             font-style: italic;
+        }
+
+        .comment-action {
+            font-size: 0.75em;
+            color: #65676b;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .comment-action:hover {
+            color: #3F7D58;
+        }
+
+        .delete-action:hover {
+            color: #dc3545;
         }
     </style>
 </div>

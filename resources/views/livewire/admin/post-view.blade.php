@@ -17,7 +17,7 @@
                 <span class="post-status {{ $post->status }}">{{ ucfirst($post->status) }}</span>
                 <span class="post-breed">Breed: {{ $post->breed }}</span>
                 <span class="post-location">Location: {{ $post->location }}</span>
-                <span class="post-contact">Contact: {{ $post->contact }}</span>
+                <span class="post-contact">Contact Number: {{ $post->mobile_number }} | Email: {{ $post->email }}</span>
             </div>
             <div class="post-content">
                 <h3>{{ $post->title }}</h3>
