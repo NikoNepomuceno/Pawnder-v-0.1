@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\PostReport;
 use App\Models\Post;
 use Livewire\WithPagination;
+use App\Notifications\PostTakenDown;
 
 class ReportsTable extends Component
 {
@@ -55,6 +56,9 @@ class ReportsTable extends Component
                     'is_taken_down' => true,
                     'status' => 'taken_down',
                 ]);
+
+                // Notify the post owner
+                $report->post->user->notify(new PostTakenDown($report->post));
 
                 // Update shared posts if any
                 $sharedPosts = Post::where('shared_post_id', $report->post->id)

@@ -10,6 +10,14 @@ class PostFeed extends Component
 {
     use WithPagination;
 
+    protected $listeners = ['refreshPost' => 'refreshPostData', 'refresh' => '$refresh'];
+
+    public function refreshPostData($postId)
+    {
+        // Trigger a full re-render of the component
+        $this->emitSelf('refresh');
+    }
+
     public function render()
     {
         $posts = Post::with([
