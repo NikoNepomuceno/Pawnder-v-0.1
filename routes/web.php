@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
     Route::post('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::post('/notifications/clear-read', [NotificationController::class, 'clearRead'])->name('notifications.clearRead');
 });
 
 // Add a route to get all photos for a post
@@ -69,13 +70,13 @@ Route::post('/resend-verification', [VerificationController::class, 'resend'])
     ->name('resend.verification');
 
 // Test route for debugging
-Route::get('/test-approved-reports', function() {
+Route::get('/test-approved-reports', function () {
     \Log::info('Test route accessed');
     return 'Test route works!';
 });
 
 // Test admin route without middleware
-Route::get('/test-admin-route', function() {
+Route::get('/test-admin-route', function () {
     \Log::info('Test admin route accessed', [
         'user' => \Auth::user(),
         'is_admin' => \Auth::user() ? \Auth::user()->is_admin : false

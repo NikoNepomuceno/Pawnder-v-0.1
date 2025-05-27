@@ -809,6 +809,60 @@
             background-color: #4a8d65;
             color: #fff !important;
         }
+
+        /* Notification Container (class for styling, id for JS) */
+        .notification-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-width: 320px;
+            max-width: 90vw;
+        }
+        /* Notification Alert Base */
+        .notification {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            background: #fff;
+            color: #222;
+            border-left: 6px solid #3F7D58;
+            animation: fadeIn 0.3s;
+            position: relative;
+            min-width: 280px;
+            max-width: 400px;
+            margin-bottom: 8px;
+        }
+        .notification.success, .notification.info {
+            border-left-color: #16a34a;
+            background: #f0fdf4;
+            color: #166534;
+        }
+        .notification.error   { border-left-color: #dc2626; background: #fef2f2; color: #991b1b; }
+        .notification .close-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-left: 16px;
+            transition: color 0.2s;
+        }
+        .notification .close-btn:hover {
+            color: #222;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px);}
+            to   { opacity: 1; transform: translateY(0);}
+        }
     </style>
     <script>
         // Apply dark mode on every page load if set in localStorage
@@ -1051,6 +1105,7 @@
     </script>
 
     @livewireScripts
+    @stack('scripts')
 </body>
 
 </html>

@@ -28,4 +28,12 @@ class NotificationController extends Controller
 
         return response()->json(['success' => true]);
     }
-} 
+
+    public function clearRead()
+    {
+        // Delete all notifications from the database
+        Auth::user()->notifications()->delete();
+
+        return response()->json(['success' => true]);
+    }
+}

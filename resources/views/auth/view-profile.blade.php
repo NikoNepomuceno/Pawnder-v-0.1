@@ -45,79 +45,91 @@
                     </div>
                 @else
                     @foreach ($posts as $post)
-                        <div class="post-card" data-post-id="{{ $post->id }}">
-                            @if ($post->is_flagged)
-                                <div class="flag-notification"><i class="fas fa-exclamation-triangle"></i>
-                                    {{ $post->flag_reason }}
-                                </div>
-                            @endif
-                            <!-- Shared Post Layout -->
-                            @if ($post->was_shared)
-                                <!-- Sharer's Post Header -->
+                        <div class="post-card {{ $post->is_flagged ? 'flagged-post' : '' }}" data-post-id="{{ $post->id }}" {{ $post->is_taken_down ? 'data-taken-down="' . $post->updated_at . '"' : '' }}>
+                            @if($post->is_taken_down)
                                 <div class="post-header">
                                     <div class="post-user-info">
-                                        <img src="{{ $post->sharedBy->profile_picture ?? asset('images/default-avatar.jpg') }}"
-                                            alt="Profile" class="post-avatar">
+                                        <img src="{{ $post->user->profile_picture ?? asset('images/default-profile.png') }}" alt="Profile" class="post-avatar">
                                         <div>
-                                            <h4 class="post-author">{{ $post->sharedBy->name }} <span
-                                                    style="font-weight:normal; color:#888;"><i
-                                                        class="fas fa-share-alt"
-                                                        style="margin-right: 4px;"></i>shared</span></h4>
+                                            <h4 class="post-author">{{ $post->user->username }}</h4>
                                             <span class="post-date">{{ $post->created_at->diffForHumans() }}</span>
                                         </div>
                                     </div>
-                                    <div class="post-actions profile-post-actions">
-                                        <button class="delete-btn">Delete</button>
-                                    </div>
                                 </div>
-                                @php $original = $post->originalPost; @endphp
-                                <!-- Original Post Content -->
-                                <div class="original-post-content">
-                                    @if ($original && !$original->trashed())
-                                        <!-- Original Post Creator's Post Header -->
-                                        <div class="post-header original-post-header">
-                                            <div class="post-user-info">
-                                                <img src="{{ $original->user->profile_picture ?? asset('images/default-profile.png') }}"
-                                                    alt="Profile" class="post-avatar">
-                                                <div>
-                                                    <h4 class="post-author">{{ $original->user->name }}</h4>
-                                                    <span
-                                                        class="post-date">{{ $original->created_at->diffForHumans() }}</span>
-                                                </div>
+                                <div class="violation-banner clean-takedown-banner">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span>This post has been taken down for violating community guidelines.</span>
+                                </div>
+                            @else
+                                @if($post->isShared())
+                                    <div class="post-header">
+                                        <div class="post-user-info">
+                                            <img src="{{ $post->sharedBy->profile_picture ?? asset('images/default-profile.png') }}" alt="Profile" class="post-avatar">
+                                            <div>
+                                                <h4 class="post-author">
+                                                    {{ $post->sharedBy->username }}
+                                                    <span class="post-name">({{ $post->sharedBy->username }})</span>
+                                                    <span><i class="fas fa-share-alt post-share-icon-margin"></i>shared</span>
+                                                </h4>
+                                                <span class="post-date">{{ $post->created_at->diffForHumans() }}</span>
                                             </div>
                                         </div>
-                                        <div class="post-details">
-                                            <span
-                                                class="post-status {{ $original->status }}">{{ ucfirst($original->status) }}</span>
-                                            <span class="post-breed">Breed: {{ $original->breed }}</span>
-                                            <span class="post-location">Location: {{ $original->location }}</span>
-                                            <span class="post-contact">Contact: {{ $original->contact }}</span>
+                                        <div class="post-actions profile-post-actions">
+                                            <button class="delete-btn">Delete</button>
                                         </div>
-                                        <div class="post-content">
-                                            <h3>{{ $original->title }}</h3>
-                                            <p class="post-description">{{ $original->description }}</p>
-                                        </div>
-                                        @if (count($original->photo_urls ?? []) > 0)
-                                            <div class="post-images">
-                                                <div
-                                                    class="image-grid {{ count($original->photo_urls) === 1 ? 'single-image' : '' }} {{ count($original->photo_urls) === 2 ? 'two-images' : '' }} {{ count($original->photo_urls) === 3 ? 'three-images' : '' }}">
-                                                    @foreach ($original->photo_urls as $index => $photo_url)
-                                                        @if ($index < 4)
-                                                            <div class="grid-item"
-                                                                data-post-id="{{ $original->id }}"
-                                                                data-index="{{ $index }}">
-                                                                <img src="{{ $photo_url }}" alt="Pet Photo">
-                                                                @if ($index === 3 && count($original->photo_urls) > 4)
-                                                                    <div class="more-indicator">
-                                                                        +{{ count($original->photo_urls) - 4 }}
-                                                                    </div>
-                                                                @endif
-                                                            </div>
-                                                        @endif
-                                                    @endforeach
+                                    </div>
+
+                                    @php
+                                        $original = $post->originalPost;
+                                    @endphp
+
+                                    @if($original && !$original->trashed())
+                                        <div class="original-post-content">
+                                            <div class="post-header original-post-header">
+                                                <div class="post-user-info">
+                                                    <img src="{{ $original->user->profile_picture ?? asset('images/default-avatar.jpg') }}" alt="Profile" class="post-avatar">
+                                                    <div>
+                                                        <h4 class="post-author">{{ $original->user->name }}</h4>
+                                                        <span class="post-date">{{ $original->created_at->diffForHumans() }}</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        @endif
+
+                                            <div class="post-details">
+                                                <span class="post-status {{ $original->status }}">{{ ucfirst($original->status) }}</span>
+                                                <span class="post-breed">Breed: {{ $original->breed }}</span>
+                                                <span class="post-location">Location: {{ $original->location }}</span>
+                                                <span class="post-contact">Contact: {{ $original->contact }}</span>
+                                            </div>
+
+                                            <div class="post-content">
+                                                <h3>{{ $original->title }}</h3>
+                                                <p class="post-description">{{ $original->description }}</p>
+                                            </div>
+
+                                            @if(count($original->photo_urls ?? []) > 0)
+                                                <div class="post-images">
+                                                    <div class="image-grid {{ count($original->photo_urls) === 1 ? 'single-image' : '' }} 
+                                                                      {{ count($original->photo_urls) === 2 ? 'two-images' : '' }} 
+                                                                      {{ count($original->photo_urls) === 3 ? 'three-images' : '' }}">
+                                                        @foreach($original->photo_urls as $index => $photo_url)
+                                                            @if($index < 4)
+                                                                <div class="grid-item" data-post-id="{{ $original->id }}" data-index="{{ $index }}">
+                                                                    <img src="{{ $photo_url }}" alt="Pet Photo">
+                                                                    @if($index === 3 && count($original->photo_urls) > 4)
+                                                                        <div class="more-indicator">+{{ count($original->photo_urls) - 4 }}</div>
+                                                                    @endif
+                                                                </div>
+                                                            @endif
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @elseif($original && $original->is_taken_down)
+                                        <div class="violation-banner">
+                                            <i class="fas fa-exclamation-triangle"></i>This post has been taken down for violating community guidelines.
+                                        </div>
                                     @else
                                         <div class="deleted-post-message">
                                             <i class="fas fa-trash-alt"></i>
@@ -125,128 +137,89 @@
                                             <p>The original post has been deleted by the author.</p>
                                         </div>
                                     @endif
-                                </div>
-                            @else
-                                <div class="post-header">
-                                    <div class="post-user-info">
-                                        <img src="{{ $post->user->profile_picture ?? asset('images/default-profile.png') }}"
-                                            alt="Profile" class="post-avatar">
-                                        <div>
-                                            <h4 class="post-author">{{ $post->user->name }}</h4>
-                                            <span class="post-date">{{ $post->created_at->diffForHumans() }}</span>
+                                @else
+                                    <div class="post-header">
+                                        <div class="post-user-info">
+                                            <img src="{{ $post->user->profile_picture ?? asset('images/default-profile.png') }}" alt="Profile" class="post-avatar">
+                                            <div>
+                                                <h4 class="post-author">
+                                                    {{ $post->user->username }}
+                                                    <span class="post-name">{{ $post->user->name }}</span>
+                                                </h4>
+                                                <span class="post-date">{{ $post->created_at->diffForHumans() }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="post-actions profile-post-actions">
+                                            <button class="edit-btn">Edit</button>
+                                            <button class="delete-btn">Delete</button>
                                         </div>
                                     </div>
-                                    <div class="post-actions profile-post-actions">
-                                        <button class="edit-btn">
-                                            Edit
-                                        </button>
-                                        <button class="delete-btn">Delete</button>
+
+                                    <div class="post-details">
+                                        <span class="post-status {{ $post->status }}">{{ ucfirst($post->status) }}</span>
+                                        <span class="post-breed">Breed: {{ $post->breed }}</span>
+                                        <span class="post-location">Location: {{ $post->location }}</span>
+                                        <span class="post-contact">Contact: {{ $post->contact }}</span>
                                     </div>
-                                </div>
-                                <div class="post-details">
-                                    <span class="post-status {{ $post->status }}">{{ ucfirst($post->status) }}</span>
-                                    <span class="post-breed">Breed: {{ $post->breed }}</span>
-                                    <span class="post-location">Location: {{ $post->location }}</span>
-                                    <span class="post-contact">Contact: {{ $post->contact }}</span>
-                                </div>
-                                <div class="post-images">
-                                    @if (count($post->photo_urls ?? []) > 0)
-                                        <div
-                                            class="image-grid {{ count($post->photo_urls) === 1 ? 'single-image' : '' }} {{ count($post->photo_urls) === 2 ? 'two-images' : '' }} {{ count($post->photo_urls) === 3 ? 'three-images' : '' }}">
-                                            @foreach ($post->photo_urls as $index => $photo_url)
-                                                @if ($index < 4)
-                                                    <div class="grid-item" data-post-id="{{ $post->id }}"
-                                                        data-index="{{ $index }}">
-                                                        <img src="{{ $photo_url }}" alt="Pet Photo">
-                                                        @if ($index === 3 && count($post->photo_urls) > 4)
-                                                            <div class="more-indicator">
-                                                                +{{ count($post->photo_urls) - 4 }}
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                @endif
-                                            @endforeach
+
+                                    <div class="post-content">
+                                        <h3>{{ $post->title }}</h3>
+                                        <p class="post-description">{{ $post->description }}</p>
+                                    </div>
+
+                                    @if(count($post->photo_urls ?? []) > 0)
+                                        <div class="post-images">
+                                            <div class="image-grid {{ count($post->photo_urls) === 1 ? 'single-image' : '' }} 
+                                                                  {{ count($post->photo_urls) === 2 ? 'two-images' : '' }} 
+                                                                  {{ count($post->photo_urls) === 3 ? 'three-images' : '' }}">
+                                                @foreach($post->photo_urls as $index => $photo_url)
+                                                    @if($index < 4)
+                                                        <div class="grid-item" data-post-id="{{ $post->id }}" data-index="{{ $index }}">
+                                                            <img src="{{ $photo_url }}" alt="Pet Photo">
+                                                            @if($index === 3 && count($post->photo_urls) > 4)
+                                                                <div class="more-indicator">+{{ count($post->photo_urls) - 4 }}</div>
+                                                            @endif
+                                                        </div>
+                                                    @endif
+                                                @endforeach
+                                            </div>
                                         </div>
                                     @endif
-                                </div>
-                                <div class="post-content">
-                                    <h3>{{ $post->title }}</h3>
-                                    <p class="post-description">{{ $post->description }}</p>
-                                </div>
-                            @endif
-                            @if (!$post->is_taken_down)
-                                <div class="post-stats">
-                                    <span class="reaction-count">
-                                        <i class="fas fa-heart"></i>
-                                        <span id="like-count-{{ $post->id }}">{{ $post->reaction_counts['like'] ?? 0 }}</span>
-                                    </span>
-                                    <span class="comment-count">
-                                        <span id="comment-count-{{ $post->id }}">{{ $post->comments_count ?? 0 }}</span>
-                                        <span id="comment-text-{{ $post->id }}">{{ ($post->comments_count ?? 0) == 1 ? 'Comment' : 'Comments' }}</span>
-                                    </span>
-                                    <span class="share-count">
-                                        <span id="share-count-{{ $post->id }}">{{ $post->share_count ?? 0 }}</span>
-                                        {{ ($post->share_count ?? 0) == 1 ? 'share' : 'shares' }}
-                                    </span>
-                                </div>
-                                <div class="post-actions">
-                                    <button
-                                        class="post-action-btn like-btn {{ $post->current_user_reaction === 'like' ? 'reacted' : '' }}"
-                                        data-post-id="{{ $post->id }}"
-                                        data-liked="{{ $post->current_user_reaction === 'like' ? '1' : '0' }}"
-                                        onclick="handleLike('{{ $post->id }}')">
-                                        <i class="fas fa-heart"></i>
-                                        <span>{{ $post->current_user_reaction === 'like' ? 'Liked' : 'Like' }}</span>
-                                    </button>
-                                    <button class="post-action-btn comment-btn" data-post-id="{{ $post->id }}"
-                                        onclick="showCommentModal('{{ $post->id }}')">
-                                        <i class="far fa-comment"></i> Comment
-                                    </button>
-                                    <button class="post-action-btn share-btn" data-post-id="{{ $post->id }}"
-                                        onclick="showShareModal('{{ $post->id }}')">
-                                        <i class="far fa-share-square"></i> Share
-                                    </button>
-                                </div>
-                            @else
-                                <div class="taken-down-message">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    <h3>This post has been taken down</h3>
-                                    <p>This post has been taken down due to a violation of our community guidelines.</p>
-                                </div>
-                            @endif
-                            <div class="post-reaction-panel" id="reaction-panel-{{ $post->id }}">
-                                <button class="reaction-icon" data-reaction="like"
-                                    data-post-id="{{ $post->id }}"><i class="fas fa-thumbs-up"></i></button>
-                                <button class="reaction-icon" data-reaction="love"
-                                    data-post-id="{{ $post->id }}"><i class="fas fa-heart"></i></button>
-                                <button class="reaction-icon" data-reaction="care"
-                                    data-post-id="{{ $post->id }}"><i class="fas fa-paw"></i></button>
-                                <button class="reaction-icon" data-reaction="wow"
-                                    data-post-id="{{ $post->id }}"><i class="fas fa-surprise"></i></button>
-                            </div>
-                            <!-- Comments Modal -->
-                            <div class="modal comments-modal" id="comments-modal-{{ $post->id }}">
-                                <div class="modal-content comments-modal-content">
-                                    <span class="close-modal">&times;</span>
-                                    <div class="comments-container">
-                                        <div class="comments-header">
-                                            <h3>Comments</h3>
-                                        </div>
-                                        <div class="comments-list" id="comments-list-{{ $post->id }}">
-                                            <!-- Comments will be loaded here -->
-                                        </div>
-                                        <form class="comment-form" data-post-id="{{ $post->id }}">
-                                            @csrf
-                                            <img src="{{ Auth::user()->profile_picture ?? asset('images/default-profile.png') }}"
-                                                alt="Profile" class="comment-avatar">
-                                            <input type="text" class="comment-input" placeholder="Write a comment..."
-                                                required>
-                                            <button type="submit" class="comment-submit"><i
-                                                    class="fas fa-paper-plane"></i></button>
-                                        </form>
+                                @endif
+
+                                @if(!$post->is_taken_down)
+                                    <div class="post-stats">
+                                        <span class="reaction-count">
+                                            <i class="fas fa-heart"></i>
+                                            <span id="like-count-{{ $post->id }}">{{ $post->reaction_counts['like'] ?? 0 }}</span>
+                                        </span>
+                                        <span class="comment-count">
+                                            <span id="comment-count-{{ $post->id }}">{{ $post->comments_count ?? 0 }}</span>
+                                            <span id="comment-text-{{ $post->id }}">{{ ($post->comments_count ?? 0) == 1 ? 'Comment' : 'Comments' }}</span>
+                                        </span>
+                                        <span class="share-count">
+                                            <span id="share-count-{{ $post->id }}">{{ $post->share_count ?? 0 }}</span>
+                                            {{ ($post->share_count ?? 0) == 1 ? 'share' : 'shares' }}
+                                        </span>
                                     </div>
-                                </div>
-                            </div>
+
+                                    <div class="post-actions">
+                                        <button class="post-action-btn like-btn {{ $post->current_user_reaction === 'like' ? 'reacted' : '' }}"
+                                                data-post-id="{{ $post->id }}"
+                                                data-liked="{{ $post->current_user_reaction === 'like' ? '1' : '0' }}"
+                                                onclick="handleLike('{{ $post->id }}')">
+                                            <i class="fas fa-heart"></i>
+                                            <span>{{ $post->current_user_reaction === 'like' ? 'Liked' : 'Like' }}</span>
+                                        </button>
+                                        <button class="post-action-btn comment-btn" data-post-id="{{ $post->id }}" onclick="showCommentModal('{{ $post->id }}')">
+                                            <i class="far fa-comment"></i>Comment
+                                        </button>
+                                        <button class="post-action-btn share-btn" data-post-id="{{ $post->id }}" onclick="showShareModal('{{ $post->id }}')">
+                                            <i class="far fa-share-square"></i>Share
+                                        </button>
+                                    </div>
+                                @endif
+                            @endif
                         </div>
                     @endforeach
                 @endif
@@ -1523,100 +1496,66 @@
 
         // Handle like functionality
         function handleLike(postId) {
-            const button=document.querySelector(`.like-btn[data-post-id="${postId}"]`);
-
-            const likeCount=document.getElementById(`like-count-$ {
-                    postId
-                }
-
-                `);
-            const isLiked=button.getAttribute('data-liked')==='1';
+            const button = document.querySelector(`.like-btn[data-post-id="${postId}"]`);
+            const likeCount = document.getElementById(`like-count-${postId}`);
+            const isLiked = button.getAttribute('data-liked') === '1';
 
             // Optimistic UI update
-            updateLikeUI(button, likeCount,  !isLiked);
+            updateLikeUI(button, likeCount, !isLiked);
 
-            const url=`/posts/$ {
-                postId
-            }
-
-            /reactions`;
-            const method=isLiked ? 'DELETE' : 'POST';
-
-            const body=isLiked ? null : JSON.stringify( {
-                    reaction_type: 'like'
-                }
-
-            );
+            const url = `/posts/${postId}/reactions`;
+            const method = isLiked ? 'DELETE' : 'POST';
+            const body = isLiked ? null : JSON.stringify({ reaction_type: 'like' });
 
             fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json'
-                    },
-                    body: body
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: body
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                if (data.total_reactions !== undefined && likeCount) {
+                    likeCount.textContent = data.total_reactions;
                 }
-
-            ) .then(response=> {
-                    if ( !response.ok) throw new Error('Network response was not ok');
-                    return response.json();
-                }
-
-            ) .then(data=> {
-                    if (data.total_reactions !==undefined && likeCount) {
-                        likeCount.textContent=data.total_reactions;
-                    }
-                }
-
-            ) .catch(error=> {
-                    // Revert UI on error
-                    updateLikeUI(button, likeCount, isLiked);
-                    showNotification('Failed to update reaction. Please try again.', 'error');
-                }
-
-            );
+            })
+            .catch(error => {
+                // Revert UI on error
+                updateLikeUI(button, likeCount, isLiked);
+                showNotification('Failed to update reaction. Please try again.', 'error');
+            });
         }
 
         // Helper function to update like UI
         function updateLikeUI(button, likeCount, shouldLike) {
-            if ( !button || !likeCount) return;
-
-            const currentCount=parseInt(likeCount.textContent) || 0;
-
+            if (!button || !likeCount) return;
+            const currentCount = parseInt(likeCount.textContent) || 0;
             if (shouldLike) {
                 button.setAttribute('data-liked', '1');
-                button.innerHTML='<i class="fas fa-heart"></i> Liked';
+                button.innerHTML = '<i class="fas fa-heart"></i> Liked';
                 button.classList.add('reacted');
-                likeCount.textContent=currentCount+1;
-            }
-
-            else {
+                likeCount.textContent = currentCount + 1;
+            } else {
                 button.setAttribute('data-liked', '0');
-                button.innerHTML='<i class="far fa-heart"></i> Like';
+                button.innerHTML = '<i class="far fa-heart"></i> Like';
                 button.classList.remove('reacted');
-                likeCount.textContent=Math.max(0, currentCount - 1);
+                likeCount.textContent = Math.max(0, currentCount - 1);
             }
         }
 
         // Show comment modal
         function showCommentModal(postId) {
-            const modal=document.getElementById(`comments-modal-$ {
-                    postId
-                }
-
-                `);
-
+            const modal = document.getElementById(`comments-modal-${postId}`);
             if (modal) {
                 showModal(modal);
-
                 // Load comments if not already loaded
-                const commentsList=document.getElementById(`comments-list-$ {
-                        postId
-                    }
-
-                    `);
-
+                const commentsList = document.getElementById(`comments-list-${postId}`);
                 if (commentsList && !commentsList.hasAttribute('data-loaded')) {
                     loadComments(postId);
                 }
@@ -1625,79 +1564,62 @@
 
         // Load comments
         function loadComments(postId) {
-            const commentsList=document.getElementById(`comments-list-$ {
-                    postId
+            const commentsList = document.getElementById(`comments-list-${postId}`);
+            if (!commentsList) return;
+
+            fetch(`/posts/${postId}/comments`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 }
-
-                `);
-            if ( !commentsList) return;
-
-            fetch(`/posts/$ {
-                    postId
-                }
-
-                /comments`, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                    }
-                }
-
-            ) .then(response=> response.json()) .then(data=> {
-                    if (data.comments) {
-                        commentsList.innerHTML=data.comments.map(comment=> `
-                <div class="comment">
-                    <img src="${comment.user.profile_picture || '/images/default-profile.png'}" alt="Profile" class="comment-avatar">
-                    <div class="comment-content">
-                        <div class="comment-header">
-                            <span class="comment-author">${comment.user.name}</span>
-                            <span class="comment-date">${comment.created_at}</span>
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.comments) {
+                    commentsList.innerHTML = data.comments.map(comment => `
+                        <div class="comment">
+                            <img src="${comment.user.profile_picture || '/images/default-profile.png'}" alt="Profile" class="comment-avatar">
+                            <div class="comment-content">
+                                <div class="comment-header">
+                                    <span class="comment-author">${comment.user.name}</span>
+                                    <span class="comment-date">${comment.created_at}</span>
+                                </div>
+                                <p class="comment-text">${comment.content}</p>
+                            </div>
                         </div>
-                        <p class="comment-text">${comment.content}</p>
-                    </div>
-                </div>
-            `).join('');
-                        commentsList.setAttribute('data-loaded', 'true');
-                    }
+                    `).join('');
+                    commentsList.setAttribute('data-loaded', 'true');
                 }
-
-            ) .catch(error=> {
-                    console.error('Error loading comments:', error);
-                    showNotification('Failed to load comments. Please try again.', 'error');
-                }
-
-            );
+            })
+            .catch(error => {
+                console.error('Error loading comments:', error);
+                showNotification('Failed to load comments. Please try again.', 'error');
+            });
         }
 
         // Show share modal
         function showShareModal(postId) {
-            const modal=document.getElementById('sharePostConfirmModal');
-
+            const modal = document.getElementById('sharePostConfirmModal');
             if (modal) {
-                window.postIdToShare=postId;
+                window.postIdToShare = postId;
                 showModal(modal);
             }
         }
 
         // Handle share confirmation
         function confirmSharePost() {
-            if ( !window.postIdToShare) {
-                showNotification('Invalid post ID', 'error');
+            if (!window.postIdToShare) {
+                showNotification('No post selected to share.', 'error');
                 return;
             }
 
-            const shareButton=document.querySelector(`.share-btn[data-post-id="${window.postIdToShare}"]`);
-
+            const shareButton = document.querySelector(`.share-btn[data-post-id="${window.postIdToShare}"]`);
             if (shareButton) {
-                shareButton.disabled=true;
-                shareButton.innerHTML='<i class="fas fa-spinner fa-spin"></i> Sharing...';
+                shareButton.disabled = true;
+                shareButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sharing...';
             }
 
-            fetch(`/posts/$ {
-                    window.postIdToShare
-                }
-
-                /share-in-app`, {
+            fetch(`/posts/${window.postIdToShare}/share-in-app`, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -1705,105 +1627,51 @@
                     'Accept': 'application/json'
                 }
             })
-            .then(async response=> {
-                let data= {}
-
-                ;
-
+            .then(async response => {
+                let data = {};
                 try {
-                    data=await response.json();
+                    data = await response.json();
+                } catch {
+                    const text = await response.text();
+                    data.message = text || 'Failed to share post';
                 }
 
-                catch {
-                    const text=await response.text();
-                    data.message=text || 'Failed to share post';
-                }
-
-                if ( !response.ok) {
+                if (!response.ok) {
                     showNotification(data.message || 'Failed to share post', 'error');
                     return;
                 }
 
-                if ( !data) return;
-
                 if (data.success) {
-                    showNotification('Post shared successfully!');
-
-                    const shareCount=document.getElementById(`share-count-$ {
-                            window.postIdToShare
-                        }
-
-                        `);
-
+                    showNotification('Post shared successfully!', 'success');
+                    const shareCount = document.getElementById(`share-count-${window.postIdToShare}`);
                     if (shareCount) {
-                        shareCount.textContent=data.share_count || (parseInt(shareCount.textContent || '0') + 1);
+                        shareCount.textContent = data.share_count || (parseInt(shareCount.textContent || '0') + 1);
                     }
-                }
-
-                else {
+                } else {
                     showNotification(data.message || 'Failed to share post', 'error');
                 }
             })
-            .catch(error=> {
+            .catch(error => {
                 console.error('Error sharing post:', error);
                 showNotification('Failed to share post. Please try again.', 'error');
             })
-            .finally(()=> {
+            .finally(() => {
                 if (shareButton) {
-                    shareButton.disabled=false;
-                    shareButton.innerHTML='<i class="far fa-share-square"></i> Share';
+                    shareButton.disabled = false;
+                    shareButton.innerHTML = '<i class="far fa-share-square"></i> Share';
                 }
-
                 hideModal(document.getElementById('sharePostConfirmModal'));
-                window.postIdToShare=null;
+                window.postIdToShare = null;
             });
-        }
-
-        // Show notification
-        function showNotification(message, type='success') {
-            // Check if notification container exists, if not create it
-            let container=document.querySelector('.notification-container');
-
-            if ( !container) {
-                container=document.createElement('div');
-                container.className='notification-container';
-                document.body.appendChild(container);
-            }
-
-            // Create notification element
-            const notification=document.createElement('div');
-
-            notification.className=`notification $ {
-                type
-            }
-
-            `;
-
-            notification.innerHTML=` <div class="notification-content"><i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i><span>$ {
-                message
-            }
-
-            </span></div>`;
-
-            // Add to container
-            container.appendChild(notification);
-
-            // Remove after 3 seconds
-            setTimeout(()=> {
-                notification.classList.add('fade-out');
-                setTimeout(()=> notification.remove(), 300);
-            }, 3000);
         }
 
         // Add event listeners when document is loaded
         document.addEventListener('DOMContentLoaded', function() {
             // Event delegation for like buttons
             document.addEventListener('click', function(e) {
-                const likeButton=e.target.closest('.like-btn');
-
+                const likeButton = e.target.closest('.like-btn');
                 if (likeButton) {
-                    const postId=likeButton.getAttribute('data-post-id');
-
+                    const postId = likeButton.getAttribute('data-post-id');
                     if (postId) {
                         handleLike(postId);
                     }
@@ -1814,84 +1682,71 @@
             document.addEventListener('submit', function(e) {
                 if (e.target.classList.contains('comment-form')) {
                     e.preventDefault();
-                    const postId=e.target.getAttribute('data-post-id');
-                    const input=e.target.querySelector('.comment-input');
-                    const content=input.value.trim();
+                    const postId = e.target.getAttribute('data-post-id');
+                    const input = e.target.querySelector('.comment-input');
+                    const content = input.value.trim();
 
-                    if ( !content) return;
+                    if (!content) return;
 
-                    fetch(`/posts/$ {
-                            postId
-                        }
+                    fetch(`/posts/${postId}/comments`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ content })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            input.value = '';
+                            loadComments(postId);
 
-                        /comments`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify( {
-                                    content
-                                }
-
-                            )
-                        }
-
-                    ) .then(response=> response.json()) .then(data=> {
-                            if (data.success) {
-                                input.value='';
-                                loadComments(postId);
-
-                                // Update comment count
-                                const commentCount=document.getElementById(`comment-count-$ {
-                                        postId
-                                    }
-
-                                    `);
-
-                                const commentText=document.getElementById(`comment-text-$ {
-                                        postId
-                                    }
-
-                                    `);
-
-                                if (commentCount && commentText) {
-                                    const newCount=parseInt(commentCount.textContent) + 1;
-                                    commentCount.textContent=newCount;
-                                    commentText.textContent=newCount===1 ? 'Comment' : 'Comments';
-                                }
+                            // Update comment count
+                            const commentCount = document.getElementById(`comment-count-${postId}`);
+                            const commentText = document.getElementById(`comment-text-${postId}`);
+                            if (commentCount && commentText) {
+                                const newCount = parseInt(commentCount.textContent) + 1;
+                                commentCount.textContent = newCount;
+                                commentText.textContent = newCount === 1 ? 'Comment' : 'Comments';
                             }
-
-                            else {
-                                showNotification(data.message || 'Failed to post comment', 'error');
-                            }
+                        } else {
+                            showNotification(data.message || 'Failed to post comment', 'error');
                         }
-
-                    ) .catch(error=> {
-                            console.error('Error posting comment:', error);
-                            showNotification('Failed to post comment. Please try again.', 'error');
-                        }
-
-                    );
+                    })
+                    .catch(error => {
+                        console.error('Error posting comment:', error);
+                        showNotification('Failed to post comment. Please try again.', 'error');
+                    });
                 }
             });
 
             // Share confirmation button
-            const confirmShareBtn=document.getElementById('confirmSharePostBtn');
-
+            const confirmShareBtn = document.getElementById('confirmSharePostBtn');
             if (confirmShareBtn) {
                 confirmShareBtn.addEventListener('click', confirmSharePost);
             }
 
             // Cancel share button
-            const cancelShareBtn=document.getElementById('cancelSharePostBtn');
-
+            const cancelShareBtn = document.getElementById('cancelSharePostBtn');
             if (cancelShareBtn) {
-                cancelShareBtn.addEventListener('click', ()=> {
+                cancelShareBtn.addEventListener('click', () => {
                     hideModal(document.getElementById('sharePostConfirmModal'));
-                    window.postIdToShare=null;
+                    window.postIdToShare = null;
                 });
+            }
+        });
+
+        // Livewire event listener for comment count updates
+        window.addEventListener('commentCountUpdated', event => {
+            const postId = event.detail ? event.detail.postId : undefined;
+            const count = event.detail ? event.detail.count : undefined;
+            const commentCountElement = document.getElementById(`comment-count-${postId}`);
+            const commentTextElement = document.getElementById(`comment-text-${postId}`);
+            if (commentCountElement && commentTextElement) {
+                commentCountElement.textContent = count;
+                commentTextElement.textContent = count == 1 ? 'Comment' : 'Comments';
             }
         });
     </script>

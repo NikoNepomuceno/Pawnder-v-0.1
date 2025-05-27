@@ -165,6 +165,14 @@ class PostController extends Controller
     public function shareInApp(Request $request, Post $post): JsonResponse
     {
         try {
+            // Check if user is trying to share their own post
+            if ($post->user_id === Auth::id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You cannot share your own post'
+                ], 400);
+            }
+
             $result = $this->postService->shareInApp($post);
             return response()->json([
                 'success' => true,

@@ -1800,7 +1800,56 @@ body.dark-mode .report-modal-content .close-modal {
 }
 
 .report-post-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     color: #e41e3f !important;
+    background: #fff0f3;
+    border: 1px solid #e41e3f;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 4px rgba(228, 30, 63, 0.05);
+}
+
+.report-post-btn i {
+    margin-right: 6px;
+    font-size: 1.1em;
+}
+
+.report-post-btn:hover, .report-post-btn:focus {
+    background: #fbe6ea;
+    color: #e41e3f !important;
+    border-color: #e41e3f;
+    outline: none;
+}
+
+.report-post-btn:active {
+    background: #b71c36;
+    color: #fff !important;
+    border-color: #b71c36;
+}
+
+body.dark-mode .report-post-btn {
+    background: #2a1a1d;
+    color: #ff6f91 !important;
+    border: 1px solid #ff6f91;
+    box-shadow: 0 1px 4px rgba(255, 111, 145, 0.08);
+}
+
+body.dark-mode .report-post-btn:hover, body.dark-mode .report-post-btn:focus {
+    background: #3a1d22;
+    color: #ff6f91 !important;
+    border-color: #ff6f91;
+}
+
+body.dark-mode .report-post-btn:active {
+    background: #b71c36;
+    color: #fff !important;
+    border-color: #b71c36;
 }
 
 /* .flagged-post is already defined */
