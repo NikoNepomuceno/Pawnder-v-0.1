@@ -125,6 +125,14 @@ body::-webkit-scrollbar {
     border-radius: 12px;
     color: #1a1a1a;
     padding: 25px;
+    /* Hide scrollbars */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Hide scrollbars for webkit browsers */
+#createPostModal .modal-content::-webkit-scrollbar {
+    display: none;
 }
 
 #createPostModal h2 {
@@ -136,6 +144,28 @@ body::-webkit-scrollbar {
 
 #createPostModal .form-group {
     margin-bottom: 20px;
+}
+
+#createPostModal .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+#createPostModal .form-group:has(#description),
+#createPostModal .description-group {
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+#createPostModal textarea {
+    min-height: 120px;
+    resize: vertical;
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+    font-family: inherit;
+    line-height: 1.5;
 }
 
 #createPostModal .form-group label {
@@ -237,34 +267,70 @@ body::-webkit-scrollbar {
     position: relative;
     width: 100px;
     height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .preview-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 4px;
+    border-radius: 8px;
 }
 
-.remove-image {
+.remove-image-btn {
     position: absolute;
-    top: -8px;
-    right: -8px;
+    top: 4px;
+    right: 4px;
     background: #e74c3c;
     color: white;
     border: none;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
-    text-align: center;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px;
+    font-weight: bold;
     padding: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.remove-image-btn:hover {
+    background: #c0392b;
+    transform: scale(1.1);
+}
+
+/* Legacy support for old class name */
+.remove-image {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    z-index: 10;
 }
 
 .remove-image:hover {
     background: #c0392b;
+    transform: scale(1.1);
 }
 
 /* Post Cards */
@@ -667,13 +733,7 @@ body::-webkit-scrollbar {
     align-items: center;
     justify-content: center;
     font-size: 18px;
-    transition: transform 0.2s, background-color 0.2s;
     position: relative;
-}
-
-.reaction-icon:hover {
-    transform: scale(1.2);
-    background-color: #F0F2F5;
 }
 
 .reaction-icon.active {
@@ -912,6 +972,26 @@ body::-webkit-scrollbar {
 
 .close-comments-btn:hover {
     background-color: #F0F2F5;
+}
+
+/* Dark Mode for Welcome Panel */
+body.dark-mode .welcome-panel {
+    background: #2d5a41 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+body.dark-mode .welcome-content h2 {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .create-post-btn {
+    background-color: #8fd19e !important;
+    color: #23272b !important;
+}
+
+body.dark-mode .create-post-btn:hover {
+    background-color: #6fcf97 !important;
+    color: #23272b !important;
 }
 
 /* Dark Mode for Posts */
@@ -1255,6 +1335,152 @@ body.dark-mode #createPostModal .file-input-button:hover {
     /* Ensure text stays white on hover */
 }
 
+/* Dark Mode for Create Post Modal - Complete Styling */
+body.dark-mode #createPostModal .modal-content {
+    background: #23272b !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #333 !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+    /* Hide scrollbars in dark mode */
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+/* Hide scrollbars for webkit browsers in dark mode */
+body.dark-mode #createPostModal .modal-content::-webkit-scrollbar {
+    display: none !important;
+}
+
+body.dark-mode #createPostModal h2 {
+    color: #8fd19e !important;
+}
+
+body.dark-mode #createPostModal .form-group label {
+    color: #8fd19e !important;
+}
+
+body.dark-mode #createPostModal .form-group input[type="text"],
+body.dark-mode #createPostModal .form-group input[type="email"],
+body.dark-mode #createPostModal .form-group textarea,
+body.dark-mode #createPostModal .form-group select {
+    background-color: #1a1d20 !important;
+    border-color: #444 !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode #createPostModal .form-group input[type="text"]:hover,
+body.dark-mode #createPostModal .form-group input[type="email"]:hover,
+body.dark-mode #createPostModal .form-group textarea:hover,
+body.dark-mode #createPostModal .form-group select:hover {
+    background-color: #1a1d20 !important;
+    border-color: #666 !important;
+}
+
+body.dark-mode #createPostModal .form-group input[type="text"]:focus,
+body.dark-mode #createPostModal .form-group input[type="email"]:focus,
+body.dark-mode #createPostModal .form-group textarea:focus,
+body.dark-mode #createPostModal .form-group select:focus {
+    border-color: #8fd19e !important;
+    box-shadow: 0 0 0 2px rgba(143, 209, 158, 0.1) !important;
+    background-color: #1a1d20 !important;
+}
+
+body.dark-mode #createPostModal .form-group input::placeholder,
+body.dark-mode #createPostModal .form-group textarea::placeholder {
+    color: #666 !important;
+}
+
+body.dark-mode #createPostModal .form-actions {
+    border-top: 1px solid #333 !important;
+}
+
+body.dark-mode #createPostModal .cancel-btn {
+    background-color: #23272b !important;
+    color: #8fd19e !important;
+    border: 1px solid #8fd19e !important;
+}
+
+body.dark-mode #createPostModal .cancel-btn:hover {
+    background-color: #181a1b !important;
+    color: #fff !important;
+}
+
+body.dark-mode #createPostModal .submit-btn {
+    background-color: #8fd19e !important;
+    color: #23272b !important;
+    border: 1px solid #8fd19e !important;
+}
+
+body.dark-mode #createPostModal .submit-btn:hover {
+    background-color: #6fcf97 !important;
+    color: #23272b !important;
+}
+
+body.dark-mode #createPostModal .close-modal {
+    color: #8fd19e !important;
+}
+
+body.dark-mode #createPostModal .close-modal:hover {
+    color: #6fcf97 !important;
+}
+
+/* Dark Mode for Photo Preview */
+body.dark-mode #createPostModal .photo-preview {
+    background: transparent !important;
+}
+
+body.dark-mode #createPostModal .preview-image-container {
+    border: 1px solid #444 !important;
+    border-radius: 4px !important;
+}
+
+body.dark-mode #createPostModal .remove-image-btn,
+body.dark-mode #createPostModal .remove-image {
+    background: #e74c3c !important;
+    color: white !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark-mode #createPostModal .remove-image-btn:hover,
+body.dark-mode #createPostModal .remove-image:hover {
+    background: #c0392b !important;
+    transform: scale(1.1) !important;
+}
+
+/* Dark Mode for Error Messages */
+body.dark-mode #createPostModal .alert {
+    background-color: #2d1b1b !important;
+    color: #ff6b6b !important;
+    border: 1px solid #ff6b6b !important;
+}
+
+body.dark-mode #createPostModal .alert-danger {
+    background-color: #2d1b1b !important;
+    color: #ff6b6b !important;
+    border-left: 4px solid #ff6b6b !important;
+}
+
+/* Dark Mode for Modal Backdrop */
+body.dark-mode .modal {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* File Input Container Styling */
+#createPostModal .file-input-container {
+    display: inline-block;
+    width: auto;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Dark Mode for File Input Styling */
+body.dark-mode #createPostModal .file-input-container {
+    background: transparent !important;
+    border: none !important;
+}
+
 /* No need for a separate body.dark-mode #createPostModal .file-input-button:hover i if color inherits. */
 /* If icon color doesn't inherit on hover in dark mode, uncomment below: */
 /*
@@ -1475,6 +1701,16 @@ body.dark-mode #createPostConfirmModal .submit-btn {
 body.dark-mode #createPostConfirmModal .submit-btn:hover {
     background-color: #6fcf97 !important;
     color: #23272b !important;
+}
+
+/* Dark Mode for Create Post Confirmation Modal Close Button */
+body.dark-mode #createPostConfirmModal .close-modal {
+    color: #8fd19e !important;
+}
+
+body.dark-mode #createPostConfirmModal .close-modal:hover {
+    background-color: #2d3135 !important;
+    color: #6fcf97 !important;
 }
 
 /* Report Modal Styles */

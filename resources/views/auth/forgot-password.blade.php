@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password - Pawnder</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/auth/forgot-password.css') }}">
 </head>
 
@@ -33,8 +34,11 @@
                 @enderror
             </div>
 
-            <button type="submit">
-                Send Password Reset Link
+            <button type="submit" id="resetBtn">
+                <span class="btn-text">Send Password Reset Link</span>
+                <span class="btn-loading" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i> Sending...
+                </span>
             </button>
         </form>
 
@@ -42,6 +46,26 @@
             <a href="{{ route('login') }}">Back to Login</a>
         </div>
     </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function (e) {
+            const resetBtn = document.getElementById('resetBtn');
+            const btnText = resetBtn.querySelector('.btn-text');
+            const btnLoading = resetBtn.querySelector('.btn-loading');
+            const emailInput = document.getElementById('email');
+
+            // Basic email validation
+            if (!emailInput.value.trim()) {
+                e.preventDefault();
+                return;
+            }
+
+            // Show loading state
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline-block';
+            resetBtn.disabled = true;
+        });
+    </script>
 </body>
 
 </html>

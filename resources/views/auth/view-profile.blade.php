@@ -46,36 +46,102 @@
                 @else
                     @foreach ($posts as $post)
                         <div class="post-card {{ $post->is_flagged ? 'flagged-post' : '' }}" data-post-id="{{ $post->id }}" {{ $post->is_taken_down ? 'data-taken-down="' . $post->updated_at . '"' : '' }}>
-                            @if($post->is_taken_down)
-                                <div class="post-header">
-                                    <div class="post-user-info">
-                                        <img src="{{ $post->user->profile_picture ?? asset('images/default-profile.png') }}" alt="Profile" class="post-avatar">
-                                        <div>
-                                            <h4 class="post-author">{{ $post->user->username }}</h4>
-                                            <span class="post-date">{{ $post->created_at->diffForHumans() }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="violation-banner clean-takedown-banner">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    <span>This post has been taken down for violating community guidelines.</span>
-                                </div>
-                            @else
-                                @if($post->isShared())
+                            @php
+                                $takedownInfo = $post->getTakedownInfo();
+                            @endphp
+
+                            @if($takedownInfo)
+                                @if($takedownInfo['is_shared_content_taken_down'])
+                                    {{-- Shared post where original content is taken down --}}
                                     <div class="post-header">
                                         <div class="post-user-info">
-                                            <img src="{{ $post->sharedBy->profile_picture ?? asset('images/default-profile.png') }}" alt="Profile" class="post-avatar">
+                                            <img src="{{ $takedownInfo['sharer_user']->profile_picture ?? asset('images/default-profile.png') }}"
+                                                alt="Profile" class="post-avatar">
                                             <div>
                                                 <h4 class="post-author">
-                                                    {{ $post->sharedBy->username }}
-                                                    <span class="post-name">({{ $post->sharedBy->username }})</span>
+                                                    {{ $takedownInfo['sharer_user']->username }}
+                                                    <span class="post-name">({{ $takedownInfo['sharer_user']->name }})</span>
                                                     <span><i class="fas fa-share-alt post-share-icon-margin"></i>shared</span>
                                                 </h4>
                                                 <span class="post-date">{{ $post->created_at->diffForHumans() }}</span>
                                             </div>
                                         </div>
                                         <div class="post-actions profile-post-actions">
-                                            <button class="delete-btn">Delete</button>
+                                            <div class="post-dropdown">
+                                                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
+                                                    <i class="fas fa-ellipsis-h"></i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <button class="dropdown-item delete-btn">
+                                                        <i class="fas fa-trash"></i>
+                                                        <span>Delete</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="original-post-content">
+                                        <div class="post-header original-post-header">
+                                            <div class="post-user-info">
+                                                <img src="{{ $takedownInfo['display_user']->profile_picture ?? asset('images/default-profile.png') }}"
+                                                    alt="Profile" class="post-avatar">
+                                                <div>
+                                                    <h4 class="post-author">{{ $takedownInfo['display_user']->username }}</h4>
+                                                    <span
+                                                        class="post-date">{{ $takedownInfo['taken_down_post']->created_at->diffForHumans() }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="violation-banner">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            This post has been taken down for violating community guidelines.
+                                        </div>
+                                    </div>
+                                @else
+                                    {{-- Regular post that is taken down --}}
+                                    <div class="post-header">
+                                        <div class="post-user-info">
+                                            <img src="{{ $takedownInfo['display_user']->profile_picture ?? asset('images/default-profile.png') }}"
+                                                alt="Profile" class="post-avatar">
+                                            <div>
+                                                <h4 class="post-author">{{ $takedownInfo['display_user']->username }}</h4>
+                                                <span
+                                                    class="post-date">{{ $takedownInfo['taken_down_post']->created_at->diffForHumans() }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="violation-banner clean-takedown-banner">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <span>This post has been taken down for violating community guidelines.</span>
+                                    </div>
+                                @endif
+                            @else
+                                @if($post->isShared())
+                                    <div class="post-header">
+                                        <div class="post-user-info">
+                                            <img src="{{ $post->sharedBy->profile_picture ?? asset('images/default-profile.png') }}"
+                                                alt="Profile" class="post-avatar">
+                                            <div>
+                                                <h4 class="post-author">
+                                                    {{ $post->sharedBy->username }}
+                                                    <span class="post-name">({{ $post->sharedBy->name }})</span>
+                                                    <span><i class="fas fa-share-alt post-share-icon-margin"></i>shared</span>
+                                                </h4>
+                                                <span class="post-date">{{ $post->created_at->diffForHumans() }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="post-actions profile-post-actions">
+                                            <div class="post-dropdown">
+                                                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
+                                                    <i class="fas fa-ellipsis-h"></i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <button class="dropdown-item delete-btn">
+                                                        <i class="fas fa-trash"></i>
+                                                        <span>Delete</span>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -87,9 +153,10 @@
                                         <div class="original-post-content">
                                             <div class="post-header original-post-header">
                                                 <div class="post-user-info">
-                                                    <img src="{{ $original->user->profile_picture ?? asset('images/default-avatar.jpg') }}" alt="Profile" class="post-avatar">
+                                                    <img src="{{ $original->user->profile_picture ?? asset('images/default-profile.png') }}"
+                                                        alt="Profile" class="post-avatar">
                                                     <div>
-                                                        <h4 class="post-author">{{ $original->user->name }}</h4>
+                                                        <h4 class="post-author">{{ $original->user->username }}</h4>
                                                         <span class="post-date">{{ $original->created_at->diffForHumans() }}</span>
                                                     </div>
                                                 </div>
@@ -99,7 +166,8 @@
                                                 <span class="post-status {{ $original->status }}">{{ ucfirst($original->status) }}</span>
                                                 <span class="post-breed">Breed: {{ $original->breed }}</span>
                                                 <span class="post-location">Location: {{ $original->location }}</span>
-                                                <span class="post-contact">Contact Number: {{ $original->mobile_number }} | Email: {{ $original->email }}</span>
+                                                <span class="post-contact">Contact Number: {{ $original->mobile_number }} | Email:
+                                                    {{ $original->email }}</span>
                                             </div>
 
                                             <div class="post-content">
@@ -109,9 +177,10 @@
 
                                             @if(count($original->photo_urls ?? []) > 0)
                                                 <div class="post-images">
-                                                    <div class="image-grid {{ count($original->photo_urls) === 1 ? 'single-image' : '' }} 
-                                                                      {{ count($original->photo_urls) === 2 ? 'two-images' : '' }} 
-                                                                      {{ count($original->photo_urls) === 3 ? 'three-images' : '' }}">
+                                                    <div
+                                                        class="image-grid {{ count($original->photo_urls) === 1 ? 'single-image' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              {{ count($original->photo_urls) === 2 ? 'two-images' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              {{ count($original->photo_urls) === 3 ? 'three-images' : '' }}">
                                                         @foreach($original->photo_urls as $index => $photo_url)
                                                             @if($index < 4)
                                                                 <div class="grid-item" data-post-id="{{ $original->id }}" data-index="{{ $index }}">
@@ -128,7 +197,8 @@
                                         </div>
                                     @elseif($original && $original->is_taken_down)
                                         <div class="violation-banner">
-                                            <i class="fas fa-exclamation-triangle"></i>This post has been taken down for violating community guidelines.
+                                            <i class="fas fa-exclamation-triangle"></i>This post has been taken down for violating community
+                                            guidelines.
                                         </div>
                                     @else
                                         <div class="deleted-post-message">
@@ -140,7 +210,8 @@
                                 @else
                                     <div class="post-header">
                                         <div class="post-user-info">
-                                            <img src="{{ $post->user->profile_picture ?? asset('images/default-profile.png') }}" alt="Profile" class="post-avatar">
+                                            <img src="{{ $post->user->profile_picture ?? asset('images/default-profile.png') }}"
+                                                alt="Profile" class="post-avatar">
                                             <div>
                                                 <h4 class="post-author">
                                                     {{ $post->user->username }}
@@ -150,8 +221,21 @@
                                             </div>
                                         </div>
                                         <div class="post-actions profile-post-actions">
-                                            <button class="edit-btn">Edit</button>
-                                            <button class="delete-btn">Delete</button>
+                                            <div class="post-dropdown">
+                                                <button class="dropdown-toggle" onclick="toggleDropdown(this)">
+                                                    <i class="fas fa-ellipsis-h"></i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <button class="dropdown-item edit-btn">
+                                                        <i class="fas fa-edit"></i>
+                                                        <span>Edit</span>
+                                                    </button>
+                                                    <button class="dropdown-item delete-btn">
+                                                        <i class="fas fa-trash"></i>
+                                                        <span>Delete</span>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -159,7 +243,8 @@
                                         <span class="post-status {{ $post->status }}">{{ ucfirst($post->status) }}</span>
                                         <span class="post-breed">Breed: {{ $post->breed }}</span>
                                         <span class="post-location">Location: {{ $post->location }}</span>
-                                        <span class="post-contact">Contact Number: {{ $post->mobile_number }} | Email: {{ $post->email }}</span>
+                                        <span class="post-contact">Contact Number: {{ $post->mobile_number }} | Email:
+                                            {{ $post->email }}</span>
                                     </div>
 
                                     <div class="post-content">
@@ -169,9 +254,10 @@
 
                                     @if(count($post->photo_urls ?? []) > 0)
                                         <div class="post-images">
-                                            <div class="image-grid {{ count($post->photo_urls) === 1 ? 'single-image' : '' }} 
-                                                                  {{ count($post->photo_urls) === 2 ? 'two-images' : '' }} 
-                                                                  {{ count($post->photo_urls) === 3 ? 'three-images' : '' }}">
+                                            <div
+                                                class="image-grid {{ count($post->photo_urls) === 1 ? 'single-image' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  {{ count($post->photo_urls) === 2 ? 'two-images' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  {{ count($post->photo_urls) === 3 ? 'three-images' : '' }}">
                                                 @foreach($post->photo_urls as $index => $photo_url)
                                                     @if($index < 4)
                                                         <div class="grid-item" data-post-id="{{ $post->id }}" data-index="{{ $index }}">
@@ -187,7 +273,7 @@
                                     @endif
                                 @endif
 
-                                @if(!$post->is_taken_down)
+                                @if(!$takedownInfo)
                                     <div class="post-stats">
                                         <span class="reaction-count">
                                             <i class="fas fa-heart"></i>
@@ -195,7 +281,8 @@
                                         </span>
                                         <span class="comment-count">
                                             <span id="comment-count-{{ $post->id }}">{{ $post->comments_count ?? 0 }}</span>
-                                            <span id="comment-text-{{ $post->id }}">{{ ($post->comments_count ?? 0) == 1 ? 'Comment' : 'Comments' }}</span>
+                                            <span
+                                                id="comment-text-{{ $post->id }}">{{ ($post->comments_count ?? 0) == 1 ? 'Comment' : 'Comments' }}</span>
                                         </span>
                                         <span class="share-count">
                                             <span id="share-count-{{ $post->id }}">{{ $post->share_count ?? 0 }}</span>
@@ -204,17 +291,20 @@
                                     </div>
 
                                     <div class="post-actions">
-                                        <button class="post-action-btn like-btn {{ $post->current_user_reaction === 'like' ? 'reacted' : '' }}"
-                                                data-post-id="{{ $post->id }}"
-                                                data-liked="{{ $post->current_user_reaction === 'like' ? '1' : '0' }}"
-                                                onclick="handleLike('{{ $post->id }}')">
+                                        <button
+                                            class="post-action-btn like-btn {{ $post->current_user_reaction === 'like' ? 'reacted' : '' }}"
+                                            data-post-id="{{ $post->id }}"
+                                            data-liked="{{ $post->current_user_reaction === 'like' ? '1' : '0' }}"
+                                            onclick="handleLike('{{ $post->id }}')">
                                             <i class="fas fa-heart"></i>
                                             <span>{{ $post->current_user_reaction === 'like' ? 'Liked' : 'Like' }}</span>
                                         </button>
-                                        <button class="post-action-btn comment-btn" data-post-id="{{ $post->id }}" onclick="showCommentModal('{{ $post->id }}')">
+                                        <button class="post-action-btn comment-btn" data-post-id="{{ $post->id }}"
+                                            onclick="showCommentModal('{{ $post->id }}')">
                                             <i class="far fa-comment"></i>Comment
                                         </button>
-                                        <button class="post-action-btn share-btn" data-post-id="{{ $post->id }}" onclick="showShareModal('{{ $post->id }}')">
+                                        <button class="post-action-btn share-btn" data-post-id="{{ $post->id }}"
+                                            onclick="showShareModal('{{ $post->id }}')">
                                             <i class="far fa-share-square"></i>Share
                                         </button>
                                     </div>
@@ -232,8 +322,7 @@
             <span class="close"
                 onclick="const modal = document.getElementById('editProfileModal'); if(modal) hideModal(modal);">&times;</span>
             <h2>Edit Profile</h2>
-            <form id="editProfileForm" action="{{ route('profile.update') }}" method="POST"
-                enctype="multipart/form-data">
+            <form id="editProfileForm" action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="edit-profile-sections">
@@ -241,8 +330,7 @@
                         <h3 class="edit-profile-section-title">Basic Info</h3>
                         <div class="form-group">
                             <label for="username">Username:</label>
-                            <input type="text" id="username" name="username" value="{{ $user->username }}"
-                                required>
+                            <input type="text" id="username" name="username" value="{{ $user->username }}" required>
                         </div>
                         <div class="form-group">
                             <label for="email">Email:</label>
@@ -276,8 +364,7 @@
                                     </div>
                                 @endif
                             </div>
-                            <input type="hidden" id="banner_image" name="banner_image"
-                                value="{{ $user->banner_image }}">
+                            <input type="hidden" id="banner_image" name="banner_image" value="{{ $user->banner_image }}">
                         </div>
                     </div>
                 </div>
@@ -295,17 +382,16 @@
                 @csrf
                 @method('PUT')
                 <div class="form-group">
-                    <label for="post_title"><i class="fas fa-heading" style="color: #3F7D58;"></i>Title</label>
+                    <label for="post_title">Title</label>
                     <input type="text" id="post_title" name="title" required placeholder="Enter post title">
                 </div>
                 <div class="form-group description-group">
-                    <label for="post_description"><i class="fas fa-align-left"
-                            style="color: #3F7D58;"></i>Description</label>
+                    <label for="post_description">Description</label>
                     <textarea id="post_description" name="description" required
                         placeholder="Provide details about your pet..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="post_status"><i class="fas fa-tag" style="color: #3F7D58;"></i>Status</label>
+                    <label for="post_status">Status</label>
                     <select id="post_status" name="status" required>
                         <option value="not_found">Not Found</option>
                         <option value="found">Found</option>
@@ -313,26 +399,26 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="post_breed"><i class="fas fa-paw" style="color: #3F7D58;"></i>Breed</label>
+                        <label for="post_breed">Breed</label>
                         <input type="text" id="post_breed" name="breed" required placeholder="Pet breed">
                     </div>
                     <div class="form-group">
-                        <label for="post_location"><i class="fas fa-map-marker-alt"
-                                style="color: #3F7D58;"></i>Location</label>
+                        <label for="post_location">Location</label>
                         <input type="text" id="post_location" name="location" required
                             placeholder="Where was the pet found/lost">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="post_contact"><i class="fas fa-phone" style="color: #3F7D58;"></i>Contact Number</label>
-                    <input type="text" id="post_contact" name="mobile_number" required placeholder="Your contact number" pattern="[0-9]+" title="Contact number must be numeric">
+                    <label for="post_contact">Contact Number</label>
+                    <input type="text" id="post_contact" name="mobile_number" required placeholder="Your contact number"
+                        pattern="[0-9]+" title="Contact number must be numeric">
                 </div>
                 <div class="form-group">
-                    <label for="post_email"><i class="fas fa-envelope" style="color: #3F7D58;"></i>Email</label>
+                    <label for="post_email">Email</label>
                     <input type="email" id="post_email" name="email" required placeholder="Your email address">
                 </div>
                 <div class="form-group">
-                    <label for="post_photos"><i class="fas fa-images" style="color: #3F7D58;"></i>Photos</label>
+                    <label for="post_photos">Photos</label>
                     <button type="button" class="file-input-button" id="upload_post_photos_widget">Upload
                         Photos</button>
                     <div class="photo-hint">Upload up to 5 photos (optional)</div>
@@ -357,11 +443,11 @@
     <!-- Delete Confirmation Modal -->
     <div id="deleteConfirmModal" class="modal">
         <div class="modal-content">
-            <h3>Confirm Deletion</h3>
-            <p>Are you sure you want to delete this post? This action cannot be undone.</p>
+            <h3>Move to Trash</h3>
+            <p>Are you sure you want to move this post to trash? You can restore it later from your trash.</p>
             <div class="form-actions">
                 <button type="button" class="cancel-btn" id="cancelDeleteBtn">Cancel</button>
-                <button type="button" class="submit-btn" id="confirmDeleteBtn">Delete</button>
+                <button type="button" class="submit-btn" id="confirmDeleteBtn">Move to Trash</button>
             </div>
         </div>
     </div>
@@ -600,13 +686,13 @@
                         console.log('Attempting to delete postId:', postId, 'URL:', `/posts/${postId}`);
                         if (!postId) return;
                         fetch(`/posts/${postId}`, {
-                                method: 'DELETE',
-                                headers: {
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                                    'Accept': 'application/json',
-                                    'Content-Type': 'application/json'
-                                }
-                            })
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            }
+                        })
                             .then(response => response.json())
                             .then(data => {
                                 if (data.success) {
@@ -617,13 +703,13 @@
                                         setTimeout(() => postCard.remove(), 400);
                                     }
                                     // Show global notification
-                                    this.showNotification(data.message || 'Post deleted successfully!', 'success');
+                                    this.showNotification(data.message || 'Post moved to trash successfully!', 'success');
                                 } else {
-                                    this.showNotification(data.message || 'Failed to delete post.', 'error');
+                                    this.showNotification(data.message || 'Failed to move post to trash.', 'error');
                                 }
                             })
                             .catch(error => {
-                                this.showNotification('Failed to delete post. Please try again.', 'error');
+                                this.showNotification('Failed to move post to trash. Please try again.', 'error');
                                 console.error('Error deleting post:', error);
                             })
                             .finally(() => {
@@ -645,7 +731,7 @@
             editPost(postId) {
                 this.editingPostId = postId;
                 const postCard = document.querySelector(`.post-card[data-post-id="${postId}"]`);
-                
+
                 if (!postCard) {
                     this.showNotification('Post not found', 'error');
                     return;
@@ -654,15 +740,21 @@
                 try {
                     // Set form action
                     this.elements.form.action = `/posts/${postId}`;
-                    
+
                     // Populate form fields
                     document.getElementById('post_title').value = postCard.querySelector('h3').textContent.trim();
                     document.getElementById('post_description').value = postCard.querySelector('.post-description').textContent.trim();
                     document.getElementById('post_status').value = postCard.querySelector('.post-status').textContent.toLowerCase().trim();
                     document.getElementById('post_breed').value = postCard.querySelector('.post-breed').textContent.replace('Breed:', '').trim();
                     document.getElementById('post_location').value = postCard.querySelector('.post-location').textContent.replace('Location:', '').trim();
-                    document.getElementById('post_contact').value = postCard.querySelector('.post-contact').textContent.replace('Contact:', '').trim();
-                    
+
+                    // Extract only the number and email from the contact string
+                    const contactText = postCard.querySelector('.post-contact').textContent;
+                    const contactMatch = contactText.match(/Contact Number:\s*([0-9]+)/);
+                    const emailMatch = contactText.match(/Email:\s*([^\s|]+)/);
+                    document.getElementById('post_contact').value = contactMatch ? contactMatch[1] : '';
+                    document.getElementById('post_email').value = emailMatch ? emailMatch[1] : '';
+
                     // Handle photos
                     const photoUrls = [];
                     postCard.querySelectorAll('.grid-item img').forEach(img => {
@@ -672,7 +764,7 @@
                         this.elements.photoUrlsInput.value = JSON.stringify(photoUrls);
                         this.updatePhotoPreview(photoUrls);
                     }
-                    
+
                     this.showModal(this.modals.editPost);
                 } catch (error) {
                     console.error('Error in editPost:', error);
@@ -710,13 +802,13 @@
                 formData.append('_method', 'PUT');
 
                 fetch(this.elements.form.action, {
-                        method: 'POST', // Laravel expects POST with _method=PUT
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            'Accept': 'application/json'
-                        },
-                        body: formData
-                    })
+                    method: 'POST', // Laravel expects POST with _method=PUT
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
@@ -770,6 +862,40 @@
             }
         };
 
+        // Dropdown functionality
+        function toggleDropdown(button) {
+            const dropdown = button.nextElementSibling;
+            const isOpen = dropdown.classList.contains('show');
+
+            // Close all other dropdowns
+            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                menu.classList.remove('show');
+            });
+
+            // Toggle current dropdown
+            if (!isOpen) {
+                dropdown.classList.add('show');
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.post-dropdown')) {
+                document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                    menu.classList.remove('show');
+                });
+            }
+        });
+
+        // Close dropdown when clicking on dropdown items
+        document.addEventListener('click', function (event) {
+            if (event.target.closest('.dropdown-item')) {
+                document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                    menu.classList.remove('show');
+                });
+            }
+        });
+
         // Initialize the EditPostManager when the DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
             EditPostManager.init();
@@ -777,118 +903,76 @@
 
         let editingPostId = null;
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize all modals
-            const editPostModal = document.getElementById('editPostModal');
-            const saveChangesConfirmModal = document.getElementById('saveChangesConfirmModal');
-            const deleteConfirmModal = document.getElementById('deleteConfirmModal');
-
-            // Initialize delete buttons
-            document.querySelectorAll('.delete-btn').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const postId = this.closest('.post-card').dataset.postId;
-                    deletePost(postId);
-                });
-            });
-
-            // Initialize save changes button
-            const savePostChangesBtn = document.getElementById('savePostChangesBtn');
-            if (savePostChangesBtn) {
-                savePostChangesBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('Save Changes button clicked');
-
-                    // Basic form validation
-                    const title = document.getElementById('post_title').value;
-                    const description = document.getElementById('post_description').value;
-                    const status = document.getElementById('post_status').value;
-                    const breed = document.getElementById('post_breed').value;
-                    const location = document.getElementById('post_location').value;
-                    const contact = document.getElementById('post_contact').value;
-
-                    if (!title || !description || !status || !breed || !location || !contact) {
-                        alert('Please fill in all required fields');
-                        return;
-                    }
-
-                    if (saveChangesConfirmModal) {
-                        showModal(saveChangesConfirmModal);
-                    }
-                });
-            }
-        });
-
         function showModal(modal) {
             console.log('showModal called with:', modal);
-            if ( !modal) {
+            if (!modal) {
                 console.error('Modal not found');
                 return;
             }
-            modal.style.display='flex';
-            document.body.style.overflow='hidden';
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
             // Force reflow to ensure transition works
             modal.offsetHeight;
         }
 
         function hideModal(modal) {
             console.log('hideModal called with:', modal);
-            if ( !modal) {
+            if (!modal) {
                 console.error('Modal not found');
                 return;
             }
-            modal.style.display='none';
-            document.body.style.overflow='';
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
         }
 
         function editPost(postId) {
             console.log('Edit post called with ID:', postId);
-            editingPostId=postId;
-            const editPostModal=document.getElementById('editPostModal');
-            const postCard=document.querySelector(`.post-card[data-post-id="${postId}"]`);
-            
-            if ( !editPostModal) {
+            editingPostId = postId;
+            const editPostModal = document.getElementById('editPostModal');
+            const postCard = document.querySelector(`.post-card[data-post-id="${postId}"]`);
+
+            if (!editPostModal) {
                 console.error('Edit post modal not found');
                 return;
             }
-            
-            if ( !postCard) {
+
+            if (!postCard) {
                 console.error('Post card not found for ID:', postId);
                 return;
             }
-            
+
             try {
                 // Set form action
-                this.elements.form.action=`/posts/$ {
-                    postId
-                }
+                this.elements.form.action = `/posts/${postId}`;
 
-                `;
-                
                 // Populate form fields
-                document.getElementById('post_title').value=postCard.querySelector('h3').textContent.trim();
-                document.getElementById('post_description').value=postCard.querySelector('.post-description').textContent.trim();
-                document.getElementById('post_status').value=postCard.querySelector('.post-status').textContent.toLowerCase().trim();
-                document.getElementById('post_breed').value=postCard.querySelector('.post-breed').textContent.replace('Breed:', '').trim();
-                document.getElementById('post_location').value=postCard.querySelector('.post-location').textContent.replace('Location:', '').trim();
-                document.getElementById('post_contact').value=postCard.querySelector('.post-contact').textContent.replace('Contact:', '').trim();
-                
-                // Handle photos
-                const photoUrls=[];
+                document.getElementById('post_title').value = postCard.querySelector('h3').textContent.trim();
+                document.getElementById('post_description').value = postCard.querySelector('.post-description').textContent.trim();
+                document.getElementById('post_status').value = postCard.querySelector('.post-status').textContent.toLowerCase().trim();
+                document.getElementById('post_breed').value = postCard.querySelector('.post-breed').textContent.replace('Breed:', '').trim();
+                document.getElementById('post_location').value = postCard.querySelector('.post-location').textContent.replace('Location:', '').trim();
 
-                postCard.querySelectorAll('.grid-item img').forEach(img=> {
+                // Extract only the number and email from the contact string
+                const contactText = postCard.querySelector('.post-contact').textContent;
+                const contactMatch = contactText.match(/Contact Number:\s*([0-9]+)/);
+                const emailMatch = contactText.match(/Email:\s*([^\s|]+)/);
+                document.getElementById('post_contact').value = contactMatch ? contactMatch[1] : '';
+                document.getElementById('post_email').value = emailMatch ? emailMatch[1] : '';
+
+                // Handle photos
+                const photoUrls = [];
+
+                postCard.querySelectorAll('.grid-item img').forEach(img => {
                     photoUrls.push(img.src);
-                    }
+                }
 
                 );
 
                 if (photoUrls.length > 0) {
-                    this.elements.photoUrlsInput.value=JSON.stringify(photoUrls);
+                    this.elements.photoUrlsInput.value = JSON.stringify(photoUrls);
                     this.updatePhotoPreview(photoUrls);
                 }
-                
+
                 this.showModal(this.modals.editPost);
             }
 
@@ -899,45 +983,45 @@
         }
 
         function deletePost(postId) {
-            EditPostManager.editingPostId=postId;
-            const modal=document.getElementById('deleteConfirmModal');
+            EditPostManager.editingPostId = postId;
+            const modal = document.getElementById('deleteConfirmModal');
             if (modal) EditPostManager.showModal(modal);
         }
 
         // Close modals when clicking outside
-        window.addEventListener('click', (event)=> {
-            const editPostModal=document.getElementById('editPostModal');
-            const saveChangesConfirmModal=document.getElementById('saveChangesConfirmModal');
-            const deleteConfirmModal=document.getElementById('deleteConfirmModal');
-            const saveProfileConfirmModal=document.getElementById('saveProfileConfirmModal');
-            const sharePostConfirmModal=document.getElementById('sharePostConfirmModal');
+        window.addEventListener('click', (event) => {
+            const editPostModal = document.getElementById('editPostModal');
+            const saveChangesConfirmModal = document.getElementById('saveChangesConfirmModal');
+            const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+            const saveProfileConfirmModal = document.getElementById('saveProfileConfirmModal');
+            const sharePostConfirmModal = document.getElementById('sharePostConfirmModal');
 
-            if (event.target===editPostModal) {
+            if (event.target === editPostModal) {
                 hideModal(editPostModal);
             }
-            if (event.target===saveChangesConfirmModal) {
+            if (event.target === saveChangesConfirmModal) {
                 hideModal(saveChangesConfirmModal);
             }
-            if (event.target===deleteConfirmModal) {
+            if (event.target === deleteConfirmModal) {
                 hideModal(deleteConfirmModal);
             }
-            if (event.target===saveProfileConfirmModal) {
+            if (event.target === saveProfileConfirmModal) {
                 hideModal(saveProfileConfirmModal);
             }
-            if (event.target===sharePostConfirmModal) {
+            if (event.target === sharePostConfirmModal) {
                 hideModal(sharePostConfirmModal);
             }
         });
 
         // Cloudinary Upload Widget for Profile Picture
-        const cloudName='{{ config('cloudinary.cloud_name') }}';
-        const uploadPreset='{{ config('cloudinary.upload_preset') }}';
+        const cloudName = '{{ config('cloudinary.cloud_name') }}';
+        const uploadPreset = '{{ config('cloudinary.upload_preset') }}';
 
         console.log('Cloudinary Config:', {
             cloudName, uploadPreset
         });
 
-        const profileWidget=cloudinary.createUploadWidget( {
+        const profileWidget = cloudinary.createUploadWidget({
             cloudName: cloudName,
             uploadPreset: uploadPreset,
             sources: ['local'],
@@ -962,24 +1046,24 @@
                     sourceBg: "#E4EBF1"
                 }
             }
-        }, (error, result)=> {
+        }, (error, result) => {
             if (error) {
                 console.error('Upload error:', error);
                 return;
             }
 
-            if (result && result.event==="success") {
-                const imageUrl=result.info.secure_url;
+            if (result && result.event === "success") {
+                const imageUrl = result.info.secure_url;
                 console.log('Uploaded profile image:', imageUrl);
 
-                document.getElementById('profile_picture').value=imageUrl;
-                const preview=document.getElementById('profile-preview');
-                preview.innerHTML=` <div class="preview-image-container"> <img src="${imageUrl}"class="preview-image"> </div> `;
+                document.getElementById('profile_picture').value = imageUrl;
+                const preview = document.getElementById('profile-preview');
+                preview.innerHTML = ` <div class="preview-image-container"> <img src="${imageUrl}"class="preview-image"> </div> `;
             }
         });
 
         // Cloudinary Upload Widget for Banner Image
-        const bannerWidget=cloudinary.createUploadWidget( {
+        const bannerWidget = cloudinary.createUploadWidget({
             cloudName: cloudName,
             uploadPreset: uploadPreset,
             sources: ['local'],
@@ -1004,19 +1088,19 @@
                     sourceBg: "#E4EBF1"
                 }
             }
-        }, (error, result)=> {
+        }, (error, result) => {
             if (error) {
                 console.error('Upload error:', error);
                 return;
             }
 
-            if (result && result.event==="success") {
-                const imageUrl=result.info.secure_url;
+            if (result && result.event === "success") {
+                const imageUrl = result.info.secure_url;
                 console.log('Uploaded banner image:', imageUrl);
 
-                document.getElementById('banner_image').value=imageUrl;
-                const preview=document.getElementById('banner-preview');
-                preview.innerHTML=` <div class="preview-image-container"> <img src="${imageUrl}"class="preview-image"> </div> `;
+                document.getElementById('banner_image').value = imageUrl;
+                const preview = document.getElementById('banner-preview');
+                preview.innerHTML = ` <div class="preview-image-container"> <img src="${imageUrl}"class="preview-image"> </div> `;
             }
         });
 
@@ -1034,182 +1118,166 @@
         }, false);
 
         // Profile Save Changes Confirmation
-        const saveProfileChangesBtn=document.getElementById('saveProfileChangesBtn');
-        const saveProfileConfirmModal=document.getElementById('saveProfileConfirmModal');
-        const cancelProfileSaveBtn=document.getElementById('cancelProfileSaveBtn');
-        const confirmProfileSaveBtn=document.getElementById('confirmProfileSaveBtn');
+        const saveProfileChangesBtn = document.getElementById('saveProfileChangesBtn');
+        const saveProfileConfirmModal = document.getElementById('saveProfileConfirmModal');
+        const cancelProfileSaveBtn = document.getElementById('cancelProfileSaveBtn');
+        const confirmProfileSaveBtn = document.getElementById('confirmProfileSaveBtn');
 
-        saveProfileChangesBtn.addEventListener('click', ()=> {
-            const modal=document.getElementById('saveProfileConfirmModal');
+        saveProfileChangesBtn.addEventListener('click', () => {
+            const modal = document.getElementById('saveProfileConfirmModal');
             if (modal) showModal(modal);
         });
 
-        cancelProfileSaveBtn.addEventListener('click', ()=> {
-            const modal=document.getElementById('saveProfileConfirmModal');
+        cancelProfileSaveBtn.addEventListener('click', () => {
+            const modal = document.getElementById('saveProfileConfirmModal');
             if (modal) hideModal(modal);
         });
 
-        confirmProfileSaveBtn.addEventListener('click', ()=> {
+        confirmProfileSaveBtn.addEventListener('click', () => {
             document.getElementById('editProfileForm').submit();
-            const modal=document.getElementById('saveProfileConfirmModal');
+            const modal = document.getElementById('saveProfileConfirmModal');
             if (modal) hideModal(modal);
         });
 
         // Add hover effects for buttons
-        saveProfileChangesBtn.addEventListener('mouseenter', ()=> {
-            saveProfileChangesBtn.style.backgroundColor='#4a8d65';
-            saveProfileChangesBtn.style.transform='';
-            saveProfileChangesBtn.style.boxShadow='';
+        saveProfileChangesBtn.addEventListener('mouseenter', () => {
+            saveProfileChangesBtn.style.backgroundColor = '#4a8d65';
+            saveProfileChangesBtn.style.transform = '';
+            saveProfileChangesBtn.style.boxShadow = '';
         });
 
-        saveProfileChangesBtn.addEventListener('mouseleave', ()=> {
-            saveProfileChangesBtn.style.backgroundColor='#3F7D58';
-            saveProfileChangesBtn.style.transform='';
-            saveProfileChangesBtn.style.boxShadow='';
+        saveProfileChangesBtn.addEventListener('mouseleave', () => {
+            saveProfileChangesBtn.style.backgroundColor = '#3F7D58';
+            saveProfileChangesBtn.style.transform = '';
+            saveProfileChangesBtn.style.boxShadow = '';
         });
 
-        savePostChangesBtn.addEventListener('mouseenter', ()=> {
-            savePostChangesBtn.style.backgroundColor='#4a8d65';
-            savePostChangesBtn.style.transform='';
-            savePostChangesBtn.style.boxShadow='';
+        savePostChangesBtn.addEventListener('mouseenter', () => {
+            savePostChangesBtn.style.backgroundColor = '#4a8d65';
+            savePostChangesBtn.style.transform = '';
+            savePostChangesBtn.style.boxShadow = '';
         });
 
-        savePostChangesBtn.addEventListener('mouseleave', ()=> {
-            savePostChangesBtn.style.backgroundColor='#3F7D58';
-            savePostChangesBtn.style.transform='';
-            savePostChangesBtn.style.boxShadow='';
+        savePostChangesBtn.addEventListener('mouseleave', () => {
+            savePostChangesBtn.style.backgroundColor = '#3F7D58';
+            savePostChangesBtn.style.transform = '';
+            savePostChangesBtn.style.boxShadow = '';
         });
 
         // Image grid and lightbox functionality
-        const lightboxModal=document.getElementById('lightbox-modal');
-        const lightboxImage=document.querySelector('.lightbox-image');
-        const lightboxClose=document.querySelector('.lightbox-close');
-        const lightboxPrev=document.querySelector('.lightbox-prev');
-        const lightboxNext=document.querySelector('.lightbox-next');
-        const lightboxCounter=document.querySelector('.lightbox-counter');
+        const lightboxModal = document.getElementById('lightbox-modal');
+        const lightboxImage = document.querySelector('.lightbox-image');
+        const lightboxClose = document.querySelector('.lightbox-close');
+        const lightboxPrev = document.querySelector('.lightbox-prev');
+        const lightboxNext = document.querySelector('.lightbox-next');
+        const lightboxCounter = document.querySelector('.lightbox-counter');
 
-        let currentImageIndex=0;
-        let currentPostImages=[];
+        let currentImageIndex = 0;
+        let currentPostImages = [];
 
         // Open lightbox when clicking on an image
-        document.querySelectorAll('.grid-item').forEach(item=> {
+        document.querySelectorAll('.grid-item').forEach(item => {
             item.addEventListener('click', function () {
-                const postId=this.getAttribute('data-post-id');
-                const index=parseInt(this.getAttribute('data-index'));
+                const postId = this.getAttribute('data-post-id');
+                const index = parseInt(this.getAttribute('data-index'));
 
-                lightboxPostId=postId;
+                lightboxPostId = postId;
 
                 // Get all images for this post
-                const postImages=Array.from(document.querySelectorAll(`.grid-item[data-post-id="${postId}"] img`)) .map(item=> item.src);
+                const postImages = Array.from(document.querySelectorAll(`.grid-item[data-post-id="${postId}"] img`)).map(item => item.src);
 
                 // If there are more than 4 images, we need to fetch all image URLs
                 if (document.querySelector(`.grid-item[data-post-id="${postId}"] .more-indicator`)) {
                     // This would ideally be an AJAX call to get all image URLs
                     // For now, we'll use what we have
-                    fetch(`/posts/$ {
-                            postId
-                        }
-
-                        /photos`) .then(response=> response.json()) .then(data=> {
-                            if (data.success) {
-                                currentPostImages=data.photo_urls;
-                                openLightbox(postId, index);
-                            }
-                        }
-
-                    ) .catch(()=> {
-                            // Fallback to the images we have
-                            currentPostImages=postImages;
+                    fetch(`/posts/${postId}/photos`).then(response => response.json()).then(data => {
+                        if (data.success) {
+                            currentPostImages = data.photo_urls;
                             openLightbox(postId, index);
                         }
-
-                    );
+                    }).catch(() => {
+                        // Fallback to the images we have
+                        currentPostImages = postImages;
+                        openLightbox(postId, index);
+                    });
                 }
 
                 else {
-                    currentPostImages=postImages;
+                    currentPostImages = postImages;
                     openLightbox(postId, index);
                 }
             });
         });
 
         function openLightbox(postId, index) {
-            lightboxPostId=postId;
-            currentImageIndex=index;
+            lightboxPostId = postId;
+            currentImageIndex = index;
 
             updateLightboxImage();
-            lightboxModal.style.display='block';
+            lightboxModal.style.display = 'flex';
 
             // Prevent scrolling on the body
-            document.body.style.overflow='hidden';
+            document.body.style.overflow = 'hidden';
         }
 
         function updateLightboxImage() {
-            lightboxImage.src=currentPostImages[currentImageIndex];
+            lightboxImage.src = currentPostImages[currentImageIndex];
 
-            lightboxCounter.textContent=`$ {
-                currentImageIndex+1
-            }
-
-            / $ {
-                currentPostImages.length
-            }
-
-            `;
+            lightboxCounter.textContent = `${currentImageIndex + 1} / ${currentPostImages.length}`;
 
             // Show/hide prev/next buttons based on the number of images
-            lightboxPrev.style.display=currentPostImages.length>1 ? 'flex' : 'none';
-            lightboxNext.style.display=currentPostImages.length>1 ? 'flex' : 'none';
+            lightboxPrev.style.display = currentPostImages.length > 1 ? 'flex' : 'none';
+            lightboxNext.style.display = currentPostImages.length > 1 ? 'flex' : 'none';
         }
 
         // Close lightbox
         lightboxClose.addEventListener('click', function () {
-            lightboxModal.style.display='none';
-            document.body.style.overflow='';
+            lightboxModal.style.display = 'none';
+            document.body.style.overflow = '';
         });
 
         // Navigate to previous image
         lightboxPrev.addEventListener('click', function () {
-            currentImageIndex=(currentImageIndex - 1 + currentPostImages.length) % currentPostImages.length;
+            currentImageIndex = (currentImageIndex - 1 + currentPostImages.length) % currentPostImages.length;
             updateLightboxImage();
         });
 
         // Navigate to next image
         lightboxNext.addEventListener('click', function () {
-            currentImageIndex=(currentImageIndex + 1) % currentPostImages.length;
+            currentImageIndex = (currentImageIndex + 1) % currentPostImages.length;
             updateLightboxImage();
         });
 
         // Close lightbox when clicking outside the image
         lightboxModal.addEventListener('click', function (event) {
-            if (event.target===lightboxModal) {
-                lightboxModal.style.display='none';
-                document.body.style.overflow='';
+            if (event.target === lightboxModal) {
+                lightboxModal.style.display = 'none';
+                document.body.style.overflow = '';
             }
         });
 
         // Keyboard navigation
         document.addEventListener('keydown', function (event) {
-            if (lightboxModal.style.display==='block') {
-                if (event.key==='Escape') {
-                    lightboxModal.style.display='none';
-                    document.body.style.overflow='';
+            if (lightboxModal.style.display === 'flex') {
+                if (event.key === 'Escape') {
+                    lightboxModal.style.display = 'none';
+                    document.body.style.overflow = '';
                 }
 
-                else if (event.key==='ArrowLeft') {
-                    currentImageIndex=(currentImageIndex - 1 + currentPostImages.length) % currentPostImages.length;
+                else if (event.key === 'ArrowLeft') {
+                    currentImageIndex = (currentImageIndex - 1 + currentPostImages.length) % currentPostImages.length;
                     updateLightboxImage();
                 }
 
-                else if (event.key==='ArrowRight') {
-                    currentImageIndex=(currentImageIndex + 1) % currentPostImages.length;
+                else if (event.key === 'ArrowRight') {
+                    currentImageIndex = (currentImageIndex + 1) % currentPostImages.length;
                     updateLightboxImage();
                 }
             }
         });
 
         // Cloudinary Upload Widget for Post Photos
-        const postPhotosWidget=cloudinary.createUploadWidget( {
+        const postPhotosWidget = cloudinary.createUploadWidget({
             cloudName: cloudName,
             uploadPreset: uploadPreset,
             sources: ['local'],
@@ -1235,28 +1303,28 @@
                     sourceBg: "#E4EBF1"
                 }
             }
-        }, (error, result)=> {
+        }, (error, result) => {
             if (error) {
                 console.error('Upload error:', error);
                 alert('Error uploading photo. Please try again.');
                 return;
             }
 
-            if (result && result.event==="success") {
-                const imageUrl=result.info.secure_url;
+            if (result && result.event === "success") {
+                const imageUrl = result.info.secure_url;
                 console.log('Uploaded post image:', imageUrl);
 
                 try {
                     // Get the existing photo URLs or initialize an empty array
-                    let photoUrls=[];
-                    const photoUrlsInput=document.getElementById('post_photo_urls');
+                    let photoUrls = [];
+                    const photoUrlsInput = document.getElementById('post_photo_urls');
 
                     if (photoUrlsInput.value) {
-                        photoUrls=JSON.parse(photoUrlsInput.value);
+                        photoUrls = JSON.parse(photoUrlsInput.value);
                     }
 
                     // Check if we've reached the maximum number of photos
-                    if (photoUrls.length >=5) {
+                    if (photoUrls.length >= 5) {
                         alert('Maximum of 5 photos allowed.');
                         return;
                     }
@@ -1265,28 +1333,28 @@
                     photoUrls.push(imageUrl);
 
                     // Update the hidden input
-                    photoUrlsInput.value=JSON.stringify(photoUrls);
+                    photoUrlsInput.value = JSON.stringify(photoUrls);
 
                     // Update the preview
-                    const preview=document.getElementById('post-photos-preview');
-                    preview.innerHTML='';
+                    const preview = document.getElementById('post-photos-preview');
+                    preview.innerHTML = '';
 
-                    photoUrls.forEach((url, index)=> {
-                        const container=document.createElement('div');
-                        container.className='preview-image-container';
+                    photoUrls.forEach((url, index) => {
+                        const container = document.createElement('div');
+                        container.className = 'preview-image-container';
 
-                        const img=document.createElement('img');
-                        img.src=url;
-                        img.className='preview-image';
+                        const img = document.createElement('img');
+                        img.src = url;
+                        img.className = 'preview-image';
 
-                        const removeBtn=document.createElement('button');
-                        removeBtn.type='button';
-                        removeBtn.className='remove-image-btn';
-                        removeBtn.textContent='×';
+                        const removeBtn = document.createElement('button');
+                        removeBtn.type = 'button';
+                        removeBtn.className = 'remove-image-btn';
+                        removeBtn.textContent = '×';
 
-                        removeBtn.onclick=function() {
+                        removeBtn.onclick = function () {
                             photoUrls.splice(index, 1);
-                            photoUrlsInput.value=JSON.stringify(photoUrls);
+                            photoUrlsInput.value = JSON.stringify(photoUrls);
                             container.remove();
                         };
 
@@ -1304,11 +1372,11 @@
         });
 
         // Open post photos upload widget when the button is clicked
-        document.addEventListener('DOMContentLoaded', function() {
-            const uploadButton=document.getElementById('upload_post_photos_widget');
+        document.addEventListener('DOMContentLoaded', function () {
+            const uploadButton = document.getElementById('upload_post_photos_widget');
 
             if (uploadButton) {
-                uploadButton.addEventListener('click', function(e) {
+                uploadButton.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
                     console.log('Upload button clicked');
@@ -1322,60 +1390,63 @@
 
         // Function to populate the photos preview when editing
         function populatePhotosPreview(photoUrls) {
-            const preview=document.getElementById('post-photos-preview');
-            const photoUrlsInput=document.getElementById('post_photo_urls');
+            const preview = document.getElementById('post-photos-preview');
+            const photoUrlsInput = document.getElementById('post_photo_urls');
 
-            preview.innerHTML='';
-            photoUrlsInput.value=JSON.stringify(photoUrls);
+            preview.innerHTML = '';
+            photoUrlsInput.value = JSON.stringify(photoUrls);
 
-            if ( !photoUrls || photoUrls.length===0) {
+            if (!photoUrls || photoUrls.length === 0) {
                 return;
             }
 
-            photoUrls.forEach((url, index)=> {
-                const container=document.createElement('div');
-                container.className='preview-image-container';
+            photoUrls.forEach((url, index) => {
+                const container = document.createElement('div');
+                container.className = 'preview-image-container';
 
-                const img=document.createElement('img');
-                img.src=url;
-                img.className='preview-image';
+                const img = document.createElement('img');
+                img.src = url;
+                img.className = 'preview-image';
 
-                const removeBtn=document.createElement('button');
-                removeBtn.type='button';
-                removeBtn.className='remove-image-btn';
-                removeBtn.textContent='×';
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'remove-image-btn';
+                removeBtn.textContent = '×';
 
-                removeBtn.onclick=function () {
-                    const currentUrls=JSON.parse(photoUrlsInput.value);
+                removeBtn.onclick = function () {
+                    const currentUrls = JSON.parse(photoUrlsInput.value);
                     currentUrls.splice(index, 1);
-                    photoUrlsInput.value=JSON.stringify(currentUrls);
+                    photoUrlsInput.value = JSON.stringify(currentUrls);
                     container.remove();
-                }
+                };
 
+                container.appendChild(img);
+                container.appendChild(removeBtn);
+                preview.appendChild(container);
             });
         }
 
         // Save Changes Confirmation for Edit Post
-        const savePostChangesBtn=document.getElementById('savePostChangesBtn');
-        const saveChangesConfirmModal=document.getElementById('saveChangesConfirmModal');
-        const cancelSaveBtn=document.getElementById('cancelSaveBtn');
-        const confirmSaveBtn=document.getElementById('confirmSaveBtn');
+        const savePostChangesBtn = document.getElementById('savePostChangesBtn');
+        const saveChangesConfirmModal = document.getElementById('saveChangesConfirmModal');
+        const cancelSaveBtn = document.getElementById('cancelSaveBtn');
+        const confirmSaveBtn = document.getElementById('confirmSaveBtn');
 
         if (savePostChangesBtn) {
-            savePostChangesBtn.addEventListener('click', (e)=> {
+            savePostChangesBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('Save Changes button clicked');
-                
-                // Basic form validation
-                const title=document.getElementById('post_title').value;
-                const description=document.getElementById('post_description').value;
-                const status=document.getElementById('post_status').value;
-                const breed=document.getElementById('post_breed').value;
-                const location=document.getElementById('post_location').value;
-                const contact=document.getElementById('post_contact').value;
 
-                if ( !title || !description || !status || !breed || !location || !contact) {
+                // Basic form validation
+                const title = document.getElementById('post_title').value;
+                const description = document.getElementById('post_description').value;
+                const status = document.getElementById('post_status').value;
+                const breed = document.getElementById('post_breed').value;
+                const location = document.getElementById('post_location').value;
+                const contact = document.getElementById('post_contact').value;
+
+                if (!title || !description || !status || !breed || !location || !contact) {
                     alert('Please fill in all required fields');
                     return;
                 }
@@ -1387,69 +1458,65 @@
         }
 
         if (cancelSaveBtn) {
-            cancelSaveBtn.addEventListener('click', ()=> {
+            cancelSaveBtn.addEventListener('click', () => {
                 if (saveChangesConfirmModal) hideModal(saveChangesConfirmModal);
             });
         }
 
         if (confirmSaveBtn) {
-            confirmSaveBtn.addEventListener('click', ()=> {
-                const form=document.getElementById('editPostForm');
+            confirmSaveBtn.addEventListener('click', () => {
+                const form = document.getElementById('editPostForm');
 
                 if (form) {
                     // Add CSRF token if not already present
-                    if ( !form.querySelector('input[name="_token"]')) {
-                        const csrfToken=document.querySelector('meta[name="csrf-token"]').content;
-                        const csrfInput=document.createElement('input');
-                        csrfInput.type='hidden';
-                        csrfInput.name='_token';
-                        csrfInput.value=csrfToken;
+                    if (!form.querySelector('input[name="_token"]')) {
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+                        const csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = '_token';
+                        csrfInput.value = csrfToken;
                         form.appendChild(csrfInput);
                     }
 
                     // Add method override for PUT request
-                    if ( !form.querySelector('input[name="_method"]')) {
-                        const methodInput=document.createElement('input');
-                        methodInput.type='hidden';
-                        methodInput.name='_method';
-                        methodInput.value='PUT';
+                    if (!form.querySelector('input[name="_method"]')) {
+                        const methodInput = document.createElement('input');
+                        methodInput.type = 'hidden';
+                        methodInput.name = '_method';
+                        methodInput.value = 'PUT';
                         form.appendChild(methodInput);
                     }
 
                     // Submit the form
                     form.submit();
                 }
-                
+
                 // Hide modals
-                const editModal=document.getElementById('editPostModal');
+                const editModal = document.getElementById('editPostModal');
                 if (editModal) hideModal(editModal);
                 if (saveChangesConfirmModal) hideModal(saveChangesConfirmModal);
             });
         }
 
         // In-app share logic (copied from home.blade.php)
-        let postIdToShare=null;
-        const sharePostConfirmModal=document.getElementById('sharePostConfirmModal');
-        const cancelSharePostBtn=document.getElementById('cancelSharePostBtn');
-        const confirmSharePostBtn=document.getElementById('confirmSharePostBtn');
+        let postIdToShare = null;
+        const sharePostConfirmModal = document.getElementById('sharePostConfirmModal');
+        const cancelSharePostBtn = document.getElementById('cancelSharePostBtn');
+        const confirmSharePostBtn = document.getElementById('confirmSharePostBtn');
 
-        document.querySelectorAll('.share-btn').forEach(button=> {
+        document.querySelectorAll('.share-btn').forEach(button => {
             button.addEventListener('click', function () {
-                const postId=this.getAttribute('data-post-id');
-                postIdToShare=postId;
+                const postId = this.getAttribute('data-post-id');
+                postIdToShare = postId;
                 showModal(sharePostConfirmModal);
             });
         });
 
         if (confirmSharePostBtn) {
             confirmSharePostBtn.addEventListener('click', function () {
-                if ( !postIdToShare) return;
+                if (!postIdToShare) return;
 
-                fetch(`/posts/$ {
-                        postIdToShare
-                    }
-
-                    /share-in-app`, {
+                fetch(`/posts/${postIdToShare}/share-in-app`, {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -1457,42 +1524,37 @@
                         'Content-Type': 'application/json'
                     }
                 })
-                .then(response=> response.json())
-                .then(data=> {
-                    if (data.success) {
-                        // Optionally show notification
-                        // Update share count
-                        if (data.share_count !==undefined) {
-                            const shareCountElement=document.getElementById(
-                                `share-count-$ {
-                                    postIdToShare
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Optionally show notification
+                            // Update share count
+                            if (data.share_count !== undefined) {
+                                const shareCountElement = document.getElementById(`share-count-${postIdToShare}`);
+
+                                if (shareCountElement) {
+                                    shareCountElement.textContent = data.share_count;
                                 }
 
-                                `);
-
-                            if (shareCountElement) {
-                                shareCountElement.textContent=data.share_count;
+                                window.dispatchEvent(new CustomEvent('shareCountUpdated', {
+                                    detail: {
+                                        postId: postIdToShare, count: data.share_count
+                                    }
+                                }));
                             }
-
-                            window.dispatchEvent(new CustomEvent('shareCountUpdated', {
-                                detail: {
-                                    postId: postIdToShare, count: data.share_count
-                                }
-                            }));
                         }
-                    }
-                })
-                .finally(()=> {
-                    hideModal(sharePostConfirmModal);
-                    postIdToShare=null;
-                });
+                    })
+                    .finally(() => {
+                        hideModal(sharePostConfirmModal);
+                        postIdToShare = null;
+                    });
             });
         }
 
         if (cancelSharePostBtn) {
             cancelSharePostBtn.addEventListener('click', function () {
                 hideModal(sharePostConfirmModal);
-                postIdToShare=null;
+                postIdToShare = null;
             });
         }
 
@@ -1518,20 +1580,20 @@
                 },
                 body: body
             })
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
-                return response.json();
-            })
-            .then(data => {
-                if (data.total_reactions !== undefined && likeCount) {
-                    likeCount.textContent = data.total_reactions;
-                }
-            })
-            .catch(error => {
-                // Revert UI on error
-                updateLikeUI(button, likeCount, isLiked);
-                showNotification('Failed to update reaction. Please try again.', 'error');
-            });
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.total_reactions !== undefined && likeCount) {
+                        likeCount.textContent = data.total_reactions;
+                    }
+                })
+                .catch(error => {
+                    // Revert UI on error
+                    updateLikeUI(button, likeCount, isLiked);
+                    showNotification('Failed to update reaction. Please try again.', 'error');
+                });
         }
 
         // Helper function to update like UI
@@ -1575,28 +1637,28 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 }
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.comments) {
-                    commentsList.innerHTML = data.comments.map(comment => `
-                        <div class="comment">
-                            <img src="${comment.user.profile_picture || '/images/default-profile.png'}" alt="Profile" class="comment-avatar">
-                            <div class="comment-content">
-                                <div class="comment-header">
-                                    <span class="comment-author">${comment.user.name}</span>
-                                    <span class="comment-date">${comment.created_at}</span>
-                                </div>
-                                <p class="comment-text">${comment.content}</p>
-                            </div>
-                        </div>
-                    `).join('');
-                    commentsList.setAttribute('data-loaded', 'true');
-                }
-            })
-            .catch(error => {
-                console.error('Error loading comments:', error);
-                showNotification('Failed to load comments. Please try again.', 'error');
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.comments) {
+                        commentsList.innerHTML = data.comments.map(comment => `
+                                                                                                                                                                <div class="comment">
+                                                                                                                                                                    <img src="${comment.user.profile_picture || '/images/default-profile.png'}" alt="Profile" class="comment-avatar">
+                                                                                                                                                                    <div class="comment-content">
+                                                                                                                                                                        <div class="comment-header">
+                                                                                                                                                                            <span class="comment-author">${comment.user.name}</span>
+                                                                                                                                                                            <span class="comment-date">${comment.created_at}</span>
+                                                                                                                                                                        </div>
+                                                                                                                                                                        <p class="comment-text">${comment.content}</p>
+                                                                                                                                                                    </div>
+                                                                                                                                                                </div>
+                                                                                                                                                            `).join('');
+                        commentsList.setAttribute('data-loaded', 'true');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading comments:', error);
+                    showNotification('Failed to load comments. Please try again.', 'error');
+                });
         }
 
         // Show share modal
@@ -1629,48 +1691,48 @@
                     'Accept': 'application/json'
                 }
             })
-            .then(async response => {
-                let data = {};
-                try {
-                    data = await response.json();
-                } catch {
-                    const text = await response.text();
-                    data.message = text || 'Failed to share post';
-                }
-
-                if (!response.ok) {
-                    showNotification(data.message || 'Failed to share post', 'error');
-                    return;
-                }
-
-                if (data.success) {
-                    showNotification('Post shared successfully!', 'success');
-                    const shareCount = document.getElementById(`share-count-${window.postIdToShare}`);
-                    if (shareCount) {
-                        shareCount.textContent = data.share_count || (parseInt(shareCount.textContent || '0') + 1);
+                .then(async response => {
+                    let data = {};
+                    try {
+                        data = await response.json();
+                    } catch {
+                        const text = await response.text();
+                        data.message = text || 'Failed to share post';
                     }
-                } else {
-                    showNotification(data.message || 'Failed to share post', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error sharing post:', error);
-                showNotification('Failed to share post. Please try again.', 'error');
-            })
-            .finally(() => {
-                if (shareButton) {
-                    shareButton.disabled = false;
-                    shareButton.innerHTML = '<i class="far fa-share-square"></i> Share';
-                }
-                hideModal(document.getElementById('sharePostConfirmModal'));
-                window.postIdToShare = null;
-            });
+
+                    if (!response.ok) {
+                        showNotification(data.message || 'Failed to share post', 'error');
+                        return;
+                    }
+
+                    if (data.success) {
+                        showNotification('Post shared successfully!', 'success');
+                        const shareCount = document.getElementById(`share-count-${window.postIdToShare}`);
+                        if (shareCount) {
+                            shareCount.textContent = data.share_count || (parseInt(shareCount.textContent || '0') + 1);
+                        }
+                    } else {
+                        showNotification(data.message || 'Failed to share post', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sharing post:', error);
+                    showNotification('Failed to share post. Please try again.', 'error');
+                })
+                .finally(() => {
+                    if (shareButton) {
+                        shareButton.disabled = false;
+                        shareButton.innerHTML = '<i class="far fa-share-square"></i> Share';
+                    }
+                    hideModal(document.getElementById('sharePostConfirmModal'));
+                    window.postIdToShare = null;
+                });
         }
 
         // Add event listeners when document is loaded
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Event delegation for like buttons
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 const likeButton = e.target.closest('.like-btn');
                 if (likeButton) {
                     const postId = likeButton.getAttribute('data-post-id');
@@ -1681,7 +1743,7 @@
             });
 
             // Event delegation for comment forms
-            document.addEventListener('submit', function(e) {
+            document.addEventListener('submit', function (e) {
                 if (e.target.classList.contains('comment-form')) {
                     e.preventDefault();
                     const postId = e.target.getAttribute('data-post-id');
@@ -1699,28 +1761,28 @@
                         },
                         body: JSON.stringify({ content })
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            input.value = '';
-                            loadComments(postId);
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                input.value = '';
+                                loadComments(postId);
 
-                            // Update comment count
-                            const commentCount = document.getElementById(`comment-count-${postId}`);
-                            const commentText = document.getElementById(`comment-text-${postId}`);
-                            if (commentCount && commentText) {
-                                const newCount = parseInt(commentCount.textContent) + 1;
-                                commentCount.textContent = newCount;
-                                commentText.textContent = newCount === 1 ? 'Comment' : 'Comments';
+                                // Update comment count
+                                const commentCount = document.getElementById(`comment-count-${postId}`);
+                                const commentText = document.getElementById(`comment-text-${postId}`);
+                                if (commentCount && commentText) {
+                                    const newCount = parseInt(commentCount.textContent) + 1;
+                                    commentCount.textContent = newCount;
+                                    commentText.textContent = newCount === 1 ? 'Comment' : 'Comments';
+                                }
+                            } else {
+                                showNotification(data.message || 'Failed to post comment', 'error');
                             }
-                        } else {
-                            showNotification(data.message || 'Failed to post comment', 'error');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error posting comment:', error);
-                        showNotification('Failed to post comment. Please try again.', 'error');
-                    });
+                        })
+                        .catch(error => {
+                            console.error('Error posting comment:', error);
+                            showNotification('Failed to post comment. Please try again.', 'error');
+                        });
                 }
             });
 

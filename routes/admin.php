@@ -31,6 +31,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/{report}', [DashboardController::class, 'showReport'])->name('show');
             Route::post('/{report}/approve', [DashboardController::class, 'approveReport'])->name('approve');
             Route::post('/{report}/reject', [DashboardController::class, 'rejectReport'])->name('reject');
+            Route::post('/{report}/unarchive', [DashboardController::class, 'unarchiveReport'])->name('unarchive');
         });
 
         // Test simple route

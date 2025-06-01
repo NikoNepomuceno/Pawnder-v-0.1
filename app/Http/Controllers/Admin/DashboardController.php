@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\PostReport;
-use App\Models\User;
+use App\Notifications\PostTakenDown;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -109,11 +109,23 @@ class DashboardController extends Controller
 
     public function approveReport(PostReport $report)
     {
-        $report->update(['status' => 'approved']);
-        $report->post->update(['status' => 'active']);
+        $report->update(['status' => 'resolved']);  // Changed from 'approved' to 'resolved'
+
+        $post = $report->post;
+        $post->update([
+            'status' => 'taken_down',
+            'is_taken_down' => true
+        ]);
+
+        // If this is an original post (not a shared post), we don't need to do anything special
+        // The shared posts will automatically show the takedown banner through the new logic
+        // No need to modify shared posts themselves
+
+        // Notify the post owner
+        $post->user->notify(new PostTakenDown($post));
 
         return redirect()->route('admin.dashboard')
-            ->with('success', 'Report has been approved and post has been restored.');
+            ->with('success', 'Report has been approved and post has been taken down.');
     }
 
     public function rejectReport(PostReport $report)
@@ -122,6 +134,38 @@ class DashboardController extends Controller
 
         return redirect()->route('admin.dashboard')
             ->with('success', 'Report has been rejected.');
+    }
+
+    public function unarchiveReport(PostReport $report)
+    {
+        try {
+            // Check if the report is actually archived (dismissed)
+            if ($report->status !== 'dismissed') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This report is not archived and cannot be unarchived.'
+                ], 400);
+            }
+
+            // Update the report status back to pending
+            $report->update([
+                'status' => 'pending',
+                'reviewed_at' => null,
+                'reviewed_by' => null,
+                'admin_notes' => null
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Report has been successfully unarchived and moved back to pending reports.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to unarchive report: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

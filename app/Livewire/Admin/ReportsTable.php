@@ -4,9 +4,9 @@ namespace App\Livewire\Admin;
 
 use Livewire\Component;
 use App\Models\PostReport;
-use App\Models\Post;
 use Livewire\WithPagination;
 use App\Notifications\PostTakenDown;
+use Illuminate\Support\Facades\Auth;
 
 class ReportsTable extends Component
 {
@@ -16,6 +16,7 @@ class ReportsTable extends Component
     public $selectedReport = null;
     public $showReportDetails = false;
     public $showApproveConfirm = false;
+    public $showArchiveConfirm = false;
 
     protected $listeners = [
         'reportStatusUpdated' => '$refresh',
@@ -38,61 +39,94 @@ class ReportsTable extends Component
     {
         try {
             $report = PostReport::find($reportId);
+
             if (!$report) {
-                throw new \Exception('Report not found');
+                throw new \Exception('Report not found.');
+            }
+
+            $post = $report->post;
+
+            if (!$post) {
+                throw new \Exception('Associated post not found.');
             }
 
             // Update report status
             $report->update([
-                'status' => 'resolved',
+                'status' => 'resolved',  // Changed from 'approved' to 'resolved'
                 'reviewed_at' => now(),
-                'reviewed_by' => auth()->id(),
-                'admin_notes' => 'Post was taken down for violating community guidelines.',
+                'reviewed_by' => Auth::id(),
+                'admin_notes' => 'Report was approved and post was taken down.'
             ]);
 
-            // Handle post takedown
-            if ($report->post) {
-                $report->post->update([
-                    'is_taken_down' => true,
-                    'status' => 'taken_down',
-                ]);
+            // Take down the post
+            $post->update([
+                'status' => 'taken_down',
+                'is_taken_down' => true
+            ]);
 
-                // Notify the post owner
-                $report->post->user->notify(new PostTakenDown($report->post));
+            // No need to modify shared posts - they will automatically show takedown banner
 
-                // Update shared posts if any
-                $sharedPosts = Post::where('shared_post_id', $report->post->id)
-                    ->update([
-                        'is_taken_down' => true,
-                        'status' => 'taken_down',
-                    ]);
-            }
+            // Notify the post owner
+            $post->user->notify(new PostTakenDown($post));
 
+            $this->dispatch('showNotification',
+                'Report approved and post has been taken down successfully.',
+                'success'
+            );
             $this->dispatch('reportStatusUpdated');
             $this->showReportDetails = false;
             $this->showApproveConfirm = false;
-
-            // Add success message
-            session()->flash('message', 'Report has been successfully resolved. The post and any shared copies have been taken down.');
         } catch (\Exception $e) {
-            // Add error message
-            session()->flash('error', 'Failed to resolve report: ' . $e->getMessage());
-            throw $e; // Re-throw to show error in the UI
+            // Close all modals so admin can see the error message clearly
+            $this->showReportDetails = false;
+            $this->showApproveConfirm = false;
+
+            $this->dispatch('showNotification',
+                'Failed to approve report: ' . $e->getMessage(),
+                'error'
+            );
         }
+    }
+
+    public function showArchiveConfirmation($reportId)
+    {
+        $this->selectedReport = PostReport::with(['reporter', 'post'])->find($reportId);
+        $this->showArchiveConfirm = true;
     }
 
     public function archiveReport($reportId)
     {
-        $report = PostReport::find($reportId);
-        $report->update([
-            'status' => 'dismissed',
-            'reviewed_at' => now(),
-            'reviewed_by' => auth()->id(),
-            'admin_notes' => 'Report was dismissed by admin.'
-        ]);
+        try {
+            $report = PostReport::find($reportId);
 
-        $this->dispatch('reportStatusUpdated');
-        $this->showReportDetails = false;
+            if (!$report) {
+                throw new \Exception('Report not found.');
+            }
+
+            $report->update([
+                'status' => 'dismissed',  // Changed from 'archived' to 'dismissed'
+                'reviewed_at' => now(),
+                'reviewed_by' => Auth::id(),
+                'admin_notes' => 'Report was archived by admin.'
+            ]);
+
+            $this->dispatch('showNotification',
+                'Report has been archived successfully.',
+                'success'
+            );
+            $this->dispatch('reportStatusUpdated');
+            $this->showReportDetails = false;
+            $this->showArchiveConfirm = false;
+        } catch (\Exception $e) {
+            // Close modals so admin can see the error message clearly
+            $this->showReportDetails = false;
+            $this->showArchiveConfirm = false;
+
+            $this->dispatch('showNotification',
+                'Failed to archive report: ' . $e->getMessage(),
+                'error'
+            );
+        }
     }
 
     public function openReportModal()

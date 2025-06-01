@@ -138,6 +138,36 @@ body {
     background: #b7e4c7;
 }
 
+.register-btn:disabled {
+    background: #e0e0e0;
+    color: #999;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.register-btn:disabled:hover {
+    background: #e0e0e0;
+    transform: none;
+    box-shadow: none;
+}
+
+.register-btn .btn-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.register-btn .btn-spinner i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 .register-or {
     text-align: center;
     color: #333;

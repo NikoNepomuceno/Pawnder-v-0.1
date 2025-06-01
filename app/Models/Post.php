@@ -214,6 +214,62 @@ class Post extends Model
     }
 
     /**
+     * Check if this post or its original post (if shared) is taken down.
+     *
+     * @return bool
+     */
+    public function isEffectivelyTakenDown(): bool
+    {
+        // If this post itself is taken down
+        if ($this->is_taken_down) {
+            return true;
+        }
+
+        // If this is a shared post, check if the original post is taken down
+        if ($this->isShared() && $this->originalPost) {
+            return $this->originalPost->is_taken_down;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the effective takedown status for display purposes.
+     * Returns information about which post is taken down and relevant user info.
+     *
+     * @return array|null
+     */
+    public function getTakedownInfo(): ?array
+    {
+        if (!$this->isEffectivelyTakenDown()) {
+            return null;
+        }
+
+        // If this post itself is taken down
+        if ($this->is_taken_down) {
+            return [
+                'is_taken_down' => true,
+                'taken_down_post' => $this,
+                'display_user' => $this->user,
+                'is_shared_content_taken_down' => false,
+            ];
+        }
+
+        // If this is a shared post and original is taken down
+        if ($this->isShared() && $this->originalPost && $this->originalPost->is_taken_down) {
+            return [
+                'is_taken_down' => true,
+                'taken_down_post' => $this->originalPost,
+                'display_user' => $this->originalPost->user,
+                'sharer_user' => $this->user,
+                'is_shared_content_taken_down' => true,
+            ];
+        }
+
+        return null;
+    }
+
+    /**
      * Scope a query to only include posts that are not deleted or have valid shared posts.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query

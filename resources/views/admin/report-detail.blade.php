@@ -80,9 +80,33 @@
 
                         <div class="report-reason mb-4">
                             <h6>Reason for Report</h6>
-                            <div class="p-3 bg-light rounded">
-                                {{ $report->reason }}
-                            </div>
+                            @if($report->hasViolationCategories())
+                                <div class="violation-categories">
+                                    @foreach($report->grouped_violation_reasons as $category => $reasons)
+                                        <div class="category-group mb-3">
+                                            <h6 class="category-title">
+                                                @if($category === 'Content-Related Violations')
+                                                    <i class="fas fa-exclamation-triangle text-danger"></i>
+                                                @elseif($category === 'User Behavior Violations')
+                                                    <i class="fas fa-user-times text-warning"></i>
+                                                @else
+                                                    <i class="fas fa-shield-alt text-info"></i>
+                                                @endif
+                                                {{ $category }}
+                                            </h6>
+                                            <div class="violation-badges">
+                                                @foreach($reasons as $reason)
+                                                    <span class="badge bg-secondary me-1 mb-1">{{ $reason }}</span>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="p-3 bg-light rounded">
+                                    {{ $report->reason }}
+                                </div>
+                            @endif
                         </div>
 
                         @if($report->admin_notes)
@@ -100,11 +124,11 @@
                                 <div class="card">
                                     <div class="card-header">
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ $report->post->user->profile_picture ?? asset('images/default-avatar.jpg') }}"
+                                            <img src="{{ $report->post->user->profile_picture ?? asset('images/default-profile.png') }}"
                                                 alt="Profile" class="post-avatar"
                                                 style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
                                             <div>
-                                                <h6 class="mb-0">{{ $report->post->user->name }}</h6>
+                                                <h6 class="mb-0">{{ $report->post->name }}</h6>
                                                 <small
                                                     class="text-muted">{{ $report->post->created_at->diffForHumans() }}</small>
                                             </div>
@@ -241,6 +265,50 @@
 
         .badge.bg-info {
             background-color: #17a2b8 !important;
+        }
+
+        /* Violation Categories Styling */
+        .violation-categories {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+        }
+
+        .category-group {
+            background: white;
+            border-radius: 6px;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        .category-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .violation-badges .badge {
+            font-size: 11px;
+            padding: 4px 8px;
+            margin: 2px;
+        }
+
+        .violation-summary {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .violation-count .badge {
+            font-size: 10px;
+            padding: 2px 6px;
         }
     </style>
 

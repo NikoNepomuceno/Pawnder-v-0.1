@@ -55,6 +55,16 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get the user's full name.
+     *
+     * @return string
+     */
+    public function getNameAttribute(): string
+    {
+        return trim($this->first_name . ' ' . $this->last_name);
+    }
+
+    /**
      * Check if the user is an admin.
      *
      * @return bool
@@ -62,5 +72,49 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isAdmin(): bool
     {
         return $this->is_admin;
+    }
+
+    /**
+     * Get the user's profile picture URL with fallback
+     *
+     * @return string
+     */
+    public function getProfilePictureUrlAttribute(): string
+    {
+        if (empty($this->profile_picture)) {
+            return asset('images/default-profile.png');
+        }
+
+        // If it's a relative path, make it absolute
+        if (!str_starts_with($this->profile_picture, 'http')) {
+            return asset($this->profile_picture);
+        }
+
+        return $this->profile_picture;
+    }
+
+    /**
+     * Check if the user has a custom (non-Google) profile picture
+     *
+     * @return bool
+     */
+    public function hasCustomProfilePicture(): bool
+    {
+        return !empty($this->profile_picture) &&
+               !str_contains($this->profile_picture, 'googleusercontent.com') &&
+               !str_contains($this->profile_picture, 'profile_pictures/google_');
+    }
+
+    /**
+     * Get the user's initials for fallback display
+     *
+     * @return string
+     */
+    public function getInitialsAttribute(): string
+    {
+        $firstInitial = !empty($this->first_name) ? strtoupper($this->first_name[0]) : '';
+        $lastInitial = !empty($this->last_name) ? strtoupper($this->last_name[0]) : '';
+
+        return $firstInitial . $lastInitial;
     }
 }

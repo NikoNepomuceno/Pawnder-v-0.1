@@ -11,6 +11,10 @@
     <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/logo.png') }}">
     <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/logo.png') }}">
     <link rel="shortcut icon" href="{{ asset('images/logo.png') }}" type="image/x-icon">
+
+    <!-- DNS Prefetch for faster navigation -->
+    <link rel="dns-prefetch" href="{{ parse_url(route('login'), PHP_URL_HOST) }}">
+
     @vite(['resources/css/app.css'])
     <link rel="stylesheet" href="{{ asset('css/auth/register.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -68,7 +72,12 @@
                         <label for="privacy_agreement">I agree to the <a href="#" onclick="showPrivacyPolicy()">Privacy
                                 Policy</a></label>
                     </div>
-                    <button type="submit" class="register-btn">Sign Up</button>
+                    <button type="submit" class="register-btn" id="signupBtn">
+                        <span class="btn-text">Sign Up</span>
+                        <span class="btn-spinner" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i> Signing up...
+                        </span>
+                    </button>
                 </form>
                 <div class="register-or">Or Sign up with Others</div>
                 <div class="register-socials">
@@ -80,7 +89,8 @@
             <div class="register-welcome">
                 <h2>Welcome back, Fur-iend!</h2>
                 <p>Be Paw-sitive!</p>
-                <a href="{{ route('login') }}"><button class="register-signin-btn">Sign In</button></a>
+                <a href="{{ route('login') }}" class="preload-link" data-preload-url="{{ route('login') }}"><button
+                        class="register-signin-btn">Sign In</button></a>
             </div>
             <img src="{{ asset('images/logo.png') }}" alt="Pawnder Logo" class="register-illustration" />
         </div>
@@ -154,6 +164,71 @@
         </div>
     </div>
     <script>
+        // Hover-triggered preloading mechanism
+        class HoverPreloader {
+            constructor() {
+                this.preloadedUrls = new Set();
+                this.hoverTimer = null;
+                this.hoverDelay = 65; // Delay in milliseconds before preloading
+                this.init();
+            }
+
+            init() {
+                // Add event listeners to all preload links
+                document.querySelectorAll('.preload-link').forEach(link => {
+                    link.addEventListener('mouseenter', (e) => this.handleHover(e));
+                    link.addEventListener('mouseleave', () => this.clearHoverTimer());
+                });
+            }
+
+            handleHover(event) {
+                const url = event.currentTarget.dataset.preloadUrl;
+                if (!url || this.preloadedUrls.has(url)) return;
+
+                // Clear any existing timer
+                this.clearHoverTimer();
+
+                // Set a timer to preload after hover delay
+                this.hoverTimer = setTimeout(() => {
+                    this.preloadPage(url);
+                }, this.hoverDelay);
+            }
+
+            clearHoverTimer() {
+                if (this.hoverTimer) {
+                    clearTimeout(this.hoverTimer);
+                    this.hoverTimer = null;
+                }
+            }
+
+            preloadPage(url) {
+                if (this.preloadedUrls.has(url)) return;
+
+                try {
+                    // Create prefetch link element
+                    const prefetchLink = document.createElement('link');
+                    prefetchLink.rel = 'prefetch';
+                    prefetchLink.href = url;
+                    prefetchLink.as = 'document';
+
+                    // Add to head
+                    document.head.appendChild(prefetchLink);
+
+                    // Mark as preloaded
+                    this.preloadedUrls.add(url);
+
+                    console.log(`Preloaded: ${url}`);
+                } catch (error) {
+                    console.warn('Preload failed:', error);
+                }
+            }
+        }
+
+        // Initialize preloader when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            new HoverPreloader();
+        });
+
         // Notification function
         function showNotification(message, type = 'success') {
             const container = document.getElementById('notificationContainer');
@@ -222,25 +297,63 @@
             }
             modal.style.display = 'none';
         }
-        // Form validation
+        // Form validation and loading state
         document.getElementById('signupForm').addEventListener('submit', function (e) {
             const privacyCheckbox = document.getElementById('privacy_agreement');
+            const password = document.getElementById('reg_password').value;
+            const confirmPassword = document.getElementById('password_confirmation').value;
+            const signupBtn = document.getElementById('signupBtn');
+            const btnText = signupBtn.querySelector('.btn-text');
+            const btnSpinner = signupBtn.querySelector('.btn-spinner');
+
+            // Reset loading state first
+            signupBtn.disabled = false;
+            btnText.style.display = 'inline';
+            btnSpinner.style.display = 'none';
+
             if (!privacyCheckbox.checked) {
                 e.preventDefault();
                 showNotification('Please agree to the Privacy Policy to continue.', 'error');
+                return;
             }
+
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                showNotification('Passwords do not match.', 'error');
+                return;
+            }
+
+            // If validation passes, show loading state
+            signupBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnSpinner.style.display = 'inline';
         });
-        // Show session messages
+        // Function to reset loading state
+        function resetLoadingState() {
+            const signupBtn = document.getElementById('signupBtn');
+            const btnText = signupBtn.querySelector('.btn-text');
+            const btnSpinner = signupBtn.querySelector('.btn-spinner');
+
+            if (signupBtn && btnText && btnSpinner) {
+                signupBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnSpinner.style.display = 'none';
+            }
+        }
+
+        // Show session messages and reset loading state if there are errors
         @if(session('success'))
             showNotification('{{ session('success') }}', 'success');
         @endif
         @if(session('error'))
             showNotification('{{ session('error') }}', 'error');
+            resetLoadingState();
         @endif
         @if($errors->any())
             @foreach($errors->all() as $error)
                 showNotification('{{ $error }}', 'error');
             @endforeach
+            resetLoadingState();
         @endif
 
         // Add page transition handling

@@ -100,6 +100,6 @@ class UserController extends Controller
         }
 
         $post->delete();
-        return redirect()->back()->with('success', 'Post deleted successfully');
+        return redirect()->back()->with('success', 'Post moved to trash successfully');
     }
 }

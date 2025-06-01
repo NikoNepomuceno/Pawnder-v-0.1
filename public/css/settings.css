@@ -21,34 +21,234 @@
     line-height: 1.7;
 }
 
+/* Theme Option Styles */
 .theme-option {
     margin-top: 32px;
-    padding: 24px 20px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(63,125,88,0.04);
+    padding: 28px 24px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(63,125,88,0.08);
+    border: 1px solid rgba(63,125,88,0.1);
+}
+
+.theme-header {
+    margin-bottom: 24px;
+}
+
+.theme-info {
+    text-align: left;
 }
 
 .theme-title {
-    font-size: 1.2rem;
-    font-weight: 500;
+    font-size: 1.4rem;
+    font-weight: 600;
     color: #3F7D58;
-    margin-bottom: 16px;
-}
-
-.theme-label {
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
-    font-size: 1rem;
-    margin-bottom: 10px;
-    cursor: pointer;
-    color: #222;
-    gap: 10px;
+    gap: 12px;
 }
 
-.theme-label input[type="radio"] {
-    accent-color: #3F7D58;
-    margin-right: 8px;
+.theme-title i {
+    font-size: 1.2rem;
+    color: #3F7D58;
+}
+
+.theme-description {
+    font-size: 0.95rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Theme Cards Container */
+.theme-selector {
+    margin-top: 20px;
+}
+
+.theme-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Individual Theme Card */
+.theme-card {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(63,125,88,0.15);
+    border-color: #3F7D58;
+}
+
+.theme-card.selected {
+    border-color: #3F7D58;
+    background: rgba(63,125,88,0.05);
+    box-shadow: 0 8px 25px rgba(63,125,88,0.2);
+}
+
+.theme-card.selected .theme-check {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Theme Preview */
+.theme-preview {
+    width: 100%;
+    height: 80px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+.light-theme .theme-preview {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid #e9ecef;
+}
+
+.dark-theme .theme-preview {
+    background: linear-gradient(135deg, #23272b 0%, #181a1b 100%);
+    border: 1px solid #333;
+}
+
+.preview-header {
+    height: 20px;
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    margin-bottom: 8px;
+}
+
+.light-theme .preview-header {
+    background: #3F7D58;
+}
+
+.dark-theme .preview-header {
+    background: #8fd19e;
+}
+
+.preview-content {
+    padding: 8px 12px;
+}
+
+.preview-line {
+    height: 8px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+}
+
+.preview-line.short {
+    width: 60%;
+}
+
+.light-theme .preview-line {
+    background: #e9ecef;
+}
+
+.dark-theme .preview-line {
+    background: #444;
+}
+
+/* Theme Details */
+.theme-details {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.theme-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.light-theme .theme-icon {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.dark-theme .theme-icon {
+    background: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+}
+
+.theme-text h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 4px 0;
+}
+
+.theme-text p {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Theme Check Mark */
+.theme-check {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 24px;
+    height: 24px;
+    background: #3F7D58;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.8rem;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Selection Animation */
+.theme-selected-animation {
+    animation: themeSelectPulse 0.3s ease-out;
+}
+
+@keyframes themeSelectPulse {
+    0% {
+        transform: translateY(-2px) scale(1);
+    }
+    50% {
+        transform: translateY(-4px) scale(1.02);
+    }
+    100% {
+        transform: translateY(-2px) scale(1);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .theme-cards {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .theme-option {
+        padding: 20px 16px;
+    }
+
+    .theme-preview {
+        height: 70px;
+    }
 }
 
 body.dark-mode {
@@ -61,8 +261,7 @@ body.dark-mode .settings-container {
     box-shadow: 0 4px 16px rgba(0,0,0,0.25);
 }
 
-body.dark-mode .settings-title,
-body.dark-mode .theme-title {
+body.dark-mode .settings-title {
     color: #8fd19e;
 }
 
@@ -70,11 +269,349 @@ body.dark-mode .settings-section {
     color: #e0e0e0;
 }
 
+/* Dark Mode Theme Option Styles */
 body.dark-mode .theme-option {
     background: #23272b;
-    box-shadow: 0 2px 8px rgba(63,125,88,0.10);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    border-color: rgba(143, 209, 158, 0.2);
 }
 
-body.dark-mode .theme-label {
+body.dark-mode .theme-title {
+    color: #8fd19e;
+}
+
+body.dark-mode .theme-title i {
+    color: #8fd19e;
+}
+
+body.dark-mode .theme-description {
+    color: #b0b0b0;
+}
+
+/* Dark Mode Theme Cards */
+body.dark-mode .theme-card {
+    background: #2d3135;
+    border-color: #444;
+}
+
+body.dark-mode .theme-card:hover {
+    border-color: #8fd19e;
+    box-shadow: 0 8px 25px rgba(143, 209, 158, 0.2);
+}
+
+body.dark-mode .theme-card.selected {
+    border-color: #8fd19e;
+    background: rgba(143, 209, 158, 0.1);
+    box-shadow: 0 8px 25px rgba(143, 209, 158, 0.25);
+}
+
+body.dark-mode .theme-check {
+    background: #8fd19e;
+    color: #23272b;
+}
+
+/* Dark Mode Theme Text */
+body.dark-mode .theme-text h3 {
     color: #e0e0e0;
-} 
+}
+
+body.dark-mode .theme-text p {
+    color: #b0b0b0;
+}
+
+/* Dark Mode Theme Icons */
+body.dark-mode .light-theme .theme-icon {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ffc107;
+}
+
+body.dark-mode .dark-theme .theme-icon {
+    background: rgba(143, 209, 158, 0.15);
+    color: #8fd19e;
+}
+
+/* Trash Option Styles */
+.trash-option {
+    margin-top: 32px;
+    padding: 28px 24px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(63,125,88,0.08);
+    border: 1px solid rgba(63,125,88,0.1);
+}
+
+.trash-header {
+    margin-bottom: 24px;
+}
+
+.trash-info {
+    text-align: left;
+}
+
+.trash-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #3F7D58;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.trash-title i {
+    font-size: 1.2rem;
+    color: #3F7D58;
+}
+
+.trash-description {
+    font-size: 0.95rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Trash Content */
+.trash-content {
+    margin-top: 20px;
+}
+
+.trash-card {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.trash-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(63,125,88,0.15);
+    border-color: #3F7D58;
+}
+
+/* Trash Visual Section */
+.trash-visual {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.trash-icon-container {
+    width: 60px;
+    height: 60px;
+    background: rgba(220, 53, 69, 0.1);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: #dc3545;
+}
+
+.trash-stats {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #3F7D58;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.stat-divider {
+    width: 1px;
+    height: 40px;
+    background: #e9ecef;
+}
+
+/* Trash Details Section */
+.trash-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+}
+
+.trash-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.feature-item i {
+    width: 16px;
+    font-size: 0.9rem;
+    color: #3F7D58;
+}
+
+/* Trash Actions */
+.trash-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.trash-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    background: #3F7D58;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(63,125,88,0.2);
+}
+
+.trash-btn:hover {
+    background: #4a8d65;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(63,125,88,0.3);
+    color: white;
+    text-decoration: none;
+}
+
+.trash-btn i {
+    font-size: 1rem;
+}
+
+.trash-btn span {
+    font-weight: 600;
+}
+
+/* Responsive Design for Trash */
+@media (max-width: 768px) {
+    .trash-visual {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+
+    .trash-stats {
+        justify-content: center;
+    }
+
+    .trash-details {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 20px;
+    }
+
+    .trash-features {
+        align-items: center;
+    }
+
+    .trash-actions {
+        justify-content: center;
+    }
+}
+
+/* Dark Mode Trash Styles */
+body.dark-mode .trash-option {
+    background: #23272b;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    border-color: rgba(143, 209, 158, 0.2);
+}
+
+body.dark-mode .trash-title {
+    color: #8fd19e;
+}
+
+body.dark-mode .trash-title i {
+    color: #8fd19e;
+}
+
+body.dark-mode .trash-description {
+    color: #b0b0b0;
+}
+
+/* Dark Mode Trash Card */
+body.dark-mode .trash-card {
+    background: #2d3135;
+    border-color: #444;
+}
+
+body.dark-mode .trash-card:hover {
+    border-color: #8fd19e;
+    box-shadow: 0 8px 25px rgba(143, 209, 158, 0.2);
+}
+
+/* Dark Mode Trash Visual */
+body.dark-mode .trash-visual {
+    border-bottom-color: #444;
+}
+
+body.dark-mode .trash-icon-container {
+    background: rgba(220, 53, 69, 0.15);
+    color: #ff6b6b;
+}
+
+body.dark-mode .stat-number {
+    color: #8fd19e;
+}
+
+body.dark-mode .stat-label {
+    color: #b0b0b0;
+}
+
+body.dark-mode .stat-divider {
+    background: #444;
+}
+
+/* Dark Mode Trash Features */
+body.dark-mode .feature-item {
+    color: #b0b0b0;
+}
+
+body.dark-mode .feature-item i {
+    color: #8fd19e;
+}
+
+/* Dark Mode Trash Button */
+body.dark-mode .trash-btn {
+    background: #8fd19e;
+    color: #23272b;
+    box-shadow: 0 2px 8px rgba(143, 209, 158, 0.3);
+}
+
+body.dark-mode .trash-btn:hover {
+    background: #6fcf97;
+    color: #23272b;
+    box-shadow: 0 6px 20px rgba(143, 209, 158, 0.4);
+}

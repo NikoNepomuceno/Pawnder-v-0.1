@@ -57,9 +57,29 @@ class PostController extends Controller
         // Only show valid posts (not deleted and with valid shared posts)
         $query->valid();
 
-        // Category filter
+        // Status filter
         if ($request->filled('status')) {
             $query->where('status', $request->status);
+        }
+
+        // Pet type filter (searches in breed, title, and description)
+        if ($request->filled('pet_type')) {
+            $petType = strtolower($request->pet_type);
+            $query->where(function ($q) use ($petType) {
+                $q->whereRaw('LOWER(breed) LIKE ?', ["%{$petType}%"])
+                    ->orWhereRaw('LOWER(title) LIKE ?', ["%{$petType}%"])
+                    ->orWhereRaw('LOWER(description) LIKE ?', ["%{$petType}%"]);
+            });
+        }
+
+        // Breed filter (searches in breed, title, and description)
+        if ($request->filled('breed_filter')) {
+            $breedFilter = strtolower($request->breed_filter);
+            $query->where(function ($q) use ($breedFilter) {
+                $q->whereRaw('LOWER(breed) LIKE ?', ["%{$breedFilter}%"])
+                    ->orWhereRaw('LOWER(title) LIKE ?', ["%{$breedFilter}%"])
+                    ->orWhereRaw('LOWER(description) LIKE ?', ["%{$breedFilter}%"]);
+            });
         }
 
         // Search filter
@@ -69,7 +89,8 @@ class PostController extends Controller
                 $q->whereRaw('LOWER(title) LIKE ?', ["%{$search}%"])
                     ->orWhereRaw('LOWER(breed) LIKE ?', ["%{$search}%"])
                     ->orWhereRaw('LOWER(location) LIKE ?', ["%{$search}%"])
-                    ->orWhereRaw('LOWER(contact) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(mobile_number) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(email) LIKE ?', ["%{$search}%"])
                     ->orWhereRaw('LOWER(description) LIKE ?', ["%{$search}%"]);
             });
         }
@@ -133,10 +154,93 @@ class PostController extends Controller
         $this->postService->deletePost($post);
 
         if (request()->expectsJson()) {
-            return response()->json(['success' => true, 'message' => 'Post deleted successfully!']);
+            return response()->json(['success' => true, 'message' => 'Post moved to trash successfully!']);
         }
 
-        return redirect()->route('home')->with('success', 'Post deleted successfully!');
+        return redirect()->route('home')->with('success', 'Post moved to trash successfully!');
+    }
+
+    /**
+     * Display the user's deleted posts (trash).
+     *
+     * @return \Illuminate\View\View
+     */
+    public function trash(): View
+    {
+        $deletedPosts = Post::onlyTrashed()
+            ->where('user_id', Auth::id())
+            ->with(['user', 'originalPost.user'])
+            ->withCount('comments')
+            ->orderBy('deleted_at', 'desc')
+            ->get();
+
+        return view('trash.index', compact('deletedPosts'));
+    }
+
+    /**
+     * Restore a deleted post from trash.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     */
+    public function restore(int $id): JsonResponse|RedirectResponse
+    {
+        $post = Post::onlyTrashed()->where('id', $id)->where('user_id', Auth::id())->first();
+
+        if (!$post) {
+            if (request()->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Post not found in trash.'], 404);
+            }
+            return redirect()->route('trash.index')->with('error', 'Post not found in trash.');
+        }
+
+        try {
+            $post->restore();
+
+            if (request()->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Post restored successfully!']);
+            }
+
+            return redirect()->route('trash.index')->with('success', 'Post restored successfully!');
+        } catch (\Exception $e) {
+            if (request()->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to restore post.'], 500);
+            }
+            return redirect()->route('trash.index')->with('error', 'Failed to restore post.');
+        }
+    }
+
+    /**
+     * Permanently delete a post from trash.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     */
+    public function forceDelete(int $id): JsonResponse|RedirectResponse
+    {
+        $post = Post::onlyTrashed()->where('id', $id)->where('user_id', Auth::id())->first();
+
+        if (!$post) {
+            if (request()->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Post not found in trash.'], 404);
+            }
+            return redirect()->route('trash.index')->with('error', 'Post not found in trash.');
+        }
+
+        try {
+            $post->forceDelete();
+
+            if (request()->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Post permanently deleted!']);
+            }
+
+            return redirect()->route('trash.index')->with('success', 'Post permanently deleted!');
+        } catch (\Exception $e) {
+            if (request()->expectsJson()) {
+                return response()->json(['success' => false, 'message' => 'Failed to permanently delete post.'], 500);
+            }
+            return redirect()->route('trash.index')->with('error', 'Failed to permanently delete post.');
+        }
     }
 
     /**
@@ -185,5 +289,19 @@ class PostController extends Controller
                 'message' => $e->getMessage()
             ], 400);
         }
+    }
+
+    /**
+     * Get the count of deleted posts for the authenticated user.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTrashCount(): JsonResponse
+    {
+        $count = Post::onlyTrashed()
+            ->where('user_id', Auth::id())
+            ->count();
+
+        return response()->json(['count' => $count]);
     }
 }

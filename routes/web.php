@@ -41,6 +41,11 @@ Route::middleware('auth')->group(function () {
         })->name('settings');
     });
 
+    // Trash routes
+    Route::get('/trash', [PostController::class, 'trash'])->name('trash.index');
+    Route::post('/trash/{id}/restore', [PostController::class, 'restore'])->name('trash.restore');
+    Route::delete('/trash/{id}/force-delete', [PostController::class, 'forceDelete'])->name('trash.forceDelete');
+
     // Notifications routes
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
     Route::post('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
@@ -74,6 +79,8 @@ Route::get('/test-approved-reports', function () {
     \Log::info('Test route accessed');
     return 'Test route works!';
 });
+
+
 
 // Test admin route without middleware
 Route::get('/test-admin-route', function () {

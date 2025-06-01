@@ -197,6 +197,9 @@
                         @case('App\Notifications\PostShared')
                             <i class='bx bx-share'></i>
                             @break
+                        @case('App\Notifications\PostTakenDown')
+                            <i class='bx bx-error-circle'></i>
+                            @break
                         @default
                             <i class='bx bx-bell'></i>
                     @endswitch

@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->softDeletes();
-            $table->boolean('was_shared')->default(false)->after('shared_post_id');
+        Schema::table('post_reports', function (Blueprint $table) {
+            $table->json('violation_reasons')->nullable()->after('reason');
         });
     }
 
@@ -22,9 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->dropSoftDeletes();
-            $table->dropColumn('was_shared');
+        Schema::table('post_reports', function (Blueprint $table) {
+            $table->dropColumn('violation_reasons');
         });
     }
 };

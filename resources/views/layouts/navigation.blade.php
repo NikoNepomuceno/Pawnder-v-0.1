@@ -29,14 +29,52 @@
                     <i class='bx bx-filter filter-icon'></i>
                 </button>
                 <div id="filterDropdown" class="nav-search-dropdown">
-                    <label for="status">Category</label>
-                    <select name="status" id="status">
-                        <option value="" {{ request('status') == '' ? 'selected' : '' }}>All</option>
-                        <option value="found" {{ request('status') == 'found' ? 'selected' : '' }}>Found</option>
-                        <option value="not_found" {{ request('status') == 'not_found' ? 'selected' : '' }}>Not Found
-                        </option>
-                    </select>
-                    <button type="submit" class="submit-btn">Apply Filter</button>
+                    <div class="filter-row">
+                        <div class="filter-item">
+                            <select name="status" id="status">
+                                <option value="" {{ request('status') == '' ? 'selected' : '' }}>All Status</option>
+                                <option value="found" {{ request('status') == 'found' ? 'selected' : '' }}>Found</option>
+                                <option value="not_found" {{ request('status') == 'not_found' ? 'selected' : '' }}>Not
+                                    Found</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <div class="filter-item">
+                                <select name="pet_type" id="pet_type">
+                                    <option value="" {{ request('pet_type') == '' ? 'selected' : '' }}>All Animals
+                                    </option>
+                                    <option value="dog" {{ request('pet_type') == 'dog' ? 'selected' : '' }}>Dog</option>
+                                    <option value="cat" {{ request('pet_type') == 'cat' ? 'selected' : '' }}>Cat</option>
+                                    <option value="bird" {{ request('pet_type') == 'bird' ? 'selected' : '' }}>Bird
+                                    </option>
+                                    <option value="rabbit" {{ request('pet_type') == 'rabbit' ? 'selected' : '' }}>Rabbit
+                                    </option>
+                                    <option value="hamster" {{ request('pet_type') == 'hamster' ? 'selected' : '' }}>
+                                        Hamster</option>
+                                    <option value="guinea pig" {{ request('pet_type') == 'guinea pig' ? 'selected' : '' }}>Guinea Pig</option>
+                                    <option value="fish" {{ request('pet_type') == 'fish' ? 'selected' : '' }}>Fish
+                                    </option>
+                                    <option value="reptile" {{ request('pet_type') == 'reptile' ? 'selected' : '' }}>
+                                        Reptile</option>
+                                    <option value="other" {{ request('pet_type') == 'other' ? 'selected' : '' }}>Other
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="filter-item breed-filter" id="breedSection">
+                                <select name="breed_filter" id="breed_filter">
+                                    <option value="">Breed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="button" class="filter-clear" id="clearFilters">Clear</button>
+                        <button type="submit" class="filter-apply">Apply</button>
+                    </div>
                 </div>
             </form>
         </div>

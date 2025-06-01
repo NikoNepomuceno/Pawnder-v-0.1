@@ -34,6 +34,7 @@ class PostReport extends Model
         'post_id',
         'reported_by',
         'reason',
+        'violation_reasons',
         'status',
         'reviewed_at',
         'reviewed_by',
@@ -47,6 +48,7 @@ class PostReport extends Model
      */
     protected $casts = [
         'reviewed_at' => 'datetime',
+        'violation_reasons' => 'array',
     ];
 
     /**
@@ -62,7 +64,7 @@ class PostReport extends Model
     ];
 
     /**
-     * The valid report reasons.
+     * The valid report reasons (legacy).
      *
      * @var array<int, string>
      */
@@ -72,6 +74,96 @@ class PostReport extends Model
         'harassment',
         'fake_post',
         'other',
+    ];
+
+    /**
+     * The new violation categories.
+     *
+     * @var array<int, string>
+     */
+    public const VIOLATION_CATEGORIES = [
+        // Content-Related Violations
+        'sexual_content',
+        'violence',
+        'hate_speech',
+        'harassment',
+        'self_harm',
+        'spam',
+        'misinformation',
+        'abusive_language',
+        'terrorism',
+        'illegal_activities',
+        // User Behavior Violations
+        'impersonation',
+        'stalking',
+        'inappropriate_messages',
+        'unwanted_contact',
+        'scam',
+        // Platform/Community Violations
+        'community_guidelines',
+        'copyright',
+        'inappropriate_profile',
+    ];
+
+    /**
+     * Human-readable labels for violation categories.
+     *
+     * @var array<string, string>
+     */
+    public const VIOLATION_LABELS = [
+        // Content-Related Violations
+        'sexual_content' => 'Sexual content or nudity',
+        'violence' => 'Violence or graphic content',
+        'hate_speech' => 'Hate speech or symbols',
+        'harassment' => 'Harassment or bullying',
+        'self_harm' => 'Self-harm or suicide promotion',
+        'spam' => 'Spam or misleading information',
+        'misinformation' => 'Misinformation or false claims',
+        'abusive_language' => 'Foul or abusive language',
+        'terrorism' => 'Terrorism or violent extremism',
+        'illegal_activities' => 'Illegal activities (e.g. drug use, weapons)',
+        // User Behavior Violations
+        'impersonation' => 'Impersonation or fake account',
+        'stalking' => 'Stalking or threatening behavior',
+        'inappropriate_messages' => 'Inappropriate direct messages',
+        'unwanted_contact' => 'Unwanted contact',
+        'scam' => 'Scam or phishing',
+        // Platform/Community Violations
+        'community_guidelines' => 'Violation of community guidelines',
+        'copyright' => 'Copyright or intellectual property infringement',
+        'inappropriate_profile' => 'Inappropriate username or profile',
+    ];
+
+    /**
+     * Categorized violation types for admin display.
+     *
+     * @var array<string, array<string>>
+     */
+    public const VIOLATION_CATEGORIES_GROUPED = [
+        'Content-Related Violations' => [
+            'sexual_content',
+            'violence',
+            'hate_speech',
+            'harassment',
+            'self_harm',
+            'spam',
+            'misinformation',
+            'abusive_language',
+            'terrorism',
+            'illegal_activities',
+        ],
+        'User Behavior Violations' => [
+            'impersonation',
+            'stalking',
+            'inappropriate_messages',
+            'unwanted_contact',
+            'scam',
+        ],
+        'Platform/Community Violations' => [
+            'community_guidelines',
+            'copyright',
+            'inappropriate_profile',
+        ],
     ];
 
     /**
@@ -134,5 +226,58 @@ class PostReport extends Model
     public function isReviewed(): bool
     {
         return !is_null($this->reviewed_at);
+    }
+
+    /**
+     * Get formatted violation reasons for display.
+     *
+     * @return string
+     */
+    public function getFormattedViolationReasonsAttribute(): string
+    {
+        if (empty($this->violation_reasons)) {
+            return $this->reason ?? 'No reason provided';
+        }
+
+        $labels = [];
+        foreach ($this->violation_reasons as $reason) {
+            $labels[] = self::VIOLATION_LABELS[$reason] ?? $reason;
+        }
+
+        return implode(', ', $labels);
+    }
+
+    /**
+     * Get violation reasons grouped by category for admin display.
+     *
+     * @return array<string, array<string>>
+     */
+    public function getGroupedViolationReasonsAttribute(): array
+    {
+        if (empty($this->violation_reasons)) {
+            return [];
+        }
+
+        $grouped = [];
+        foreach (self::VIOLATION_CATEGORIES_GROUPED as $category => $categoryReasons) {
+            $matchingReasons = array_intersect($this->violation_reasons, $categoryReasons);
+            if (!empty($matchingReasons)) {
+                $grouped[$category] = array_map(function($reason) {
+                    return self::VIOLATION_LABELS[$reason] ?? $reason;
+                }, $matchingReasons);
+            }
+        }
+
+        return $grouped;
+    }
+
+    /**
+     * Check if this report uses the new violation categories system.
+     *
+     * @return bool
+     */
+    public function hasViolationCategories(): bool
+    {
+        return !empty($this->violation_reasons) && is_array($this->violation_reasons);
     }
 }
