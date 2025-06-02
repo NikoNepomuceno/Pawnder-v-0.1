@@ -22,6 +22,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Report Management Routes
         Route::prefix('reports')->name('reports.')->group(function () {
+            Route::get('/pending', [DashboardController::class, 'pendingReports'])
+                ->name('pending')
+                ->middleware('auth');
             Route::get('/approved', [DashboardController::class, 'approvedReports'])
                 ->name('approved')
                 ->middleware('auth');

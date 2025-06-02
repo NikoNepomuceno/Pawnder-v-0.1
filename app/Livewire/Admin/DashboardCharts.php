@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use Livewire\Component;
 use App\Models\PostReport;
+use App\Models\Post;
 use Carbon\Carbon;
 
 class DashboardCharts extends Component
@@ -25,6 +26,10 @@ class DashboardCharts extends Component
         $approvedReports = PostReport::where('status', 'resolved')->count();
         $archivedReports = PostReport::where('status', 'dismissed')->count();
 
+        // Get post status counts (found vs not_found)
+        $foundPosts = Post::where('status', 'found')->count();
+        $notFoundPosts = Post::where('status', 'not_found')->count();
+
         // Get reports trend for the last 7 days
         $trendData = [];
         $trendLabels = [];
@@ -44,6 +49,11 @@ class DashboardCharts extends Component
             'trend' => [
                 'labels' => $trendLabels,
                 'data' => $trendData
+            ],
+            'postStatus' => [
+                'labels' => ['Found', 'Not Found'],
+                'data' => [$foundPosts, $notFoundPosts],
+                'colors' => ['#10b981', '#ef4444']
             ]
         ];
     }

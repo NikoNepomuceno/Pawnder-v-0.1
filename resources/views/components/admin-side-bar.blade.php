@@ -35,6 +35,12 @@
                     class="fas fa-tachometer-alt w-5 text-center {{ request()->routeIs('admin.dashboard') ? 'text-green-600' : 'text-gray-500 group-hover:text-green-600' }}"></i>
                 <span>Dashboard</span>
             </a>
+            <a href="{{ route('admin.reports.pending') }}"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-green-50 transition-colors group {{ request()->routeIs('admin.reports.pending') ? 'bg-green-100 text-green-800 font-semibold' : '' }}">
+                <i
+                    class="fas fa-clock w-5 text-center {{ request()->routeIs('admin.reports.pending') ? 'text-green-600' : 'text-gray-500 group-hover:text-green-600' }}"></i>
+                <span>Pending Reports</span>
+            </a>
             <a href="{{ route('admin.reports.approved') }}"
                 class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-green-50 transition-colors group {{ request()->routeIs('admin.reports.approved') ? 'bg-green-100 text-green-800 font-semibold' : '' }}">
                 <i

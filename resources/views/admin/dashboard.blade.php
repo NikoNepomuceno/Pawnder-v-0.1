@@ -21,19 +21,6 @@
                 <div class="mb-8">
                     <livewire:admin.dashboard-charts />
                 </div>
-
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="p-6 border-b border-gray-200">
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-clock text-amber-500 text-xl"></i>
-
-                            <h2 class="text-xl font-semibold text-gray-800">Pending Reports</h2>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <livewire:admin.reports-table status="pending" />
-                    </div>
-                </div>
             </div>
         </div>
     </div>

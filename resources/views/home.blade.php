@@ -147,8 +147,8 @@
                                             <div class="post-images">
                                                 <div
                                                     class="image-grid {{ count($original->photo_urls) === 1 ? 'single-image' : '' }}
-                                                                                                                            {{ count($original->photo_urls) === 2 ? 'two-images' : '' }}
-                                                                                                                            {{ count($original->photo_urls) === 3 ? 'three-images' : '' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                            {{ count($original->photo_urls) === 2 ? 'two-images' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                            {{ count($original->photo_urls) === 3 ? 'three-images' : '' }}">
                                                     @foreach($original->photo_urls as $index => $photo_url)
                                                         @if($index < 4)
                                                             <div class="grid-item" data-post-id="{{ $original->id }}" data-index="{{ $index }}">
@@ -225,8 +225,8 @@
                                     @if(count($post->photo_urls) > 0)
                                         <div
                                             class="image-grid {{ count($post->photo_urls) === 1 ? 'single-image' : '' }}
-                                                                                                                    {{ count($post->photo_urls) === 2 ? 'two-images' : '' }}
-                                                                                                                    {{ count($post->photo_urls) === 3 ? 'three-images' : '' }}">
+                                                                                                                                                                                                                                                                                                                                                                                                                    {{ count($post->photo_urls) === 2 ? 'two-images' : '' }}
+                                                                                                                                                                                                                                                                                                                                                                                                                    {{ count($post->photo_urls) === 3 ? 'three-images' : '' }}">
                                             @foreach($post->photo_urls as $index => $photo_url)
                                                 @if($index < 4)
                                                     <div class="grid-item" data-post-id="{{ $post->id }}" data-index="{{ $index }}">
@@ -424,6 +424,17 @@
                                 <span class="checkmark"></span>
                                 Inappropriate username or profile
                             </label>
+                        </div>
+
+                        <div class="other-section">
+                            <h4><i class="fas fa-ellipsis-h"></i> Other</h4>
+                            <div class="violation-options">
+                                <label class="violation-option">
+                                    <input type="checkbox" value="other_reason" name="violation_reasons[]">
+                                    <span class="checkmark"></span>
+                                    Other reason not listed above
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1367,6 +1378,27 @@
             margin-top: 12px;
         }
 
+        .other-section {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .other-section h4 {
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .other-section h4 i {
+            color: #e74c3c;
+            font-size: 13px;
+        }
+
         .violation-option {
             display: flex;
             align-items: center;
@@ -1428,6 +1460,18 @@
 
         body.dark-mode .violation-option {
             color: #e0e0e0;
+        }
+
+        body.dark-mode .other-section {
+            border-top-color: #404448;
+        }
+
+        body.dark-mode .other-section h4 {
+            color: #8fd19e;
+        }
+
+        body.dark-mode .other-section h4 i {
+            color: #8fd19e;
         }
 
         body.dark-mode .violation-option:hover {

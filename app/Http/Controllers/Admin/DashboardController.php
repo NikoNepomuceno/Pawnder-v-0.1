@@ -169,6 +169,18 @@ class DashboardController extends Controller
     }
 
     /**
+     * Show all pending reports.
+     */
+    public function pendingReports()
+    {
+        if (!\Illuminate\Support\Facades\Auth::user() || !\Illuminate\Support\Facades\Auth::user()->is_admin) {
+            abort(403, 'Unauthorized. Admin access required.');
+        }
+
+        return view('admin.pending-reports');
+    }
+
+    /**
      * Show all approved reports.
      */
     public function approvedReports()

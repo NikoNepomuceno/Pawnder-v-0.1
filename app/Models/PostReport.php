@@ -103,6 +103,8 @@ class PostReport extends Model
         'community_guidelines',
         'copyright',
         'inappropriate_profile',
+        // Other
+        'other_reason',
     ];
 
     /**
@@ -132,6 +134,8 @@ class PostReport extends Model
         'community_guidelines' => 'Violation of community guidelines',
         'copyright' => 'Copyright or intellectual property infringement',
         'inappropriate_profile' => 'Inappropriate username or profile',
+        // Other
+        'other_reason' => 'Other reason not listed above',
     ];
 
     /**
@@ -262,7 +266,7 @@ class PostReport extends Model
         foreach (self::VIOLATION_CATEGORIES_GROUPED as $category => $categoryReasons) {
             $matchingReasons = array_intersect($this->violation_reasons, $categoryReasons);
             if (!empty($matchingReasons)) {
-                $grouped[$category] = array_map(function($reason) {
+                $grouped[$category] = array_map(function ($reason) {
                     return self::VIOLATION_LABELS[$reason] ?? $reason;
                 }, $matchingReasons);
             }

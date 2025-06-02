@@ -661,10 +661,7 @@
             overflow: hidden;
         }
 
-        .report-card:hover {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
-            transform: translateY(-1px);
-        }
+
 
         .report-header {
             display: flex;

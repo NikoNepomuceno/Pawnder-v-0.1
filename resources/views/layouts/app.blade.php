@@ -1107,7 +1107,7 @@
                     </a>
                 </div>
                 <div class="search-bar">
-                    <form id="navSearchForm" method="GET" action="" class="nav-search-form">
+                    <form id="navSearchForm" method="GET" action="{{ route('home') }}" class="nav-search-form">
                         <input type="text" name="search" placeholder="Search..." value="{{ request('search') }}"
                             class="nav-search-input">
                         <button type="button" id="filterToggleBtn" class="nav-search-filter-btn">
@@ -1316,6 +1316,16 @@
                 breedSelect.innerHTML = '<option value="">Breed</option>';
 
                 if (animalType && breedData[animalType]) {
+                    // Add "All Breed" option for the selected animal type
+                    const allBreedOption = document.createElement('option');
+                    allBreedOption.value = `all_${animalType}_breeds`;
+                    allBreedOption.textContent = `All ${animalType.charAt(0).toUpperCase() + animalType.slice(1)} Breeds`;
+                    // Check if "All Breed" option is selected
+                    if (`all_${animalType}_breeds` === '{{ request("breed_filter") }}') {
+                        allBreedOption.selected = true;
+                    }
+                    breedSelect.appendChild(allBreedOption);
+
                     // Add breeds for selected animal type
                     breedData[animalType].forEach(breed => {
                         const option = document.createElement('option');

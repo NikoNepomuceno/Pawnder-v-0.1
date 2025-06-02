@@ -9,16 +9,16 @@
                 <!-- Header with mobile spacing -->
                 <div class="flex items-center justify-between mb-8 pt-16 lg:pt-0">
                     <h1 class="text-2xl lg:text-3xl font-bold text-gray-800">Archived Reports</h1>
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm text-gray-500 hidden sm:block">Total: {{ $archivedReports->total() }}</span>
-                    </div>
                 </div>
 
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div class="p-6 border-b border-gray-200">
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-archive text-gray-500 text-xl"></i>
-                            <h2 class="text-xl font-semibold text-gray-800">Archived Reports</h2>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-archive text-gray-500 text-xl"></i>
+                                <h2 class="text-xl font-semibold text-gray-800">Archived Reports</h2>
+                            </div>
+                            <span class="text-sm text-gray-500">Total: {{ $archivedReports->total() }}</span>
                         </div>
                     </div>
 
@@ -183,6 +183,24 @@
         </div>
     </div>
 
+    <!-- Logout Confirmation Modal -->
+    <div id="adminLogoutConfirmModal"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-black/25 backdrop-blur-sm p-4">
+        <div
+            class="relative bg-white rounded-2xl p-8 shadow-lg w-full max-w-sm text-center flex flex-col items-center border border-gray-200 mx-auto">
+            <h3 class="text-xl font-semibold mb-4 text-gray-800">Confirm Logout</h3>
+            <p class="mb-6 text-gray-600">Are you sure you want to log out?</p>
+            <div class="flex justify-center gap-4 w-full">
+                <button
+                    class="px-6 py-2.5 rounded-lg bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-colors flex-1"
+                    id="adminCancelLogout">Cancel</button>
+                <button
+                    class="px-6 py-2.5 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition-colors flex-1"
+                    id="adminConfirmLogout">Logout</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification Container -->
     <div id="notificationContainer" class="fixed top-0 left-0 right-0 z-50 flex flex-col items-center pt-2"></div>
 
@@ -193,6 +211,33 @@
             setTimeout(function () {
                 document.getElementById('pageFade').classList.add('opacity-100');
             }, 10);
+
+            // Logout modal logic
+            var openBtn = document.getElementById('adminOpenLogoutModal');
+            var logoutModal = document.getElementById('adminLogoutConfirmModal');
+            var cancelBtn = document.getElementById('adminCancelLogout');
+            var confirmBtn = document.getElementById('adminConfirmLogout');
+            var form = document.getElementById('adminLogoutForm');
+
+            if (openBtn && logoutModal) {
+                openBtn.onclick = function () {
+                    logoutModal.classList.remove('hidden');
+                    logoutModal.classList.add('flex');
+                };
+            }
+
+            if (cancelBtn && logoutModal) {
+                cancelBtn.onclick = function () {
+                    logoutModal.classList.add('hidden');
+                    logoutModal.classList.remove('flex');
+                };
+            }
+
+            if (confirmBtn && form) {
+                confirmBtn.onclick = function () {
+                    form.submit();
+                };
+            }
 
             // Unarchive modal elements
             const unarchiveModal = document.getElementById('unarchiveReportConfirmModal');
@@ -235,6 +280,10 @@
             window.addEventListener('click', function (event) {
                 if (event.target === unarchiveModal) {
                     hideUnarchiveModal();
+                }
+                if (event.target === logoutModal) {
+                    logoutModal.classList.add('hidden');
+                    logoutModal.classList.remove('flex');
                 }
             });
 
@@ -310,7 +359,7 @@
             @elseif($errors->any())
                 window.showNotification('{{ $errors->first() }}', 'error');
             @endif
-                                });
+                                                    });
     </script>
 @endsection
 
@@ -347,6 +396,17 @@
 
         .animate-slideOutToTop {
             animation: slideOutToTop 0.3s ease-out forwards;
+        }
+
+        /* Ensure perfect modal centering */
+        #adminLogoutConfirmModal {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        #adminLogoutConfirmModal.hidden {
+            display: none !important;
         }
     </style>
 @endpush

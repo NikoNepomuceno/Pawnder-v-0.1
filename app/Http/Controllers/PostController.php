@@ -49,10 +49,13 @@ class PostController extends Controller
      */
     public function index(Request $request): View
     {
+
+
         $query = Post::with(['user', 'originalPost.user'])->withCount('comments');
 
         // Exclude posts created by the current user
-        $query->where('user_id', '!=', Auth::id());
+        $currentUserId = Auth::id();
+        $query->where('user_id', '!=', $currentUserId);
 
         // Only show valid posts (not deleted and with valid shared posts)
         $query->valid();
@@ -62,24 +65,39 @@ class PostController extends Controller
             $query->where('status', $request->status);
         }
 
-        // Pet type filter (searches in breed, title, and description)
-        if ($request->filled('pet_type')) {
-            $petType = strtolower($request->pet_type);
-            $query->where(function ($q) use ($petType) {
-                $q->whereRaw('LOWER(breed) LIKE ?', ["%{$petType}%"])
-                    ->orWhereRaw('LOWER(title) LIKE ?', ["%{$petType}%"])
-                    ->orWhereRaw('LOWER(description) LIKE ?', ["%{$petType}%"]);
-            });
-        }
+        // Combined Pet type and Breed filtering logic
+        if ($request->filled('pet_type') || $request->filled('breed_filter')) {
+            $petType = $request->filled('pet_type') ? strtolower($request->pet_type) : null;
+            $breedFilter = $request->filled('breed_filter') ? strtolower($request->breed_filter) : null;
 
-        // Breed filter (searches in breed, title, and description)
-        if ($request->filled('breed_filter')) {
-            $breedFilter = strtolower($request->breed_filter);
-            $query->where(function ($q) use ($breedFilter) {
-                $q->whereRaw('LOWER(breed) LIKE ?', ["%{$breedFilter}%"])
-                    ->orWhereRaw('LOWER(title) LIKE ?', ["%{$breedFilter}%"])
-                    ->orWhereRaw('LOWER(description) LIKE ?', ["%{$breedFilter}%"]);
-            });
+            // Check if breed filter is an "All [Animal] Breeds" selection
+            if ($breedFilter && preg_match('/^all_(\w+)_breeds$/', $breedFilter, $matches)) {
+                $animalType = $matches[1];
+                $allBreeds = $this->getAllBreedsForAnimalType($animalType);
+
+                if (!empty($allBreeds)) {
+                    // Filter by specific animal type breeds only (breed field only)
+                    $query->where(function ($q) use ($allBreeds) {
+                        foreach ($allBreeds as $index => $breed) {
+                            if ($index === 0) {
+                                $q->whereRaw('LOWER(breed) LIKE ?', ["%{$breed}%"]);
+                            } else {
+                                $q->orWhereRaw('LOWER(breed) LIKE ?', ["%{$breed}%"]);
+                            }
+                        }
+                    });
+                }
+            } elseif ($breedFilter) {
+                // Specific breed filter (search in breed field only for precision)
+                $query->whereRaw('LOWER(breed) LIKE ?', ["%{$breedFilter}%"]);
+            } elseif ($petType) {
+                // Pet type only (search across breed, title, and description)
+                $query->where(function ($q) use ($petType) {
+                    $q->whereRaw('LOWER(breed) LIKE ?', ["%{$petType}%"])
+                        ->orWhereRaw('LOWER(title) LIKE ?', ["%{$petType}%"])
+                        ->orWhereRaw('LOWER(description) LIKE ?', ["%{$petType}%"]);
+                });
+            }
         }
 
         // Search filter
@@ -96,6 +114,7 @@ class PostController extends Controller
         }
 
         $posts = $query->latest()->get();
+
         return view('home', compact('posts'));
     }
 
@@ -303,5 +322,36 @@ class PostController extends Controller
             ->count();
 
         return response()->json(['count' => $count]);
+    }
+
+    /**
+     * Get all breeds for a specific animal type.
+     *
+     * @param  string  $animalType
+     * @return array
+     */
+    private function getAllBreedsForAnimalType(string $animalType): array
+    {
+        $breedData = [
+            'dog' => [
+                'golden retriever', 'labrador', 'german shepherd', 'bulldog', 'poodle',
+                'beagle', 'rottweiler', 'yorkshire terrier', 'dachshund', 'siberian husky',
+                'shih tzu', 'chihuahua', 'border collie', 'boxer', 'cocker spaniel'
+            ],
+            'cat' => [
+                'persian', 'siamese', 'maine coon', 'british shorthair', 'ragdoll',
+                'bengal', 'russian blue', 'scottish fold', 'sphynx', 'abyssinian'
+            ],
+            'bird' => [
+                'budgerigar', 'canary', 'cockatiel', 'lovebird', 'parrot',
+                'finch', 'macaw', 'conure'
+            ],
+            'rabbit' => [
+                'holland lop', 'netherland dwarf', 'mini rex', 'lionhead',
+                'flemish giant', 'angora'
+            ]
+        ];
+
+        return $breedData[$animalType] ?? [];
     }
 }
