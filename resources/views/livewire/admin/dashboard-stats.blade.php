@@ -56,9 +56,11 @@
             border-radius: 1rem;
             padding: 1.5rem;
             display: flex;
+            flex-direction: column;
             align-items: center;
             gap: 1rem;
             box-shadow: 0 2px 8px rgba(27, 67, 50, 0.05);
+            text-align: center;
         }
 
         .stat-icon {

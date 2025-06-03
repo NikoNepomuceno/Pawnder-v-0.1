@@ -51,7 +51,7 @@ class DashboardCharts extends Component
                 'data' => $trendData
             ],
             'postStatus' => [
-                'labels' => ['Found', 'Not Found'],
+                'labels' => ['Found', 'Lost'],
                 'data' => [$foundPosts, $notFoundPosts],
                 'colors' => ['#10b981', '#ef4444']
             ]

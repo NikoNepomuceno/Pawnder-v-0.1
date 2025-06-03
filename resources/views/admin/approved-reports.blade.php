@@ -13,7 +13,7 @@
 
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div class="p-6 border-b border-gray-200">
-                        <div class="flex items-center justify-between">
+                        <div class="flex flex-col space-y-3">
                             <div class="flex items-center space-x-3">
                                 <i class="fas fa-check-circle text-green-500 text-xl"></i>
                                 <h2 class="text-xl font-semibold text-gray-800">Approved Reports</h2>

@@ -96,7 +96,7 @@
                                 <i class="fas fa-check-circle"></i>
                             </div>
                             <div class="stat-content">
-                                <div class="stat-label">Found Posts</div>
+                                <div class="stat-label">Found Pets</div>
                                 <div class="stat-value" id="foundCount">{{ $chartData['postStatus']['data'][0] ?? 0 }}
                                 </div>
                                 <div class="stat-percentage" id="foundPercentage">
@@ -111,7 +111,7 @@
                                 <i class="fas fa-times-circle"></i>
                             </div>
                             <div class="stat-content">
-                                <div class="stat-label">Not Found Posts</div>
+                                <div class="stat-label">Lost Pets</div>
                                 <div class="stat-value" id="notFoundCount">
                                     {{ $chartData['postStatus']['data'][1] ?? 0 }}
                                 </div>
@@ -477,7 +477,7 @@
                     const notFoundCount = chartData.postStatus.data[1] || 0;
                     const totalCount = foundCount + notFoundCount;
 
-                    window.postStatusChart.data.labels = ['Found Posts', 'Not Found Posts', 'Total Posts'];
+                    window.postStatusChart.data.labels = ['Found Pets', 'Lost Pets', 'Total Posts'];
                     window.postStatusChart.data.datasets[0].data = [foundCount, notFoundCount, totalCount];
                     window.postStatusChart.data.datasets[0].backgroundColor = [
                         '#10b981', // Green for found
@@ -768,7 +768,7 @@
                     window.postStatusChart = new Chart(postStatusCtx, {
                         type: 'bar',
                         data: {
-                            labels: ['Found Posts', 'Not Found Posts', 'Total Posts'],
+                            labels: ['Found Pets', 'Lost Pets', 'Total Posts'],
                             datasets: [{
                                 label: 'Count',
                                 data: [foundCount, notFoundCount, totalCount],
