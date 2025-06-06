@@ -176,9 +176,6 @@
             <button type="button" class="clear-read-btn" id="clearReadBtn" title="Clear all notifications">
                 <i class='bx bx-trash'></i> Clear All
             </button>
-            {{-- <button class="mark-all-read-btn" id="markAllReadBtn">
-                <i class='bx bx-check-double'></i> Mark all as read
-            </button> --}}
         </div>
     </div>
 

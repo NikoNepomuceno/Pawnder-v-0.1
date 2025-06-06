@@ -135,10 +135,22 @@ class AuthController extends Controller
      */
     public function sendResetLink(Request $request): RedirectResponse
     {
-        $request->validate(['email' => 'required|email']);
+        $request->validate([
+            'email' => 'required|email|exists:users,email'
+        ], [
+            'email.required' => 'Email address is required.',
+            'email.email' => 'Please enter a valid email address.',
+            'email.exists' => 'No account found with this email address.'
+        ]);
+
+        // Check rate limiting
+        $key = 'password.reset.' . $request->ip();
+        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($key, 3)) {
+            return back()->withErrors(['email' => 'Too many password reset attempts. Please try again in ' . \Illuminate\Support\Facades\RateLimiter::availableIn($key) . ' seconds.']);
+        }
 
         if ($this->authService->sendPasswordResetLink($request->string('email'))) {
-            return back()->with('status', __('passwords.sent'));
+            return back()->with('status', 'Password reset link sent to your email address.');
         }
 
         return back()->withErrors(['email' => 'Unable to send password reset link. Please try again later.']);
