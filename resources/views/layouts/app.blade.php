@@ -584,7 +584,14 @@
 
         @media screen and (max-width: 768px) {
             .hamburger {
-                display: flex;
+                display: none;
+            }
+
+            .navbar {
+                padding: 8px 12px;
+                gap: 8px;
+                justify-content: center;
+                position: relative;
             }
 
             .brand {
@@ -592,44 +599,190 @@
             }
 
             .nav-center {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: #3F7D58;
-                padding: 80px 20px 20px;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                z-index: 100;
-            }
-
-            .nav-center.active {
                 display: flex;
-                animation: fadeIn 0.3s;
+                align-items: center;
+                gap: 12px;
+                justify-content: center;
             }
 
             .nav-links {
-                flex-direction: column;
+                display: flex;
+                gap: 12px;
                 align-items: center;
-                gap: 25px;
-                margin-bottom: 30px;
+                flex-shrink: 0;
             }
 
             .nav-links a {
-                font-size: 28px;
+                font-size: 18px;
+                padding: 8px;
+                border-radius: 6px;
+                transition: background-color 0.2s;
+                min-width: 34px;
+                min-height: 34px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
-            .search-bar input[type="text"] {
+            .nav-links a:hover,
+            .nav-links a:focus {
+                background-color: rgba(255, 255, 255, 0.1);
+                outline: none;
+            }
+
+            .nav-links a:active {
+                background-color: rgba(255, 255, 255, 0.2);
+                transform: scale(0.95);
+            }
+
+            .search-bar {
+                flex: 0 0 auto;
+                max-width: 160px;
+                margin: 0 8px;
+            }
+
+            .nav-search-input {
                 width: 100%;
-                max-width: 300px;
-                padding: 12px 18px;
+                height: 32px;
+                padding: 6px 12px;
+                font-size: 14px;
+                border-radius: 16px;
+            }
+
+            .nav-search-filter-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+                border-radius: 50%;
+            }
+
+            .nav-search-dropdown {
+                width: 240px;
+                right: -20px;
+                left: auto;
+                transform: none;
+            }
+
+            /* Ensure dropdown doesn't go off screen on small devices */
+            @media screen and (max-width: 320px) {
+                .nav-search-dropdown {
+                    width: 200px;
+                    right: -40px;
+                }
             }
 
             .nav-right {
-                margin-left: auto;
+                position: absolute;
+                right: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                margin-left: 0;
+                flex-shrink: 0;
+            }
+
+            .profile-icon {
+                width: 32px;
+                height: 32px;
+                border-width: 1px;
+                cursor: pointer;
+                transition: transform 0.2s;
+            }
+
+            .profile-icon:active {
+                transform: scale(0.95);
+            }
+
+            .dropdown-indicator {
+                width: 12px;
+                height: 12px;
+                bottom: -1px;
+                right: -1px;
+            }
+
+            .dropdown-indicator i {
+                font-size: 12px;
+            }
+
+            .dropdown-content {
+                right: -10px;
+                top: 45px;
+                min-width: 160px;
+            }
+        }
+
+        /* Extra small mobile screens */
+        @media screen and (max-width: 480px) {
+            .navbar {
+                padding: 6px 8px;
+            }
+
+            .brand {
+                display: none;
+            }
+
+            .nav-links a {
+                font-size: 16px;
+                padding: 6px;
+                min-width: 30px;
+                min-height: 30px;
+            }
+
+            .search-bar {
+                max-width: 120px;
+                margin: 0 6px;
+            }
+
+            .nav-right {
+                right: 8px;
+            }
+
+            .nav-search-input {
+                height: 28px;
+                padding: 4px 10px;
+                font-size: 13px;
+            }
+
+            .nav-search-filter-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+
+            .nav-search-dropdown {
+                width: 220px;
+                right: -30px;
+            }
+
+            .profile-icon {
+                width: 28px;
+                height: 28px;
+            }
+
+            .dropdown-indicator {
+                width: 10px;
+                height: 10px;
+            }
+
+            .dropdown-indicator i {
+                font-size: 10px;
+            }
+        }
+
+        /* Notification badge mobile adjustments */
+        @media screen and (max-width: 768px) {
+            .notification-badge {
+                top: -4px;
+                right: -4px;
+                min-width: 14px;
+                height: 14px;
+                font-size: 9px;
+                border: 1px solid #fff;
+            }
+
+            .notification-badge.overflow {
+                font-size: 8px;
+                min-width: 16px;
+                padding: 0 2px;
             }
         }
 
@@ -1209,8 +1362,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Navigation elements
-            const hamburger = document.getElementById('hamburger');
-            const navCenter = document.getElementById('nav-center');
             const profileIcon = document.getElementById('profile-icon');
             const dropdownContent = document.getElementById('dropdown-content');
             const logoutBtns = document.querySelectorAll('.logoutBtn');
@@ -1220,14 +1371,6 @@
             const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
             const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');
             const logoutForm = document.getElementById('logoutForm');
-
-            // Mobile menu toggle
-            if (hamburger && navCenter) {
-                hamburger.addEventListener('click', () => {
-                    navCenter.classList.toggle('active');
-                    hamburger.classList.toggle('active');
-                });
-            }
 
             // Profile dropdown toggle
             if (profileIcon && dropdownContent) {
